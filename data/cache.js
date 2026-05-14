@@ -1,0 +1,635 @@
+// data_cache.js
+// CS2 Cache Map Utility Playbook Data
+// Research sources:
+//   - bo3.gg Cache Smokes Guide (https://bo3.gg/articles/cs2-cache-smokes-guide-best-lineups-for-every-site)
+//   - bo3.gg Cache Utility Guide (https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades)
+//   - austincs "All MUST KNOW Nades for Cache in CS2 (2026)" (https://www.youtube.com/watch?v=0_klMH393qo)
+//   - Steam Guide: Cache Guide by Pastor Napas (https://steamcommunity.com/sharedfiles/filedetails/?id=3718386401)
+//   - profilerr.net Cache Smokes (https://profilerr.net/cache-smokes-in-cs2/)
+//   - csnades.gg Cache Guide (https://csnades.gg/guides/cache)
+//   - daddyskins.com Cache CS2 (https://daddyskins.com/blog/counterpedia/cache-cs2/)
+//
+// Radar coordinate system (normalized 0.0–1.0):
+//   x: 0.0 = left (T spawn side), 1.0 = right (CT side)
+//   y: 0.0 = top (A site), 1.0 = bottom (B site)
+//
+// Throw types:
+//   JT   = Jump Throw (hold LMB, bind jump+throw)
+//   WJT  = Walk + Jump Throw (walk forward, then jump throw)
+//   LMB  = Standing Left Click only
+//   RMB  = Standing Right Click only
+//   WALK2 = Walk two steps then throw (running throw)
+//   RUN  = Running throw (throw while running, no jump)
+
+export const MAP_NAME = "Cache";
+export const RADAR_URL = "";
+
+export const LINEUPS = {
+
+  // ─────────────────────────────────────────────
+  // MID CONTROL — T-side
+  // ─────────────────────────────────────────────
+
+  t_z_connector_smoke: {
+    id: "t_z_connector_smoke",
+    name: "Z / Connector Smoke (Instant)",
+    util: "SMOKE",
+    throw: "WJT",
+    side: "T",
+    area: "MID",
+    mustLearn: true,
+    instant: true,
+    purpose: "Blocks CT vision from Z connector / the window overlooking mid. Allows T side to rush garage and take mid safely without being spotted or picked by a CT AWPer.",
+    stand: "Run along the 3rd white line coming out of T spawn (count 1-2-3 lines from spawn). As you reach the end of that 3rd line, jump and throw.",
+    aim: "Aim at the backwards 'N' (Cyrillic И) character painted on the wall at the end of the third line. Crosshair sits on the letter as you hit the jump.",
+    notes: "One of the most iconic smokes on Cache. Should be thrown almost every round on T-side. It is a running/walk-jump throw — build up a little speed along the line. Works with the jump-throw bind.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.32, y: 0.52 },
+    radarTarget: { x: 0.52, y: 0.40 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=10",
+    austincs: true,
+  },
+
+  t_criss_cross_smoke_left: {
+    id: "t_criss_cross_smoke_left",
+    name: "Criss-Cross Smoke — Left Side Mid",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "T",
+    area: "MID",
+    mustLearn: false,
+    instant: false,
+    purpose: "One of two criss-cross smokes that together block both sides of the mid arch, allowing T players to safely cross into white box / sandbags area.",
+    stand: "Stand on the right side in line with the green door at the mid arch. Find the stain on the left panel above the mid opening.",
+    aim: "Aim just above the left panel (the stain sits just above that panel). Left click throw.",
+    notes: "Pair with the right-side criss-cross smoke. Both thrown simultaneously give crossing T players complete cover. Useful for taking mid control and approaching vents.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.38, y: 0.48 },
+    radarTarget: { x: 0.47, y: 0.44 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=89",
+    austincs: true,
+  },
+
+  t_criss_cross_smoke_right: {
+    id: "t_criss_cross_smoke_right",
+    name: "Criss-Cross Smoke — Right Side Mid",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "T",
+    area: "MID",
+    mustLearn: false,
+    instant: false,
+    purpose: "Complements the left criss-cross smoke; together they cover both sides of the mid arch for safe T crossing toward white box and vents.",
+    stand: "Stand on the left side in line with the green door at the mid arch.",
+    aim: "Find the stain on the top of the right pillar above the right panel. Aim at the stain, left click throw.",
+    notes: "Throw simultaneously with the left criss-cross smoke. Together they let teammates cross mid in relative safety.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.38, y: 0.54 },
+    radarTarget: { x: 0.49, y: 0.44 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=89",
+    austincs: true,
+  },
+
+  ct_mid_delay_smoke: {
+    id: "ct_mid_delay_smoke",
+    name: "CT Mid Delay Smoke (Garage / T-Ramp)",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "CT",
+    area: "MID",
+    mustLearn: true,
+    instant: false,
+    purpose: "Delays or blocks fast T-side mid control attempts. Stops Ts from immediately rushing garage, buying time for mid player to position and for teammates to rotate.",
+    stand: "Stand at CT connector or the mid CT-side entrance. Position near the pillar that overlooks mid.",
+    aim: "Aim at the top of the garage entrance / T ramp opening. Left click throw.",
+    notes: "Thrown early in the round. Forces Ts to waste flashes and smokes countering it. The CT mid player can still peek sides. Very strong on eco or force rounds.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.52, y: 0.47 },
+    radarTarget: { x: 0.38, y: 0.50 },
+    source: "community",
+    video: "",
+    austincs: false,
+  },
+
+  t_boost_molly: {
+    id: "t_boost_molly",
+    name: "T-Side Boost Molly (Mid Sandbags)",
+    util: "MOLLY",
+    throw: "JT",
+    side: "T",
+    area: "MID",
+    mustLearn: true,
+    instant: false,
+    purpose: "Burns out the sandbags / boost position in mid, preventing CTs from holding an elevated advantage and forcing them off the boost before Ts push white box.",
+    stand: "Get to the front of the railing near mid. Position your body on the front of the railing (stuck/lined on the railing edge).",
+    aim: "Aim at where the red wall meets the blue door on the far side. Jump throw.",
+    notes: "Time this so it lands as your teammates are ready to push mid. You can throw this on the fly after throwing the Z smoke from CT spawn. Pairs with a mid flash.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.44, y: 0.47 },
+    radarTarget: { x: 0.50, y: 0.45 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=463",
+    austincs: true,
+  },
+
+  // ─────────────────────────────────────────────
+  // A SITE — T-side executes
+  // ─────────────────────────────────────────────
+
+  t_a_cross_smoke: {
+    id: "t_a_cross_smoke",
+    name: "A Cross Smoke (Heaven / CT)",
+    util: "SMOKE",
+    throw: "RUN",
+    side: "T",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Blocks the A cross / CT position and part of heaven. One of the two most critical smokes for a T-side A execute; removes the most dangerous CT angle at the site entrance.",
+    stand: "Stand at the wall at the base of where you'd boost onto the Shroud box / near the garage side of A main. Take a running approach toward the wall.",
+    aim: "Aim at the top of the wall / roof edge as you run toward it. Release with a running throw.",
+    notes: "CS2 smokes are large enough to cover the left-side forklift area as well when this lands well. Pair with the Back A Site smoke for a clean execute. A safe variant: stand in the corner and aim at the protruding roof corner — left click throw, no movement needed.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.27, y: 0.35 },
+    radarTarget: { x: 0.22, y: 0.28 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=145",
+    austincs: true,
+  },
+
+  t_back_a_site_smoke: {
+    id: "t_back_a_site_smoke",
+    name: "Back A Site Smoke",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "T",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Smokes off the back of A site / truck / CT truck area. Prevents CTs from falling back deep and denies a common retake angle. Critical for safe planting.",
+    stand: "Stand near the squeaky door next to the number '4' painted on the wall. Align your crosshair so it crosses the railing (use your nade lineup crosshair for precision).",
+    aim: "Find the part of the squeaky door / wall that sticks out — aim to the left of that protruding section until your crosshair just crosses the railing. Left click throw.",
+    notes: "Works best combined with the A Cross smoke. After both are up, the A site entry is much cleaner. Can be thrown just before going through squeaky or A main.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.27, y: 0.42 },
+    radarTarget: { x: 0.16, y: 0.30 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=202",
+    austincs: true,
+  },
+
+  t_highway_smoke: {
+    id: "t_highway_smoke",
+    name: "Highway Smoke (from T Truck / Squeaky)",
+    util: "SMOKE",
+    throw: "JT",
+    side: "T",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Cuts off the highway / mid-to-A connector, preventing CTs from rotating through highway and blocking mid player from collapsing onto A site during an execute.",
+    stand: "Approach from near squeaky (outer squeaky area). Get into the corner near squeaky entrance. Alternatively, use T Truck position.",
+    aim: "From squeaky: aim at the bottom tip of the leaves on the branch visible overhead. Jump throw. From T Truck: aim at the bottom of the dark line above the Shroud ledge then jump throw. Another variation uses the steam guide method: stand on the mark at the end of the blue building and aim inside the red 'O', then walk 2 steps and jump throw.",
+    notes: "One of the priority T-side smokes on Cache. Pairs with the A cross smoke and back site smoke for a proper A execute. The squeaky variant gives a faster setup. Deep version: stand on mark at end of blue building, aim inside red 'O', WALK2 + JT.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.29, y: 0.45 },
+    radarTarget: { x: 0.38, y: 0.30 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=sP8KejAF-lw&t=262",
+    austincs: false,
+  },
+
+  t_forklift_molly: {
+    id: "t_forklift_molly",
+    name: "Forklift Molly (Sandbags A)",
+    util: "MOLLY",
+    throw: "LMB",
+    side: "T",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Burns out the forklift / sandbags position on A site, removing one of the most common defensive holds and forcing the CT defender to reposition before entry.",
+    stand: "Stand outside A (near A main entrance / long approach). Position near the corner or the A staircase approach.",
+    aim: "Aim at the forklift / sandbags area. Left click or cook and throw. From near A staircase, left-click into the sandbagged forklift position.",
+    notes: "Part of the standard T fast-A execute: Molly Sandbags → Molly Vent → Flash A Main. This is the first of three throws. Burn forklift, force the CT off before you push.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.24, y: 0.37 },
+    radarTarget: { x: 0.19, y: 0.30 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=Ncbxljrn-FQ",
+    austincs: false,
+  },
+
+  t_a_main_flash: {
+    id: "t_a_main_flash",
+    name: "A Main Entry Flash (from A Stairs)",
+    util: "FLASH",
+    throw: "LMB",
+    side: "T",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Pops into A main / site, blinding CTs watching A main and the cross. Creates the entry window for the first T through the door. The core A execute flash.",
+    stand: "Stand at the A staircase / top of A main approach, just before the doorway. Hug the wall.",
+    aim: "Aim up and toward the site side of the doorway, lobbing the flash so it pops right at the CT edge of A main. Left click overhanded throw.",
+    notes: "Learn this first on T-side. Most A executes start with this flash. Throw after the mollies to time it so it pops as entry fraggers push through. Do not accidentally blind teammates behind you.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.21, y: 0.36 },
+    radarTarget: { x: 0.17, y: 0.30 },
+    source: "community",
+    video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
+    austincs: false,
+  },
+
+  // ─────────────────────────────────────────────
+  // A SITE — CT-side defense
+  // ─────────────────────────────────────────────
+
+  ct_a_main_molly_toxic: {
+    id: "ct_a_main_molly_toxic",
+    name: "CT A Main Molly (from Toxic / Corner)",
+    util: "MOLLY",
+    throw: "LMB",
+    side: "CT",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Lands on the standard T approach path to A main, stopping a fast push and forcing Ts to wait for the fire to clear. Buys time for CT teammates to rotate.",
+    stand: "Position in the Toxic area (the corner/cubby on CT side near A site, also called the 'Corner' angle). Crouch or stand in the tight corner near A main.",
+    aim: "Aim at the standard T path through A main. Left click throw — the molotov bounces and lands on the T push line. Can also be thrown from the 'Corner' angle on A main with same effect.",
+    notes: "Key part of the CT Default: Moly on A Main from Toxic/Corner, followed by a nade through the corridor, then flash to catch pushers. Stop a fast A rush almost every time.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.18, y: 0.33 },
+    radarTarget: { x: 0.20, y: 0.29 },
+    source: "community",
+    video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
+    austincs: false,
+  },
+
+  ct_a_main_smoke_truck: {
+    id: "ct_a_main_smoke_truck",
+    name: "CT A Main Smoke (from Truck)",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "CT",
+    area: "A",
+    mustLearn: true,
+    instant: false,
+    purpose: "Defensive smoke at A main entrance from CT truck, slowing down T rushes and giving CT defenders safe time to reposition or for a rotation to arrive.",
+    stand: "Stand by the light on the CT truck (back of A site). Align with the two windows above.",
+    aim: "Aim at the cross between the two windows above. Left click throw.",
+    notes: "Slows down fast A main pushes and creates confusion. Allows site defenders to safely adjust. Can also be thrown from CT Spawn — get into the corner and aim at the corner of the roof for a similar A main block.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.16, y: 0.28 },
+    radarTarget: { x: 0.20, y: 0.32 },
+    source: "community",
+    video: "https://steamcommunity.com/sharedfiles/filedetails/?id=3718386401",
+    austincs: false,
+  },
+
+  // ─────────────────────────────────────────────
+  // B SITE — T-side executes
+  // ─────────────────────────────────────────────
+
+  t_b_heaven_smoke: {
+    id: "t_b_heaven_smoke",
+    name: "B Heaven Smoke",
+    util: "SMOKE",
+    throw: "JT",
+    side: "T",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Removes the heaven angle on B site — the most dangerous elevated position. An unsmoked heaven means one CT can shut down an entire B execute from elevation.",
+    stand: "From B Halls: get to the corner in B halls, looking for the gaps in the roof rafters. From Sun Room: stand in the corner on the ground inside Sun Room near the crease.",
+    aim: "B Halls: aim at the specific roof gap (requires crosshair precision, jump throw). Sun Room: aim at the inside part of the broken wall left of the crease, left click throw.",
+    notes: "Priority #1 for B executes. No team should execute B with heaven unsmoked. Two common throw positions: from B halls (JT through roof) or from Sun Room (LMB, easier). The B halls version is a jump throw; the Sun Room version is a standing left click.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.68, y: 0.55 },
+    radarTarget: { x: 0.75, y: 0.62 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=400",
+    austincs: true,
+  },
+
+  t_b_tree_smoke: {
+    id: "t_b_tree_smoke",
+    name: "B Tree Room / CT Smoke",
+    util: "SMOKE",
+    throw: "JT",
+    side: "T",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Blocks the tree room / CT tunnel — prevents a CT from holding the tunnel exit or rotating unseen into a planted bomb post-plant situation.",
+    stand: "Find the corner near T boxes with a view to the tree room. Sun Room also works (Sunroom to Tree). B Main entrance is a running on-the-go option.",
+    aim: "From T Boxes: aim at the missing brick, go up to the middle of the top of the next brick — middle click (Left+Right) jump throw. From Sun Room: aim at the electrical symbol in the middle of the line. From B Main: aim toward tree room on the go.",
+    notes: "Priority T-side B smoke alongside heaven. After heaven and tree smokes are down, the site opens significantly. The T Boxes to Tree version uses a Left+Right click jump throw (middle mouse bind).",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.62, y: 0.60 },
+    radarTarget: { x: 0.80, y: 0.68 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=296",
+    austincs: true,
+  },
+
+  t_b_main_smoke: {
+    id: "t_b_main_smoke",
+    name: "B Main Smoke (Off Wall Running)",
+    util: "SMOKE",
+    throw: "RUN",
+    side: "T",
+    area: "B",
+    mustLearn: false,
+    instant: false,
+    purpose: "Smokes the B main entrance from the CT or heaven side, blocking an AWPer or rifler playing tight in B main. Useful for CT retakes or running out of heaven.",
+    stand: "Coming out of CT position or Heaven position. Run toward B main while looking at the white part of the wall.",
+    aim: "Aim at the white part of the B main wall (off-hand bounce). Running left click throw — smoke bounces off the wall and lands at B main entrance.",
+    notes: "Can also be thrown from near the B main entrance from T side: approach from B Halls, aim at the top of the window/roof, run a few steps then left click throw. On T-side from B halls: approach and left click at top of window/roof edge.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.60, y: 0.72 },
+    radarTarget: { x: 0.55, y: 0.72 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=259",
+    austincs: true,
+  },
+
+  t_b_main_molly: {
+    id: "t_b_main_molly",
+    name: "B Halls Molly into B Main",
+    util: "MOLLY",
+    throw: "LMB",
+    side: "T",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Stops CTs from holding the B main entrance tightly. Forces the defender back onto the site before your team commits to the B execute. First throw in a B execute.",
+    stand: "Stand in B Halls near the B main entrance (the hallway before B main).",
+    aim: "Aim toward the B main CT position / the tight hold angle. Left click throw into B main.",
+    notes: "The entry throw that makes B executable — non-negotiable on T-side B executes. Follow immediately with the Sun Room combo (molly, nade, flash) for a full execute.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.62, y: 0.72 },
+    radarTarget: { x: 0.53, y: 0.72 },
+    source: "community",
+    video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
+    austincs: false,
+  },
+
+  t_b_sunroom_flash: {
+    id: "t_b_sunroom_flash",
+    name: "B Site Flash (from Sun Room / God Flash)",
+    util: "FLASH",
+    throw: "LMB",
+    side: "T",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Pops into B site to blind CTs holding the site. Covers site and heaven positions without blinding teammates approaching from B main.",
+    stand: "Stand on the sidewalk where it meets the wall near sun room / the B site flash window. Same position as the headshot molly. Ledge between the ground line and the ledge line.",
+    aim: "Aim at the top of where the two windows meet (the flash window). Left click throw. Alternatively, look for the small black mark on the wall and left click throw.",
+    notes: "Called the 'B God Flash' by AustinCS — lands behind a pipe, pops to blind most CT positions on B site and heaven without blinding teammates. Line up both of the Sun Room throws (molly + flash) from the same area for efficiency.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.72, y: 0.60 },
+    radarTarget: { x: 0.75, y: 0.65 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=377",
+    austincs: true,
+  },
+
+  t_b_site_default_molly: {
+    id: "t_b_site_default_molly",
+    name: "B Site Default Molly (from Sun Room)",
+    util: "MOLLY",
+    throw: "LMB",
+    side: "T",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Burns out the default CT hold position on B site, clearing the most common defensive plant-denial spot and giving T side a safe plant.",
+    stand: "Sun Room — stand in the corner on the ground near the crease (same or adjacent position to B Heaven smoke). Ledge position between the ground line and the ledge line works too.",
+    aim: "Aim at the meeting point of the second window where it meets the wall. Left click throw into the default B site position.",
+    notes: "Part of the full Sun Room combo: molly default → nade chip damage → flash. Run all three sequentially for a clean B site take. This molly removes the safest CT default hold.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.72, y: 0.60 },
+    radarTarget: { x: 0.78, y: 0.72 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=319",
+    austincs: true,
+  },
+
+  t_b_headshot_molly: {
+    id: "t_b_headshot_molly",
+    name: "B Headshot / Back Site Molly",
+    util: "MOLLY",
+    throw: "JT",
+    side: "T",
+    area: "B",
+    mustLearn: false,
+    instant: false,
+    purpose: "Burns out the headshot / back site position on B, clearing a common tight-angle hold near the generator/back of site.",
+    stand: "Stand on the sidewalk where it meets the wall (same area as B God Flash position). Aim at the part sticking out of the generator.",
+    aim: "Aim at the sharp part of the generator / electrical box that protrudes. Jump throw.",
+    notes: "Combo option with the B site molly. From the same ledge position, you can also throw the Headshot + Default Molly combo (aim at the sharp part of electrical box, LMB jump throw — hits both headshot and default simultaneously).",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.72, y: 0.60 },
+    radarTarget: { x: 0.80, y: 0.69 },
+    source: "community",
+    video: "https://www.youtube.com/watch?v=0_klMH393qo&t=345",
+    austincs: true,
+  },
+
+  // ─────────────────────────────────────────────
+  // B SITE — CT-side defense
+  // ─────────────────────────────────────────────
+
+  ct_b_main_anti_rush_molly: {
+    id: "ct_b_main_anti_rush_molly",
+    name: "CT B Main Anti-Rush Molly (from Checkers / B Default)",
+    util: "MOLLY",
+    throw: "LMB",
+    side: "CT",
+    area: "B",
+    mustLearn: true,
+    instant: false,
+    purpose: "Stops a fast B main rush. Lands at the B main entrance, burning any Ts pushing aggressively. Buys CT time to fall back to safe position or for a teammate to rotate.",
+    stand: "Stand at B default (the CT-side B position, looking toward B main). Can also throw from checkers position.",
+    aim: "Aim toward the B main entry funnel. Left click throw so the molotov lands right at the B main entrance / tight CT hold spot.",
+    notes: "Essential for B defense. Part of the full CT B defensive combo: molly B main → HE grenade → flash. If you only do one thing when defending B, burn B main entry. Combine with a flash from checkers for maximum effect.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.74, y: 0.68 },
+    radarTarget: { x: 0.56, y: 0.72 },
+    source: "community",
+    video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
+    austincs: false,
+  },
+
+  ct_b_main_smoke: {
+    id: "ct_b_main_smoke",
+    name: "CT B Main Smoke (from Heaven, Retake)",
+    util: "SMOKE",
+    throw: "LMB",
+    side: "CT",
+    area: "B",
+    mustLearn: false,
+    instant: false,
+    purpose: "Smokes off B main on the CT side — used for retakes to deny T vision into site from B main, or when a CT wants to delay the push and buy time.",
+    stand: "Heaven position — crouch in-line with the metal rafter. Turn 180 degrees facing the wall.",
+    aim: "On High Shader Settings: aim just above the specific mark on the wall. On Low Shader Settings: aim at the black mark just above the black light. Left click throw while crouching.",
+    notes: "Called the 'Retake B Smoke' in the Steam guide. Flows over the edge of Heaven and allows CT teammates to come out of the CT / rotate safely while B main is blocked. The shader setting matters for exact aiming point.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.76, y: 0.62 },
+    radarTarget: { x: 0.56, y: 0.72 },
+    source: "community",
+    video: "https://steamcommunity.com/sharedfiles/filedetails/?id=3718386401",
+    austincs: false,
+  },
+
+  ct_b_checkers_flash: {
+    id: "ct_b_checkers_flash",
+    name: "CT Checkers Flash (into B Main)",
+    util: "FLASH",
+    throw: "LMB",
+    side: "CT",
+    area: "B",
+    mustLearn: false,
+    instant: false,
+    purpose: "Pops directly into B Main to blind Ts pushing the entrance, giving the B anchor a window to reposition or hold aggressively after the blind.",
+    stand: "Stand at the Checkers position (CT-side B hall area overlooking B main).",
+    aim: "Aim up and throw the flash so it pops into B Main entry. Left click throw.",
+    notes: "Part of the full B defensive combo. Throw after the molly hits B main — Ts pushing through fire will be blinded. Good for information-gathering peeks right after the flash pops.",
+    screenshots: {
+      stand: "",
+      aim: "",
+      result: "",
+    },
+    radarPos: { x: 0.72, y: 0.72 },
+    radarTarget: { x: 0.56, y: 0.72 },
+    source: "community",
+    video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
+    austincs: false,
+  },
+
+];
+
+// Auto-generate MUST_LEARN from mustLearn flag
+
+export const MUST_LEARN = [
+  "t_z_connector_smoke",
+  "ct_mid_delay_smoke",
+  "t_boost_molly",
+  "t_a_cross_smoke",
+  "t_back_a_site_smoke",
+  "t_highway_smoke",
+  "t_forklift_molly",
+  "t_a_main_flash",
+  "ct_a_main_molly_toxic",
+  "ct_a_main_smoke_truck",
+  "t_b_heaven_smoke",
+  "t_b_tree_smoke",
+  "t_b_main_molly",
+  "t_b_sunroom_flash",
+  "t_b_site_default_molly",
+  "ct_b_main_anti_rush_molly",
+];
+
+export const COMBOS = [];
+// TODO: Add Cache combos (execute patterns)
+
+export const UTILITY_BELTS = [];
+// TODO: Add Cache utility belts (per-role loadouts)
+
+export const SCENARIOS = [];
+// TODO: Add Cache scenarios (coaching tips)
+
+export const SETUP_POSITIONS = [];
+// TODO: Add Cache setup positions
+
+export const SPAWNS = { T: [], CT: [] };
+// TODO: Add Cache spawn data
