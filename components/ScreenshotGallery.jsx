@@ -201,10 +201,10 @@ export function ScreenshotGallery({ screenshots, source, video, austincs, lineup
               style={{
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#ff8844",
+                color: T.austin,
                 textDecoration: "none",
-                background: "#ff884410",
-                border: "1px solid #ff884422",
+                background: T.austin + "10",
+                border: `1px solid ${T.austin}22`,
                 borderRadius: 3,
                 padding: "3px 7px",
               }}

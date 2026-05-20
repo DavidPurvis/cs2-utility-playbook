@@ -15,7 +15,7 @@ export function SideToggle({ side, onSideChange, resetFilters }) {
           style={{
             flex: 1,
             padding: "10px",
-            background: side === s ? (s === "T" ? "#1a1408" : "#081018") : T.bgCard,
+            background: side === s ? (s === "T" ? T.tSideBg : T.ctSideBg) : T.bgCard,
             border: `1px solid ${side === s ? (s === "T" ? T.tSide + "40" : T.ctSide + "40") : T.borderLt}`,
             borderRadius: 6,
             cursor: "pointer",
