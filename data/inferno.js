@@ -24,10 +24,9 @@ export const MAP_NAME = "Inferno";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_inferno_radar_psd.png";
 
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 inferno " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("inferno", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -71,7 +70,7 @@ export const LINEUPS = {
     throw: "JT",
     side: "T",
     area: "B",
-    mustLearn: false,
+    mustLearn: true,
     purpose:
       "Blocks the Coffins / Spools angle on B site, isolating the bomb plant area from the most common defensive position.",
     stand: "Stand at the top of Banana, left side against the wall just before the opening to B site.",

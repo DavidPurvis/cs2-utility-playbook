@@ -1,0 +1,18 @@
+{
+  "name": "CS2 Utility Playbook",
+  "short_name": "CS2 Utility",
+  "description": "Team utility playbook for the CS2 Premier map pool — lineups, combos, belts, and study sheets.",
+  "start_url": "/cs2-utility-playbook/",
+  "display": "standalone",
+  "background_color": "#060a10",
+  "theme_color": "#060a10",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

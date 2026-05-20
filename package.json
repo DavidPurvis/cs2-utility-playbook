@@ -1,14 +1,25 @@
 {
   "name": "cs2-utility-playbook",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "cp dist/index.html dist/404.html && node scripts/verify-dist.mjs",
     "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "validate": "npm run lint && npm test && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:unit": "vitest run tests/**/*.test.js",
+    "test:ui": "vitest run tests/**/*.test.jsx",
+    "test:regression": "vitest run tests/regression-baseline.test.js tests/stability-metrics.test.js tests/premier-map-parity.test.js tests/App.regression.test.jsx",
+    "test:metrics": "node scripts/stability-report.mjs",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run"
   },
@@ -17,8 +28,17 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^2.1.9",
+    "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^2.1.9",
+    "eslint": "^10.4.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "jsdom": "^25.0.1",
     "vite": "^5.4.10",
     "vitest": "^2.1.9"
   }

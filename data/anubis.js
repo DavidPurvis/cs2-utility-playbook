@@ -23,11 +23,9 @@ export const MAP_NAME = "Anubis";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_anubis_radar_psd.png";
 
-// helper: YouTube search URL for any lineup (always works without curating individual videos)
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 anubis " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("anubis", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -60,7 +58,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/smoke/topmid/top_mid-smoke-from-t-spawn-lineup.webp",
       result: "https://assets.cs2util.com/anubis/smoke/topmid/top_mid-smoke-from-t-spawn-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/top-mid-smoke-from-t-spawn" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/top-mid-smoke-from-t-spawn" },
     radarPos: { x: 50, y: 72 },
     radarTarget: { x: 62, y: 45 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -120,7 +118,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/smoke/main/main-smoke-from-ct-spawn-lineup.webp",
       result: "https://assets.cs2util.com/anubis/smoke/main/main-smoke-from-ct-spawn-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/main-smoke-from-ct-spawn" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/main-smoke-from-ct-spawn" },
     radarPos: { x: 25, y: 52 },
     radarTarget: { x: 22, y: 22 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -150,7 +148,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/smoke/a-site/heaven-smoke-from-main-lineup.webp",
       result: "https://assets.cs2util.com/anubis/smoke/a-site/heaven-smoke-from-main-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/heaven-smoke-from-main" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/heaven-smoke-from-main" },
     radarPos: { x: 25, y: 52 },
     radarTarget: { x: 28, y: 25 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -163,7 +161,7 @@ export const LINEUPS = {
     throw: "RMB",
     side: "T",
     area: "A",
-    mustLearn: false,
+    mustLearn: true,
     purpose: "Blinds CTs holding A site as your team pushes out of A Main. Quick pop flash that gives no time to turn.",
     stand: "Inside A Main corridor, right wall, two steps before the exit to site.",
     aim: "Face the exit and aim at the top of the doorframe. Flash bounces off the ceiling and pops instantly.",
@@ -179,7 +177,7 @@ export const LINEUPS = {
       aim:    "https://cs2pulse.com/wp-content/uploads/2024/07/image7-11.png",
       result: "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/a-site-flash-from-boat" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/a-site-flash-from-boat" },
     radarPos: { x: 24, y: 48 },
     radarTarget: { x: 28, y: 22 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -210,7 +208,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/molotov/b-site/street-smoke-from-b-long-lineup.webp",
       result: "https://assets.cs2util.com/anubis/molotov/b-site/street-smoke-from-b-long-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/street-smoke-from-b-long" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/street-smoke-from-b-long" },
     radarPos: { x: 75, y: 52 },
     radarTarget: { x: 68, y: 25 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -240,7 +238,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/molotov/b-site/back-site-molotov-from-palace-lineup.webp",
       result: "https://assets.cs2util.com/anubis/molotov/b-site/back-site-molotov-from-palace-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/back-site-molotov-from-palace" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/back-site-molotov-from-palace" },
     radarPos: { x: 74, y: 50 },
     radarTarget: { x: 70, y: 22 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -268,7 +266,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/flash/b-site/b-site-flash-from-b-long-lineup.webp",
       result: "https://assets.cs2util.com/anubis/flash/b-site/b-site-flash-from-b-long-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/b-site-flash-from-b-long" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/b-site-flash-from-b-long" },
     radarPos: { x: 76, y: 50 },
     radarTarget: { x: 70, y: 25 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -299,7 +297,7 @@ export const LINEUPS = {
       aim:    "https://cs2pulse.com/wp-content/uploads/2024/07/image10-11.png",
       result: "https://media.cs2nades.net/uploads/97659f17-bdc0-4b9e-8934-88bc057933e2_B%20Pillar%20from%20Ruins.jpg",
     },
-    source: { name: "cs2pulse", url: "https://cs2pulse.com/flash-bangs/anubis/b-site-from-heaven/" },
+    screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/flash-bangs/anubis/b-site-from-heaven/" },
     radarPos: { x: 75, y: 53 },
     radarTarget: { x: 68, y: 28 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -330,7 +328,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/smoke/topmid/top-mid-smoke-from-ct-spawn-lineup.webp",
       result: "https://assets.cs2util.com/anubis/smoke/topmid/top-mid-smoke-from-ct-spawn-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/top-mid-smoke-from-ct-spawn" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/top-mid-smoke-from-ct-spawn" },
     radarPos: { x: 50, y: 20 },
     radarTarget: { x: 50, y: 45 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -360,7 +358,7 @@ export const LINEUPS = {
       aim:    "https://cs2pulse.com/wp-content/uploads/2023/12/image8-20.png",
       result: "https://media.cs2nades.net/uploads/1bbeb2e7-d9f0-432a-a52b-1a87a19fa42b_A%20Main%20from%20CT%20Spawn.jpg",
     },
-    source: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/a-main/" },
+    screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/a-main/" },
     radarPos: { x: 28, y: 25 },
     radarTarget: { x: 25, y: 48 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -390,7 +388,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/molotov/doors/doors-molotov-from-b-long-lineup.webp",
       result: "https://assets.cs2util.com/anubis/molotov/doors/doors-molotov-from-b-long-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/doors-molotov-from-b-long" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/doors-molotov-from-b-long" },
     radarPos: { x: 68, y: 25 },
     radarTarget: { x: 74, y: 48 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -421,7 +419,7 @@ export const LINEUPS = {
       aim:    "https://cs2pulse.com/wp-content/uploads/2025/06/Anubis-T-Stairs-Smoke-from-CT-Spawn.jpg",
       result: "https://media.cs2nades.net/uploads/109d5ad2-2176-4044-90fe-1ce3efc50b16_Canals%20from%20CT%20Spawn.jpg",
     },
-    source: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/t-stairs-from-ct-spawn/" },
+    screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/t-stairs-from-ct-spawn/" },
     radarPos: { x: 45, y: 22 },
     radarTarget: { x: 35, y: 48 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -450,7 +448,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-lineup.webp",
       result: "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/a-site-flash-from-boat" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/a-site-flash-from-boat" },
     radarPos: { x: 32, y: 18 },
     radarTarget: { x: 28, y: 25 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -479,7 +477,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/flash/b-long/b-long-flash-from-street-lineup.webp",
       result: "https://assets.cs2util.com/anubis/flash/b-long/b-long-flash-from-street-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/b-long-flash-from-street" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/b-long-flash-from-street" },
     radarPos: { x: 62, y: 20 },
     radarTarget: { x: 70, y: 24 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -509,7 +507,7 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/anubis/molotov/a-site/a-site-molotov-from-boat-lineup.webp",
       result: "https://assets.cs2util.com/anubis/molotov/a-site/a-site-molotov-from-boat-cover.webp",
     },
-    source: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/a-site-molotov-from-boat" },
+    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/a-site-molotov-from-boat" },
     radarPos: { x: 28, y: 28 },
     radarTarget: { x: 25, y: 48 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -852,3 +850,24 @@ export const SETUP_POSITIONS = [
     tip: "Flash into B site for retakes. Push TOGETHER — lone peeks lose retakes.",
   },
 ];
+
+// ═══════════════════════════════════════════════════════════════
+//  SPAWNS — 5 per side. Used by spawn selector for instant utility.
+// ═══════════════════════════════════════════════════════════════
+
+export const SPAWNS = {
+  T: [
+    { id: 1, name: "Spawn 1 (Mid pillar)",  pos: { x: 50, y: 72 }, lineups: ["mid_connector_smoke"] },
+    { id: 2, name: "Spawn 2 (Left)",        pos: { x: 47, y: 74 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (Right)",       pos: { x: 53, y: 74 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (Back)",        pos: { x: 50, y: 76 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (A side)",      pos: { x: 45, y: 71 }, lineups: [] },
+  ],
+  CT: [
+    { id: 1, name: "Spawn 1 (Back mid)",    pos: { x: 50, y: 20 }, lineups: ["ct_mid_smoke"] },
+    { id: 2, name: "Spawn 2 (A side)",      pos: { x: 32, y: 18 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (Center)",      pos: { x: 50, y: 18 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (B side)",      pos: { x: 62, y: 20 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (Connector)",   pos: { x: 55, y: 22 }, lineups: [] },
+  ],
+};

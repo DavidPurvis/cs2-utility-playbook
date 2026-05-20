@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import MAPS from "../data/maps.js";
+import MAPS from "../data/maps-registry.js";
 import { validateAllMaps } from "./validateMapData.js";
 
 describe("map data integrity", () => {
@@ -28,6 +28,6 @@ describe("map data integrity", () => {
     for (const r of Object.values(byMap)) {
       lineups += r.stats.lineupCount || 0;
     }
-    expect(lineups).toBeGreaterThan(80);
+    expect(lineups).toBeGreaterThanOrEqual(148);
   });
 });

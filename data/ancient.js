@@ -19,16 +19,14 @@
        then reference them in the lineup's `screenshots` object.
 */
 
+import { ytSearch } from "./youtube.js";
+
 export const MAP_NAME = "Ancient";
 
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_ancient_radar_psd.png";
 
-// helper: YouTube search URL for any lineup (always works without curating individual videos)
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 ancient " + q + " lineup"
-  )}`;
+const yt = (q) => ytSearch("ancient", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -367,12 +365,14 @@ export const LINEUPS = {
       "Burns out the Ninja position on A site. Forces close-corner CTs to reposition.",
     stand: "Approaching A Main entrance while moving.",
     aim: "Arc the molotov toward the Ninja corner of A site.",
-    notes: "Throw while moving. Needs a little practice.",
-    source: { name: "cs2util", url: "https://www.cs2util.com/ancient/molotov/b-site-molotov-from-t-lower" },
-    video: yt("a ninja molly"),
+    notes:
+      "Throw while moving from A Main. Prior screenshots pointed at B-site assets — verify in-game before relying on images; use video until A-site ninja media is captured.",
+    source: { name: "Refrag", url: "https://refrag.gg/blog/cs2-utility-secrets-5-must-know-nades-for-ancient/" },
+    video: yt("a ninja molly ancient"),
     screenshots: {
-      aim:    "https://assets.cs2util.com/ancient/molotov/b-site-molotov-from-t-lower-lineup.webp",
-      result: "https://assets.cs2util.com/ancient/molotov/b-site-molotov-from-t-lower-cover.webp",
+      stand: "",
+      aim: "",
+      result: "",
     },
     radarPos:    { x: 28, y: 48 },
     radarTarget: { x: 20, y: 32 },
@@ -568,13 +568,14 @@ export const LINEUPS = {
       "Flash over A site walls from CT. Catches Ts off guard in post-plant — they expect attacks from A Main, not CT.",
     stand: "CT spawn, approaching A site.",
     aim: "Full throw flash high over the A site walls.",
-    notes: "Call 'flashing A' first. Throw flash, count 1, push together.",
-    // NOTE: aim/result images are from B Site Pillar Flash (closest CT-side A retake flash found). Swap if you find an A-specific CT retake flash image.
-    source: { name: "cs2util", url: "https://www.cs2util.com/ancient/flash/b-site-pillar-flash-from-doors" },
+    notes:
+      "Call 'flashing A' first. Throw flash, count 1, push together. Screenshots pending — do not use placeholder B-site flash images for positioning.",
+    source: { name: "Refrag", url: "https://refrag.gg/blog/cs2-utility-secrets-5-must-know-nades-for-ancient/" },
     video: yt("ct a retake flash"),
     screenshots: {
-      aim:    "https://assets.cs2util.com/ancient/flash/b-site/b-site-pillar-flash-from-doors-lineup.webp",
-      result: "https://assets.cs2util.com/ancient/flash/b-site/b-site-pillar-flash-from-doors-cover.webp",
+      stand: "",
+      aim: "",
+      result: "",
     },
     radarPos:    { x: 22, y: 34 },
     radarTarget: { x: 20, y: 28 },
@@ -592,13 +593,14 @@ export const LINEUPS = {
       "Flash over cave walls into B site. Blinds Ts in post-plant positions.",
     stand: "Rotating from mid/cave toward B site.",
     aim: "Full throw flash over the cave walls into B site.",
-    notes: "Call 'flashing B' first. Push together on count.",
-    // NOTE: aim/result images are from Ramp Self-Pop Flash from B Long (closest CT-side B retake flash found). Swap if you find a more accurate image.
-    source: { name: "cs2util", url: "https://www.cs2util.com/ancient/flash/ramp-self-pop-flash-from-b-long" },
+    notes:
+      "Call 'flashing B' first. Push together on count. Screenshots pending — verify stand/aim in Practice mode with video until retake media is captured.",
+    source: { name: "Refrag", url: "https://refrag.gg/blog/cs2-utility-secrets-5-must-know-nades-for-ancient/" },
     video: yt("ct b retake flash cave"),
     screenshots: {
-      aim:    "https://assets.cs2util.com/ancient/flash/b-site/ramp-self-pop-flash-from-b-long-lineup.webp",
-      result: "https://assets.cs2util.com/ancient/flash/b-site/ramp-self-pop-flash-from-b-long-cover.webp",
+      stand: "",
+      aim: "",
+      result: "",
     },
     radarPos:    { x: 55, y: 48 },
     radarTarget: { x: 62, y: 42 },
@@ -739,20 +741,20 @@ export const UTILITY_BELTS = [
     name: "B Site Utility Belt",
     site: "B",
     side: "T",
-    desc: "One player carries the full B execute. Teammates drop them smokes pre-round so they can throw 3 smokes from the Lane corner + a molly + a flash.",
+    desc: "One player carries the B execute: 2 smokes + 1 molly + 1 flash (exactly 4 grenades, the CS2 carry cap). A second player throws the Long smoke from B Main so the carrier never has to hold five.",
     roundTypes: ["FULL"],
-    callout: '"[Name]\'s B belt. Drop two smokes for them. Push on their flash."',
+    callout: '"[Name]\'s B belt. One teammate drops a smoke. Long-smoker, throw on my flash."',
     preRound:
-      "Pre-round: 2 teammates drop smokes at T spawn. Belt carrier picks them up. Yes, your team's smoke economy goes to one player — that's the pattern.",
+      "Carrier buys 1 molly + 1 flash + 1 smoke. A teammate drops a second smoke at T spawn — carrier picks it up. That's 4 grenades, the CS2 carry cap. A separate player (the Long-smoker) buys their own smoke and throws it from B Main on the flash pop.",
     sequence: [
-      { lineup: "b_pillar_molly",   step: 1, note: "First. From T Lower. Forces pillar player out." },
-      { lineup: "b_cave_smoke",     step: 2, note: "From Lane corner. Jump throw." },
-      { lineup: "b_short_smoke",    step: 3, note: "SAME corner. Jump throw." },
-      { lineup: "b_long_smoke",     step: 4, note: "SAME corner. Jump throw. Optional — skip to keep Long for post-plant." },
-      { lineup: "b_main_pop_flash", step: 5, note: "Flash. Team pushes on this." },
+      { lineup: "b_pillar_molly",   step: 1, carrier: "carrier",      note: "Carrier. From T Lower. Forces pillar player out." },
+      { lineup: "b_cave_smoke",     step: 2, carrier: "carrier",      note: "Carrier. From Lane corner. Jump throw." },
+      { lineup: "b_short_smoke",    step: 3, carrier: "carrier",      note: "Carrier. SAME corner. Jump throw." },
+      { lineup: "b_main_pop_flash", step: 4, carrier: "carrier",      note: "Carrier. Flash. Team pushes on this." },
+      { lineup: "b_long_smoke",     step: 5, carrier: "long_smoker",  note: "SECOND PLAYER (not the carrier). Throw from B Main on the flash pop. Keeps the carrier under the 4-grenade cap." },
     ],
     teamRole:
-      "Everyone else stages in B Main. Push on their flash. Post-plant on Cave / Stairs / Long.",
+      "Everyone else stages in B Main. Designated Long-smoker throws on the carrier's flash. Post-plant on Cave / Stairs / Long.",
   },
 ];
 

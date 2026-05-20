@@ -1,5 +1,5 @@
 import { bench, describe } from "vitest";
-import MAPS from "../../data/maps.js";
+import MAPS from "../../data/maps-registry.js";
 import { validateAllMaps, validateMapModule } from "../validateMapData.js";
 
 describe("map validation benchmark", () => {

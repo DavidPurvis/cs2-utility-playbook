@@ -2,6 +2,8 @@
 
 A quick-reference React app for coordinating utility with your CS2 team. Covers the full **Premier map pool**: Ancient, Dust II, Inferno, Mirage, Nuke, Anubis, and Overpass. Built for amateur teams (silver to DMG) who work 9-to-5 jobs and need lineups they can memorize fast.
 
+**Project context** (vision, requirements, engineering decisions): see [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md). Update that file when adding new asks or major technical choices.
+
 ## Prerequisites
 
 - **Node.js** 18+ (any recent LTS works)
@@ -18,13 +20,31 @@ The app opens at [http://localhost:5173](http://localhost:5173).
 
 ## Tests and benchmarks
 
-Automated checks live under `tests/`. They validate map modules (lineups, cross-references, radar coordinates), the map registry, and training exercise data. This gives a repeatable pass/fail signal and a baseline for data size metrics.
+Automated checks live under `tests/` in a layered pyramid:
+
+| Layer | What it covers | Example files |
+|-------|----------------|---------------|
+| **Unit** | Validator rules, theme tokens, YouTube helpers, mock map fixtures | `validateMapData.unit.test.js`, `lib/theme.test.js` |
+| **Data / integration** | Full map modules, registry, per-map parity, training data | `per-map-data.test.js`, `premier-map-parity.test.js` |
+| **Regression** | Frozen lineup counts per map, stability score floors | `regression-baseline.test.js`, `fixtures/stability-baseline.json` |
+| **UI (jsdom)** | App navigation, map switch, Training view, modals, deep links | `App.ui.test.jsx`, `components/*.test.jsx` |
+
+**Stability metrics** (quantifiable health score):
 
 ```bash
-npm test              # run all unit tests once
-npm run test:watch    # re-run on file changes
-npm run test:coverage # same + V8 coverage (data + test helpers included)
-npm run bench         # Vitest benchmarks for full-map validation throughput
+npm run test:metrics   # JSON report: overall score, integrity, premier completeness, warnings
+```
+
+Scores are asserted in `stability-metrics.test.js` against `tests/fixtures/stability-baseline.json`. Bump baseline counts when you intentionally add content; failing exact-count tests usually mean accidental deletions.
+
+```bash
+npm test                 # full suite (unit + data + regression + UI)
+npm run test:unit        # *.test.js only (node)
+npm run test:ui          # *.test.jsx only (jsdom)
+npm run test:regression  # baseline + stability + premier parity + App regression
+npm run test:watch       # re-run on file changes
+npm run test:coverage    # V8 coverage (lib, components, data, tests)
+npm run bench            # Vitest benchmarks for full-map validation throughput
 ```
 
 Benchmarks print iterations per second locally; use them to spot regressions if validation logic grows heavier.
@@ -33,8 +53,42 @@ To build for production:
 
 ```bash
 npm run build
-npm run preview   # serves the build locally
+npm run preview   # serves the build locally (use http://localhost:4173/cs2-utility-playbook/ — matches GitHub Pages base path)
 ```
+
+CI runs `npm run lint`, `npm test`, `npm run test:metrics`, and `npm run build` on pushes and pull requests (see `.github/workflows/ci.yml`).
+
+## Production
+
+**Release gate** (run before shipping or tagging):
+
+```bash
+npm run validate   # lint + full test suite + production build + dist checks
+```
+
+**Deploy** — Pushes to `main` or `master` run [.github/workflows/deploy.yml](./.github/workflows/deploy.yml) and publish `dist/` to **GitHub Pages** at:
+
+`https://<your-github-user>.github.io/cs2-utility-playbook/`
+
+Enable Pages in the repo: **Settings → Pages → Source: GitHub Actions**.
+
+| Production feature | Detail |
+|--------------------|--------|
+| Version | `1.0.0` in `package.json` |
+| Code splitting | One async chunk per map (`loadMapModule`) |
+| SPA routing | `404.html` copy of `index.html` for deep links |
+| PWA shell | `public/manifest.json` + `icon.svg` |
+| SEO / sharing | Meta description + Open Graph tags in `index.html` |
+| Errors | `ErrorBoundary` hides stack traces in production builds |
+| Storage | `lib/storage.js` safe `localStorage` wrappers |
+
+Manual preview of the production build:
+
+```bash
+npm run build && npm run preview
+```
+
+Open the URL Vite prints (paths are under `/cs2-utility-playbook/`).
 
 ## How to Use
 
@@ -49,7 +103,14 @@ Switch between them using the persistent nav bar at the top.
 
 ### Map Selector
 
-Large buttons below the nav switch between maps. Your selection persists across reloads. Each map has its own lineup database, combos, belts, scenarios, setup positions, and spawn data.
+Large buttons below the nav switch between the seven **Premier** maps. Your selection persists across reloads. Each map has lineups, combos, utility belts, scenarios, and setup positions. **Instant spawn utility** (spawn selector on the Map tab) is available on Ancient, Dust II, Inferno, Mirage, Nuke, Anubis, and Overpass.
+
+**Cache** is available in the map selector as bonus content (lineups, combos, belts, scenarios, and map positions). Screenshot URLs are still being filled in.
+
+### Data quality backlog
+
+- Premier lineups still use YouTube **search** links as a fallback until curated `watch?v=` URLs are added per map.
+- Run `npm test` for structural validation; in-game accuracy should be reviewed manually (Refrag / cs2util cross-check).
 
 ### Playbook Tab
 
@@ -199,9 +260,12 @@ Open `data/training.js`. Add, remove, or reorder exercises in the `WARMUP` and `
 
 ```
 cs2_utility/
-  cs2_ancient_playbook.jsx    — All React UI components
+  App.jsx                     — All React UI components
   data/
-    maps.js                   — Map registry
+    mapMeta.js                — Selector metadata (no lineup payloads)
+    loadMapModule.js          — Lazy map loaders (production bundles)
+    maps-registry.js          — Eager registry for tests/validation
+    maps.js                   — App-facing map API re-exports
     training.js               — Warmup + training exercise data
     ancient.js                — Ancient lineup database + spawns
     dust2.js                  — Dust II lineup database + spawns
@@ -210,6 +274,7 @@ cs2_utility/
     nuke.js                   — Nuke lineup database + spawns
     anubis.js                 — Anubis lineup database + spawns
     overpass.js               — Overpass lineup database + spawns
+    cache.js                  — Cache lineup database + spawns
   main.jsx                    — React entry point
   index.html                  — HTML shell
   vite.config.js              — Vite config

@@ -2,16 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💨%3C/text%3E%3C/svg%3E" />
-    <title>CS2 Utility Playbook · Ancient</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="CS2 Utility Playbook — Premier map pool lineups, combos, utility belts, spawn smokes, and team study sheets." />
+    <meta name="theme-color" content="#060a10" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="application-name" content="CS2 Utility Playbook" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CS2 Utility Playbook" />
+    <meta property="og:description" content="Team utility reference for Ancient, Dust II, Inferno, Mirage, Nuke, Anubis, and Overpass." />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>CS2 Utility Playbook</title>
     <style>
       html, body, #root { margin: 0; padding: 0; background: #060a10; min-height: 100vh; }
-      body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #dde8f0; }
+      body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #dde8f0; -webkit-font-smoothing: antialiased; }
       * { box-sizing: border-box; }
+      .noscript-banner {
+        padding: 16px;
+        background: #1a1010;
+        border-bottom: 1px solid #ff4466;
+        color: #ff8899;
+        text-align: center;
+        font-size: 14px;
+      }
+      @media print {
+        .no-print { display: none !important; }
+        body, #root { background: #fff; color: #111; }
+        .study-sheet-view { max-width: 100% !important; padding: 0 !important; }
+      }
     </style>
   </head>
   <body>
+    <noscript>
+      <div class="noscript-banner">CS2 Utility Playbook requires JavaScript. Enable it to view lineups and study sheets.</div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/main.jsx"></script>
   </body>

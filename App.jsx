@@ -1,99 +1,35 @@
-import { useState, useEffect, useMemo, useCallback, createContext, useContext, Component } from "react";
-import MAPS, { MAP_LIST } from "./data/maps";
-import { WARMUP, TRAINING, TOOL_COLORS } from "./data/training";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { BONUS_MAP_IDS, getMapLabel, getMapPool, MAP_LIST, PREMIER_MAP_IDS } from "./data/mapMeta.js";
+import { loadMapModule } from "./data/loadMapModule.js";
+import { readJsonStorage, readStorage, writeJsonStorage, writeStorage } from "./lib/storage.js";
+import { MapDataContext, useMapData } from "./context/MapDataContext.jsx";
+import { T, THROW, UTIL, ROUND_TYPES } from "./lib/theme.js";
+import { withYouTubeTimestamp } from "./lib/youtube.js";
+import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
+import { SideToggle } from "./components/SideToggle.jsx";
+import { TrainingView } from "./components/TrainingView.jsx";
+import { ScreenshotGallery } from "./components/ScreenshotGallery.jsx";
 
-const MapDataContext = createContext(null);
-function useMapData() { return useContext(MapDataContext); }
+const SELECTABLE_MAP_IDS = [...PREMIER_MAP_IDS, ...BONUS_MAP_IDS];
 
 /*
   CS2 UTILITY PLAYBOOK — v4 (Multi-Map)
 
   Built for amateur teams (silver to DMG) with 9-5 jobs.
   Focus: memorable 2-3 player combos + one-player utility belts.
-  Covers the full Premier map pool: Ancient, Dust II, Inferno,
-  Mirage, Nuke, Anubis, Overpass.
+  Covers the Premier map pool: Ancient, Dust II, Inferno,
+  Mirage, Nuke, Anubis, Overpass, and Cache (bonus).
 
-  Data lives in ./data/<mapname>.js — this file is UI only.
+  Data lives in ./data/<mapname>.js — playbook UI components below; shared theme in lib/.
 */
 
-// ── THEME ─────────────────────────────────────────────────────
-const T = {
-  bg:        "#060a10",
-  bgCard:    "#090d14",
-  bgPanel:   "#080c14",
-  bgDeep:    "#0a0e14",
-  bgHover:   "#0c1520",
-  bgPlay:    "#0a1018",
-  border:    "#111a22",
-  borderLt:  "#151e2d",
-  borderAlt: "#1a2233",
-  accent:    "#00ffaa",
-  gold:      "#ffcc33",
-  textPri:   "#dde8f0",
-  textSec:   "#88aabb",
-  textDim:   "#556677",
-  textMute:  "#445566",
-  textFaint: "#334455",
-  tSide:     "#ffaa44",
-  ctSide:    "#44aaff",
-  danger:    "#ff4466",
-  fontMono:  "'Courier New',monospace",
-  fontUI:    "'Segoe UI',-apple-system,sans-serif",
-  radius:    8,
-  radiusSm:  4,
-};
-
-// ── THROW TYPES ────────────────────────────────────────────────
-const THROW = {
-  JT:    { label: "Jump Throw",     short: "Jump+LMB", color: "#ffaa00", icon: "⬆" },
-  WJT:   { label: "W + Jump Throw", short: "W+Jump",   color: "#ff6644", icon: "🏃" },
-  LMB:   { label: "Left Click",     short: "LMB",      color: "#44bbff", icon: "🖱" },
-  RMB:   { label: "Right Click",    short: "RMB",      color: "#44ddbb", icon: "🤏" },
-  WALK2: { label: "2-Step Walk+JT", short: "WW+Jump",  color: "#ff44aa", icon: "👣" },
-  RUN:   { label: "Run + LMB",      short: "W+LMB",    color: "#ffcc44", icon: "💨" },
-};
-
-// ── UTILITY TYPES ──────────────────────────────────────────────
-const UTIL = {
-  SMOKE: { label: "Smoke",   icon: "💨", color: "#8899bb" },
-  FLASH: { label: "Flash",   icon: "⚡", color: "#ffee55" },
-  MOLLY: { label: "Molotov", icon: "🔥", color: "#ff6633" },
-  HE:    { label: "HE",      icon: "💥", color: "#ff4444" },
-};
-
-// ── ROUND TYPES ────────────────────────────────────────────────
-const ROUND_TYPES = {
-  PISTOL: { label: "Pistol", short: "PISTOL", color: "#cc66ff" },
-  ECO:    { label: "Eco",    short: "ECO",    color: "#ff4466" },
-  FORCE:  { label: "Force",  short: "FORCE",  color: "#ffaa44" },
-  FULL:   { label: "Full",   short: "FULL",   color: "#44ff88" },
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  COMPONENTS
-// ═══════════════════════════════════════════════════════════════
-
-class ErrorBoundary extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ padding:12, background:T.bgPanel, border:`1px solid ${T.danger}`, borderRadius:T.radius, color:T.danger, fontSize:12 }}>
-          <strong>Something broke in this section.</strong>
-          <div style={{ marginTop:4, color:T.textSec, fontSize:11 }}>
-            {String(this.state.error?.message || this.state.error)}
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
+function MissingLineup({ lineupId }) {
+  if (import.meta.env?.DEV) console.warn(`Missing lineup: ${lineupId}`);
+  return (
+    <span style={{ fontSize: 11, color: T.danger }} title={lineupId}>
+      Missing lineup
+    </span>
+  );
 }
 
 function ThrowBadge({ type }) {
@@ -145,75 +81,23 @@ function MustLearnStar({ size = 14 }) {
   );
 }
 
-function ScreenshotGallery({ screenshots, source, video, austincs }) {
-  const imgs = Object.entries(screenshots || {}).filter(([, v]) => v);
-  const hasAustin = austincs?.video;
-  const hasLinks = !!source || !!video || hasAustin;
-  const noScreenshots = imgs.length === 0;
-  if (noScreenshots && !hasLinks) return null;
-  return (
-    <div style={{ marginTop:10 }}>
-      {imgs.length > 0 ? (
-        <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:6 }}>
-          {imgs.map(([label, url]) => (
-            <a key={label} href={url} target="_blank" rel="noopener noreferrer" style={{ flexShrink:0 }}>
-              <div style={{ width:200, height:113, borderRadius:6, overflow:"hidden", border:`1px solid ${T.borderAlt}`, position:"relative", background:T.bgDeep }}>
-                <img src={url} alt={label} style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
-                  onError={(e) => { e.target.style.display = "none"; const fb = e.target.parentElement.querySelector(".fallback"); if (fb) fb.style.display = "flex"; }}
-                />
-                <div className="fallback" style={{ display:"none", position:"absolute", inset:0, alignItems:"center", justifyContent:"center", color:T.textMute, fontSize:11 }}>
-                  Click to view
-                </div>
-                <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent,#000a)", padding:"10px 6px 4px", fontSize:9, fontWeight:700, color:"#ffffffaa", textTransform:"uppercase", letterSpacing:1 }}>
-                  {label === "stand" ? "📍 Stand" : label === "aim" ? "🎯 Aim" : "✅ Result"}
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      ) : hasLinks && (
-        <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 10px", background:T.bg, border:`1px solid ${T.border}`, borderRadius:6, marginBottom:6 }}>
-          <span style={{ fontSize:11, color:T.textDim }}>No screenshot yet</span>
-          {video && (
-            <a href={video} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize:10, fontWeight:700, color:T.danger, textDecoration:"none", background:`${T.danger}10`, border:`1px solid ${T.danger}22`, borderRadius:3, padding:"3px 7px" }}>
-              ▶ Watch video instead
-            </a>
-          )}
-        </div>
-      )}
-      {hasLinks && (
-        <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop: imgs.length > 0 ? 4 : 0 }}>
-          {video && imgs.length > 0 && (
-            <a href={video} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize:10, fontWeight:700, color:T.danger, textDecoration:"none", background:`${T.danger}10`, border:`1px solid ${T.danger}22`, borderRadius:3, padding:"3px 7px" }}>
-              ▶ Watch on YouTube
-            </a>
-          )}
-          {source && (
-            <a href={source.url} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize:10, fontWeight:700, color:T.ctSide, textDecoration:"none", background:`${T.ctSide}10`, border:`1px solid ${T.ctSide}22`, borderRadius:3, padding:"3px 7px" }}>
-              📸 {source.name}
-            </a>
-          )}
-          {hasAustin && (
-            <a href={austincs.video + (austincs.timestamp ? `&t=${austincs.timestamp}` : "")} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize:10, fontWeight:700, color:"#ff8844", textDecoration:"none", background:"#ff884410", border:"1px solid #ff884422", borderRadius:3, padding:"3px 7px" }}>
-              🎬 AustinCS{austincs.timestamp ? ` @ ${austincs.timestamp}` : ""}
-            </a>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function PracticeModal({ lineupId, onClose }) {
   const { LINEUPS } = useMapData();
   const [step, setStep] = useState(0);
+  const [imgFailed, setImgFailed] = useState(false);
+  useEffect(() => { setImgFailed(false); }, [lineupId, step]);
   if (!lineupId) return null;
   const L = LINEUPS[lineupId];
-  if (!L) return null;
+  if (!L) {
+    return (
+      <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000c", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+        <div style={{ background:T.bgPanel, padding:20, borderRadius:8, color:T.danger }}>
+          Unknown lineup: {lineupId}
+          <button type="button" onClick={onClose} style={{ display:"block", marginTop:12 }}>Close</button>
+        </div>
+      </div>
+    );
+  }
   const steps = [
     { title: "1. Stand here", body: L.stand, img: L.screenshots?.stand },
     { title: "2. Aim here",   body: L.aim,   img: L.screenshots?.aim },
@@ -247,9 +131,20 @@ function PracticeModal({ lineupId, onClose }) {
               <ThrowBadge type={cur.throwType} />
             </div>
           )}
-          {cur.img ? (
+          {cur.img && !imgFailed ? (
             <div style={{ marginBottom:12, borderRadius:8, overflow:"hidden", border:`1px solid ${T.borderAlt}`, background:T.bgDeep }}>
-              <img src={cur.img} alt={cur.title} style={{ width:"100%", display:"block" }} />
+              <img src={cur.img} alt={cur.title} style={{ width:"100%", display:"block" }}
+                onError={() => setImgFailed(true)} />
+            </div>
+          ) : cur.img && imgFailed ? (
+            <div style={{ marginBottom:12, borderRadius:8, border:`1px dashed ${T.danger}66`, background:T.bgDeep, padding:"20px 12px", textAlign:"center" }}>
+              <div style={{ fontSize:11, color:T.danger }}>Screenshot failed to load</div>
+              {L.video && (
+                <a href={L.video} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize:10, fontWeight:700, color:T.danger, textDecoration:"none", marginTop:6, display:"inline-block" }}>
+                  ▶ Watch video instead
+                </a>
+              )}
             </div>
           ) : (
             <div style={{ marginBottom:12, borderRadius:8, border:`1px dashed ${T.borderAlt}`, background:T.bgDeep, padding:"20px 12px", textAlign:"center" }}>
@@ -267,7 +162,7 @@ function PracticeModal({ lineupId, onClose }) {
           </div>
           {step === steps.length - 1 && (L.video || L.source) && (
             <div style={{ marginTop:10 }}>
-              <ScreenshotGallery screenshots={{}} source={L.source} video={L.video} austincs={L.austincs} />
+              <ScreenshotGallery screenshots={{}} source={L.source} video={L.video} austincs={L.austincs} lineup={L} />
             </div>
           )}
           <div style={{ display:"flex", gap:8, marginTop:14 }}>
@@ -296,7 +191,7 @@ function PracticeModal({ lineupId, onClose }) {
 function LineupRow({ lineupId, who, onPractice }) {
   const { LINEUPS } = useMapData();
   const L = LINEUPS[lineupId];
-  if (!L) return null;
+  if (!L) return <div style={{ padding:"8px 12px", borderBottom:`1px solid ${T.border}` }}><MissingLineup lineupId={lineupId} /></div>;
   return (
     <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", borderBottom:`1px solid ${T.border}` }}>
       <span style={{ fontSize:14 }}>{UTIL[L.util]?.icon}</span>
@@ -564,7 +459,7 @@ function LineupCard({ lineupId, onPractice }) {
               <div style={{ fontSize:12, color:"#99bb99", lineHeight:1.5 }}>{L.notes}</div>
             </div>
           )}
-          <ScreenshotGallery screenshots={L.screenshots} source={L.source} video={L.video} austincs={L.austincs} />
+          <ScreenshotGallery screenshots={L.screenshots} source={L.source} video={L.video} austincs={L.austincs} lineup={L} />
         </div>
       )}
     </div>
@@ -578,7 +473,6 @@ function LineupCard({ lineupId, onPractice }) {
 function InteractiveMap({ side, onPractice }) {
   const mapData = useMapData();
   const { LINEUPS, SETUP_POSITIONS, RADAR_URL, MAP_NAME } = mapData;
-  const SPAWNS = mapData.SPAWNS || { T: [], CT: [] };
   const [selectedPos, setSelectedPos] = useState(null);
   const [hoveredLineup, setHoveredLineup] = useState(null);
   const [selectedSpawn, setSelectedSpawn] = useState(null);
@@ -586,7 +480,7 @@ function InteractiveMap({ side, onPractice }) {
 
   useEffect(() => { setSelectedPos(null); setSelectedSpawn(null); }, [MAP_NAME]);
 
-  const spawns = useMemo(() => SPAWNS[side] || [], [side, SPAWNS]);
+  const spawns = useMemo(() => mapData.SPAWNS?.[side] || [], [side, mapData.SPAWNS]);
 
   const positions = useMemo(
     () => SETUP_POSITIONS.filter((p) => p.side === side),
@@ -614,7 +508,7 @@ function InteractiveMap({ side, onPractice }) {
       const u = LINEUPS[id]?.util;
       if (u) counts[u] = (counts[u] || 0) + 1;
     }
-    let best = "SMOKE";
+    let best = null;
     let max = 0;
     for (const [k, v] of Object.entries(counts)) {
       if (v > max) { best = k; max = v; }
@@ -682,15 +576,25 @@ function InteractiveMap({ side, onPractice }) {
           aria-label={`${MAP_NAME} radar`}
           style={{ width:"100%", height:"auto", display:"block", verticalAlign:"top" }}
         >
-          <image
-            href={RADAR_URL}
-            x={0}
-            y={0}
-            width={100}
-            height={100}
-            preserveAspectRatio="none"
-            opacity={selected || activeSpawn ? 0.6 : 0.85}
-          />
+          {RADAR_URL ? (
+            <image
+              href={RADAR_URL}
+              x={0}
+              y={0}
+              width={100}
+              height={100}
+              preserveAspectRatio="none"
+              opacity={selected || activeSpawn ? 0.6 : 0.85}
+            />
+          ) : (
+            <>
+              <rect x={0} y={0} width={100} height={100} fill={T.bgDeep} />
+              <text x={50} y={50} textAnchor="middle" dominantBaseline="middle"
+                fontSize={3} fill={T.textDim} fontFamily={T.fontMono}>
+                {`Radar image not available — ${MAP_NAME}`}
+              </text>
+            </>
+          )}
 
           {/* Spawn mode: show spawn dots and utility landing lines */}
           {mapMode === "spawns" && spawns.map((sp) => {
@@ -810,7 +714,7 @@ function InteractiveMap({ side, onPractice }) {
           {mapMode === "positions" && positions.map((pos) => {
             const isSelected = selectedPos === pos.id;
             const util = dominantUtil(pos);
-            const color = UTIL[util]?.color || "#888";
+            const color = util ? (UTIL[util]?.color || T.textDim) : T.textDim;
             const hasMustLearn = pos.lineups.some((id) => LINEUPS[id]?.mustLearn);
             if (isSelected) {
               return (
@@ -1066,13 +970,13 @@ function StudySheetView({ name, onExit, onPractice }) {
       navigator.clipboard.writeText(url.toString());
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // ignore (Safari private mode, etc.)
+    } catch (err) {
+      if (import.meta.env?.DEV) console.warn("[StudySheet] clipboard failed", err);
     }
   };
 
   return (
-    <div style={{ fontFamily:T.fontUI, background:T.bg, color:T.textPri, minHeight:"100vh", maxWidth:720, margin:"0 auto", padding:"0 14px 40px" }}>
+    <div className="study-sheet-view" style={{ fontFamily:T.fontUI, background:T.bg, color:T.textPri, minHeight:"100vh", maxWidth:720, margin:"0 auto", padding:"0 14px 40px" }}>
       <div style={{ background:`linear-gradient(180deg, ${T.gold}10, ${T.bg})`, borderBottom:`1px solid ${T.gold}33`, padding:"20px 16px 14px", margin:"0 -14px", textAlign:"center" }}>
         <div style={{ fontSize:10, fontWeight:900, color:T.gold, letterSpacing:4, textTransform:"uppercase" }}>
           ★ Study Sheet
@@ -1086,11 +990,11 @@ function StudySheetView({ name, onExit, onPractice }) {
       <MustLearnSection onPractice={onPractice} big />
 
       <div style={{ display:"flex", gap:8, marginTop:16, flexWrap:"wrap" }}>
-        <button onClick={copyShareUrl}
+        <button type="button" className="no-print" onClick={copyShareUrl}
           style={{ flex:"1 1 200px", padding:"10px 14px", background:copied ? T.accent+"20" : T.bgCard, border:`1px solid ${copied ? T.accent+"60" : T.borderLt}`, borderRadius:6, color:copied ? T.accent : T.textSec, fontSize:12, fontWeight:800, cursor:"pointer" }}>
           {copied ? "✓ Link copied" : "🔗 Copy share link"}
         </button>
-        <button onClick={() => setShowCombos((v) => !v)}
+        <button type="button" className="no-print" onClick={() => setShowCombos((v) => !v)}
           style={{ flex:"1 1 200px", padding:"10px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`, borderRadius:6, color:T.textSec, fontSize:12, fontWeight:800, cursor:"pointer" }}>
           {showCombos ? "▲ Hide combos" : "▼ Show combos & belts"}
         </button>
@@ -1121,92 +1025,10 @@ function StudySheetView({ name, onExit, onPractice }) {
         </div>
       )}
 
-      <button onClick={onExit}
+      <button type="button" className="no-print" onClick={onExit}
         style={{ width:"100%", marginTop:24, padding:"12px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`, borderRadius:T.radius, color:T.textDim, fontSize:13, fontWeight:700, cursor:"pointer" }}>
         ← Exit Study Mode (back to full playbook)
       </button>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TRAINING VIEW — warmup + training exercises with launch links
-// ═══════════════════════════════════════════════════════════════
-
-function ToolBadge({ tool }) {
-  const color = TOOL_COLORS[tool] || T.textSec;
-  return (
-    <span style={{
-      display:"inline-flex", alignItems:"center", fontSize:10, fontWeight:800,
-      color, background:color+"15", border:`1px solid ${color}30`,
-      borderRadius:3, padding:"2px 7px", letterSpacing:0.5,
-    }}>
-      {tool}
-    </span>
-  );
-}
-
-/** steam:// opens best in same tab; https opens in new tab */
-function ExerciseLaunchLink({ href }) {
-  const steam = href.startsWith("steam:");
-  return (
-    <a href={href} {...(steam ? {} : { target: "_blank", rel: "noopener noreferrer" })}
-      style={{
-        display:"inline-flex", alignItems:"center", padding:"6px 12px",
-        background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-        color:T.accent, fontSize:10, fontWeight:800, textDecoration:"none", whiteSpace:"nowrap", flexShrink:0,
-      }}>
-      LAUNCH
-    </a>
-  );
-}
-
-function TrainingView() {
-  return (
-    <div style={{ padding:"0 14px", maxWidth:720, margin:"0 auto", paddingBottom:32 }}>
-      <div style={{ marginTop:16 }}>
-        <div style={{ fontSize:12, fontWeight:900, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginBottom:10 }}>
-          Warmup — before you queue
-        </div>
-        <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
-          {WARMUP.map((ex) => (
-            <div key={ex.id} style={{
-              display:"flex", alignItems:"center", gap:10, padding:"10px 12px",
-              background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:6,
-            }}>
-              <ToolBadge tool={ex.tool} />
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{ex.name}</div>
-                <div style={{ fontSize:11, color:T.textDim, marginTop:2 }}>{ex.note}</div>
-              </div>
-              <span style={{ fontSize:11, color:T.textMute, whiteSpace:"nowrap", flexShrink:0 }}>{ex.duration}</span>
-              <ExerciseLaunchLink href={ex.launch} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ marginTop:24 }}>
-        <div style={{ fontSize:12, fontWeight:900, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginBottom:10 }}>
-          Training — dedicated sessions
-        </div>
-        <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
-          {TRAINING.map((ex) => (
-            <div key={ex.id} style={{
-              display:"flex", alignItems:"center", gap:10, padding:"10px 12px",
-              background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:6,
-            }}>
-              <ToolBadge tool={ex.tool} />
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{ex.name}</div>
-                <div style={{ fontSize:11, color:T.textDim, marginTop:2 }}>{ex.note}</div>
-              </div>
-              <span style={{ fontSize:11, color:T.textMute, whiteSpace:"nowrap", flexShrink:0 }}>{ex.duration}</span>
-              <ExerciseLaunchLink href={ex.launch} />
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -1217,16 +1039,14 @@ function TrainingView() {
 
 export default function CS2Playbook() {
   const [currentMap, setCurrentMap] = useState(() => {
-    try { return localStorage.getItem("cs2_current_map") || "ancient"; } catch { return "ancient"; }
+    const saved = readStorage("cs2_current_map", "ancient");
+    return SELECTABLE_MAP_IDS.includes(saved) ? saved : "ancient";
   });
+  const [mapData, setMapData] = useState(null);
   const [side, setSide] = useState("T");
-  const [names, setNames] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cs2_player_names")) || ["", "", "", "", ""];
-    } catch {
-      return ["", "", "", "", ""];
-    }
-  });
+  const [names, setNames] = useState(() =>
+    readJsonStorage("cs2_player_names", ["", "", "", "", ""])
+  );
   const [showRoster, setShowRoster] = useState(false);
   const [showLineupRef, setShowLineupRef] = useState(false);
   const [areaFilter, setAreaFilter] = useState("ALL");
@@ -1234,11 +1054,28 @@ export default function CS2Playbook() {
   const [practiceId, setPracticeId] = useState(null);
   const [view, setView] = useState("playbook"); // "playbook", "map", or "study"
   const [section, setSection] = useState("maps"); // "maps" or "training"
+  // studyName tri-state: null = off, "" = anonymous sheet, non-empty string = named sheet
   const [studyName, setStudyName] = useState(null);
   const [studyPickerOpen, setStudyPickerOpen] = useState(false);
+  const [lineupSearch, setLineupSearch] = useState("");
 
-  const mapModule = MAPS[currentMap]?.module || MAPS.ancient.module;
-  const mapData = useMemo(() => mapModule, [mapModule]);
+  useEffect(() => {
+    let cancelled = false;
+    const requested = currentMap;
+    loadMapModule(requested)
+      .then((mod) => {
+        if (!cancelled) setMapData(mod);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        loadMapModule("ancient").then((mod) => {
+          if (!cancelled && requested === currentMap) setMapData(mod);
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentMap]);
 
   const switchMap = useCallback((id) => {
     setCurrentMap(id);
@@ -1246,16 +1083,29 @@ export default function CS2Playbook() {
     setAreaFilter("ALL");
     setRoundFilter("ALL");
     setShowLineupRef(false);
+    setLineupSearch("");
     setPracticeId(null);
-    try { localStorage.setItem("cs2_current_map", id); } catch {}
+    writeStorage("cs2_current_map", id);
   }, []);
 
-  // On mount: read ?p= URL param for study mode
+  // On mount: read ?map= ?lineup= ?p= URL params
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.has("p")) setStudyName(params.get("p") || "");
-    } catch {}
+      const mapParam = params.get("map");
+      const lineupParam = params.get("lineup");
+      const hasStudy = params.has("p");
+      if (mapParam || lineupParam || hasStudy) setSection("maps");
+      if (mapParam && SELECTABLE_MAP_IDS.includes(mapParam)) setCurrentMap(mapParam);
+      if (hasStudy) setStudyName(params.get("p") ?? "");
+      if (lineupParam) {
+        setView("playbook");
+        setShowLineupRef(true);
+        setPracticeId(lineupParam);
+      }
+    } catch (err) {
+      if (import.meta.env?.DEV) console.warn("[App] URL param parse failed", err);
+    }
   }, []);
 
   // Sync study mode to URL
@@ -1268,40 +1118,58 @@ export default function CS2Playbook() {
         url.searchParams.set("p", studyName);
       }
       window.history.replaceState({}, "", url.toString());
-    } catch {}
+    } catch (err) {
+      if (import.meta.env?.DEV) console.warn("[App] study URL sync failed", err);
+    }
   }, [studyName]);
 
   // Debounced localStorage write for names
   useEffect(() => {
-    const handle = setTimeout(() => {
-      try {
-        localStorage.setItem("cs2_player_names", JSON.stringify(names));
-      } catch {}
-    }, 300);
+    const handle = setTimeout(() => writeJsonStorage("cs2_player_names", names), 300);
     return () => clearTimeout(handle);
   }, [names]);
 
   const mapAreas = useMemo(() => {
     const areas = new Set();
-    for (const L of Object.values(mapData.LINEUPS || {})) {
+    for (const L of Object.values(mapData?.LINEUPS || {})) {
       if (L.area) areas.add(L.area);
     }
     return ["ALL", ...Array.from(areas).sort()];
   }, [mapData]);
 
   const filteredCombos = useMemo(
-    () => (mapData.COMBOS || []).filter((c) => c.side === side && (roundFilter === "ALL" || c.roundTypes.includes(roundFilter))),
+    () =>
+      (mapData?.COMBOS || []).filter(
+        (c) => c.side === side && (roundFilter === "ALL" || c.roundTypes.includes(roundFilter))
+      ),
     [side, roundFilter, mapData]
   );
   const filteredBelts = useMemo(
-    () => (mapData.UTILITY_BELTS || []).filter((b) => b.side === side && (roundFilter === "ALL" || b.roundTypes.includes(roundFilter))),
+    () =>
+      (mapData?.UTILITY_BELTS || []).filter(
+        (b) => b.side === side && (roundFilter === "ALL" || b.roundTypes.includes(roundFilter))
+      ),
     [side, roundFilter, mapData]
   );
-  const filteredScenarios = useMemo(() => (mapData.SCENARIOS || []).filter((s) => s.side === side), [side, mapData]);
+  const filteredScenarios = useMemo(
+    () => (mapData?.SCENARIOS || []).filter((s) => s.side === side),
+    [side, mapData]
+  );
   const filteredLineups = useMemo(() => {
-    const all = Object.values(mapData.LINEUPS || {}).filter((l) => l.side === side);
-    return areaFilter === "ALL" ? all : all.filter((l) => l.area === areaFilter);
-  }, [side, areaFilter, mapData]);
+    const q = lineupSearch.trim().toLowerCase();
+    let all = Object.values(mapData?.LINEUPS || {}).filter((l) => l.side === side);
+    if (areaFilter !== "ALL") all = all.filter((l) => l.area === areaFilter);
+    if (q) {
+      all = all.filter(
+        (l) =>
+          l.name?.toLowerCase().includes(q) ||
+          l.area?.toLowerCase().includes(q) ||
+          l.util?.toLowerCase().includes(q) ||
+          l.id?.toLowerCase().includes(q)
+      );
+    }
+    return all;
+  }, [side, areaFilter, lineupSearch, mapData]);
 
   const openPractice = useCallback((id) => setPracticeId(id), []);
   const closePractice = useCallback(() => setPracticeId(null), []);
@@ -1325,18 +1193,26 @@ export default function CS2Playbook() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const mapLoading = mapData === null;
+
   // Study mode takes over the whole view (from URL param)
   if (studyName !== null) {
     return (
       <MapDataContext.Provider value={mapData}>
-        <StudySheetView name={studyName} onExit={exitStudyMode} onPractice={openPractice} />
-        {practiceId && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
+        {mapLoading ? (
+          <div style={{ padding: 24, textAlign: "center", color: T.textSec, fontSize: 13 }}>
+            Loading map data…
+          </div>
+        ) : (
+          <StudySheetView name={studyName} onExit={exitStudyMode} onPractice={openPractice} />
+        )}
+        {practiceId && mapData && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
       </MapDataContext.Provider>
     );
   }
 
   const namedCount = names.filter((n) => n && n.trim()).length;
-  const mapLabel = MAPS[currentMap]?.label || "Ancient";
+  const mapLabel = getMapLabel(currentMap);
 
   return (
     <MapDataContext.Provider value={mapData}>
@@ -1393,15 +1269,23 @@ export default function CS2Playbook() {
       {/* TRAINING section */}
       {section === "training" && <TrainingView />}
 
+      {section === "maps" && mapLoading && (
+        <div style={{ padding: 32, textAlign: "center", color: T.textSec, fontSize: 13 }}>
+          Loading {mapLabel}…
+        </div>
+      )}
+
       {/* MAPS section */}
-      {section === "maps" && (
+      {section === "maps" && !mapLoading && (
         <>
           {/* Map selector — large, prominent */}
           <div style={{ display:"flex", gap:6, padding:"12px 14px 0", flexWrap:"wrap" }}>
             {MAP_LIST.map((m) => {
               const active = currentMap === m.id;
+              const pool = getMapPool(m.id);
               return (
                 <button key={m.id} onClick={() => switchMap(m.id)}
+                  title={pool === "bonus" ? "Bonus map (not in the active Premier pool)" : undefined}
                   style={{
                     flex:"1 1 90px", padding:"12px 6px", fontSize:12, fontWeight:900, cursor:"pointer",
                     background: active ? T.accent+"18" : T.bgCard,
@@ -1410,6 +1294,11 @@ export default function CS2Playbook() {
                     letterSpacing:0.5, transition:"all 0.15s",
                   }}>
                   {m.label}
+                  {pool === "bonus" && (
+                    <span style={{ display:"block", fontSize:8, fontWeight:700, color:T.gold, marginTop:2, letterSpacing:0.5 }}>
+                      BONUS
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -1453,22 +1342,7 @@ export default function CS2Playbook() {
           {view === "map" && (
             <>
               <div style={{ padding:"0 14px" }}>
-                <div style={{ display:"flex", gap:8, marginTop:10 }}>
-                  {["T", "CT"].map((s) => (
-                    <button key={s}
-                      onClick={() => setSide(s)}
-                      style={{
-                        flex:1, padding:"10px",
-                        background: side === s ? (s === "T" ? "#1a1408" : "#081018") : T.bgCard,
-                        border: `1px solid ${side === s ? (s === "T" ? T.tSide+"40" : T.ctSide+"40") : T.borderLt}`,
-                        borderRadius:6, cursor:"pointer",
-                        color: side === s ? (s === "T" ? T.tSide : T.ctSide) : T.textDim,
-                        fontSize:13, fontWeight:900, letterSpacing:2,
-                      }}>
-                      {s === "T" ? "T SIDE — ATTACK" : "CT SIDE — DEFEND"}
-                    </button>
-                  ))}
-                </div>
+                <SideToggle side={side} onSideChange={setSide} />
               </div>
               <InteractiveMap side={side} onPractice={openPractice} />
             </>
@@ -1479,22 +1353,12 @@ export default function CS2Playbook() {
           <div style={{ padding:"0 14px" }}>
             <MustLearnSection onPractice={openPractice} />
 
-            {/* Side selector */}
-            <div style={{ display:"flex", gap:8, marginTop:16 }}>
-              {["T", "CT"].map((s) => (
-                <button key={s}
-                  onClick={() => { setSide(s); setAreaFilter("ALL"); setRoundFilter("ALL"); }}
-                  style={{
-                    flex:1, padding:"10px",
-                    background: side === s ? (s === "T" ? "#1a1408" : "#081018") : T.bgCard,
-                    border: `1px solid ${side === s ? (s === "T" ? T.tSide+"40" : T.ctSide+"40") : T.borderLt}`,
-                    borderRadius:6, cursor:"pointer",
-                    color: side === s ? (s === "T" ? T.tSide : T.ctSide) : T.textDim,
-                    fontSize:13, fontWeight:900, letterSpacing:2,
-                  }}>
-                  {s === "T" ? "T SIDE — ATTACK" : "CT SIDE — DEFEND"}
-                </button>
-              ))}
+            <div style={{ marginTop:16 }}>
+              <SideToggle
+                side={side}
+                onSideChange={setSide}
+                resetFilters={() => { setAreaFilter("ALL"); setRoundFilter("ALL"); }}
+              />
             </div>
 
             {/* Round-type filter */}
@@ -1579,6 +1443,18 @@ export default function CS2Playbook() {
               </button>
               {showLineupRef && (
                 <div style={{ marginTop:8 }}>
+                  <input
+                    type="search"
+                    placeholder="Search lineups by name, area, util…"
+                    value={lineupSearch}
+                    onChange={(e) => setLineupSearch(e.target.value)}
+                    aria-label="Search lineups"
+                    style={{
+                      width:"100%", marginBottom:8, padding:"8px 10px", fontSize:13,
+                      background:T.bg, border:`1px solid ${T.borderAlt}`, borderRadius:T.radiusSm,
+                      color:T.textPri, outline:"none",
+                    }}
+                  />
                   <div style={{ display:"flex", gap:6, marginBottom:8 }}>
                     {mapAreas.map((area) => (
                       <button key={area} onClick={() => setAreaFilter(area)}

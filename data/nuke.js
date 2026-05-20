@@ -24,10 +24,9 @@ export const MAP_NAME = "Nuke";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_nuke_radar_psd.png";
 
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 nuke " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("nuke", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE

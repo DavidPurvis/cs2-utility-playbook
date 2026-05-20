@@ -24,10 +24,9 @@ export const MAP_NAME = "Mirage";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_mirage_radar_psd.png";
 
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 mirage " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("mirage", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -162,7 +161,7 @@ export const LINEUPS = {
     throw: "RMB",
     side: "T",
     area: "A",
-    mustLearn: false,
+    mustLearn: true,
     purpose:
       "Blinds CTs holding A ramp, triple box, and site from stairs. Pop flash for an A ramp push.",
     stand: "Inside the A ramp corridor, right side, just before the exit onto A site.",

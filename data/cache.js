@@ -9,9 +9,7 @@
 //   - csnades.gg Cache Guide (https://csnades.gg/guides/cache)
 //   - daddyskins.com Cache CS2 (https://daddyskins.com/blog/counterpedia/cache-cs2/)
 //
-// Radar coordinate system (normalized 0.0–1.0):
-//   x: 0.0 = left (T spawn side), 1.0 = right (CT side)
-//   y: 0.0 = top (A site), 1.0 = bottom (B site)
+// Radar coordinates use 0–100 (percent of radar image), same as other map modules.
 //
 // Throw types:
 //   JT   = Jump Throw (hold LMB, bind jump+throw)
@@ -22,7 +20,8 @@
 //   RUN  = Running throw (throw while running, no jump)
 
 export const MAP_NAME = "Cache";
-export const RADAR_URL = "";
+export const RADAR_URL =
+  "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_cache_radar_psd.png";
 
 export const LINEUPS = {
 
@@ -36,7 +35,7 @@ export const LINEUPS = {
     util: "SMOKE",
     throw: "WJT",
     side: "T",
-    area: "MID",
+    area: "Mid",
     mustLearn: true,
     instant: true,
     purpose: "Blocks CT vision from Z connector / the window overlooking mid. Allows T side to rush garage and take mid safely without being spotted or picked by a CT AWPer.",
@@ -48,11 +47,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.32, y: 0.52 },
-    radarTarget: { x: 0.52, y: 0.40 },
-    source: "community",
+    radarPos: { x: 32, y: 52 },
+    radarTarget: { x: 52, y: 40 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=10",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "10", note: "" },
   },
 
   t_criss_cross_smoke_left: {
@@ -61,7 +60,7 @@ export const LINEUPS = {
     util: "SMOKE",
     throw: "LMB",
     side: "T",
-    area: "MID",
+    area: "Mid",
     mustLearn: false,
     instant: false,
     purpose: "One of two criss-cross smokes that together block both sides of the mid arch, allowing T players to safely cross into white box / sandbags area.",
@@ -73,11 +72,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.38, y: 0.48 },
-    radarTarget: { x: 0.47, y: 0.44 },
-    source: "community",
+    radarPos: { x: 38, y: 48 },
+    radarTarget: { x: 47, y: 44 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=89",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "89", note: "" },
   },
 
   t_criss_cross_smoke_right: {
@@ -86,7 +85,7 @@ export const LINEUPS = {
     util: "SMOKE",
     throw: "LMB",
     side: "T",
-    area: "MID",
+    area: "Mid",
     mustLearn: false,
     instant: false,
     purpose: "Complements the left criss-cross smoke; together they cover both sides of the mid arch for safe T crossing toward white box and vents.",
@@ -98,11 +97,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.38, y: 0.54 },
-    radarTarget: { x: 0.49, y: 0.44 },
-    source: "community",
+    radarPos: { x: 38, y: 54 },
+    radarTarget: { x: 49, y: 44 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=89",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "89", note: "" },
   },
 
   ct_mid_delay_smoke: {
@@ -111,7 +110,7 @@ export const LINEUPS = {
     util: "SMOKE",
     throw: "LMB",
     side: "CT",
-    area: "MID",
+    area: "Mid",
     mustLearn: true,
     instant: false,
     purpose: "Delays or blocks fast T-side mid control attempts. Stops Ts from immediately rushing garage, buying time for mid player to position and for teammates to rotate.",
@@ -123,11 +122,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.52, y: 0.47 },
-    radarTarget: { x: 0.38, y: 0.50 },
-    source: "community",
-    video: "",
-    austincs: false,
+    radarPos: { x: 52, y: 47 },
+    radarTarget: { x: 38, y: 50 },
+    source: { name: "community", url: "" },
+    video: "https://www.youtube.com/watch?v=0_klMH393qo",
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "", note: "AustinCS Cache must-know nades." },
   },
 
   t_boost_molly: {
@@ -136,8 +135,8 @@ export const LINEUPS = {
     util: "MOLLY",
     throw: "JT",
     side: "T",
-    area: "MID",
-    mustLearn: true,
+    area: "Mid",
+    mustLearn: false,
     instant: false,
     purpose: "Burns out the sandbags / boost position in mid, preventing CTs from holding an elevated advantage and forcing them off the boost before Ts push white box.",
     stand: "Get to the front of the railing near mid. Position your body on the front of the railing (stuck/lined on the railing edge).",
@@ -148,11 +147,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.44, y: 0.47 },
-    radarTarget: { x: 0.50, y: 0.45 },
-    source: "community",
+    radarPos: { x: 44, y: 47 },
+    radarTarget: { x: 50, y: 45 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=463",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "463", note: "" },
   },
 
   // ─────────────────────────────────────────────
@@ -177,11 +176,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.27, y: 0.35 },
-    radarTarget: { x: 0.22, y: 0.28 },
-    source: "community",
+    radarPos: { x: 27, y: 35 },
+    radarTarget: { x: 22, y: 28 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=145",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "145", note: "" },
   },
 
   t_back_a_site_smoke: {
@@ -191,7 +190,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Smokes off the back of A site / truck / CT truck area. Prevents CTs from falling back deep and denies a common retake angle. Critical for safe planting.",
     stand: "Stand near the squeaky door next to the number '4' painted on the wall. Align your crosshair so it crosses the railing (use your nade lineup crosshair for precision).",
@@ -202,11 +201,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.27, y: 0.42 },
-    radarTarget: { x: 0.16, y: 0.30 },
-    source: "community",
+    radarPos: { x: 27, y: 42 },
+    radarTarget: { x: 16, y: 30 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=202",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "202", note: "" },
   },
 
   t_highway_smoke: {
@@ -216,7 +215,7 @@ export const LINEUPS = {
     throw: "JT",
     side: "T",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Cuts off the highway / mid-to-A connector, preventing CTs from rotating through highway and blocking mid player from collapsing onto A site during an execute.",
     stand: "Approach from near squeaky (outer squeaky area). Get into the corner near squeaky entrance. Alternatively, use T Truck position.",
@@ -227,11 +226,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.29, y: 0.45 },
-    radarTarget: { x: 0.38, y: 0.30 },
-    source: "community",
+    radarPos: { x: 29, y: 45 },
+    radarTarget: { x: 38, y: 30 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=sP8KejAF-lw&t=262",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   t_forklift_molly: {
@@ -241,7 +240,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Burns out the forklift / sandbags position on A site, removing one of the most common defensive holds and forcing the CT defender to reposition before entry.",
     stand: "Stand outside A (near A main entrance / long approach). Position near the corner or the A staircase approach.",
@@ -252,11 +251,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.24, y: 0.37 },
-    radarTarget: { x: 0.19, y: 0.30 },
-    source: "community",
+    radarPos: { x: 24, y: 37 },
+    radarTarget: { x: 19, y: 30 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=Ncbxljrn-FQ",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   t_a_main_flash: {
@@ -266,7 +265,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Pops into A main / site, blinding CTs watching A main and the cross. Creates the entry window for the first T through the door. The core A execute flash.",
     stand: "Stand at the A staircase / top of A main approach, just before the doorway. Hug the wall.",
@@ -277,11 +276,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.21, y: 0.36 },
-    radarTarget: { x: 0.17, y: 0.30 },
-    source: "community",
+    radarPos: { x: 21, y: 36 },
+    radarTarget: { x: 17, y: 30 },
+    source: { name: "community", url: "" },
     video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   // ─────────────────────────────────────────────
@@ -295,7 +294,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "CT",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Lands on the standard T approach path to A main, stopping a fast push and forcing Ts to wait for the fire to clear. Buys time for CT teammates to rotate.",
     stand: "Position in the Toxic area (the corner/cubby on CT side near A site, also called the 'Corner' angle). Crouch or stand in the tight corner near A main.",
@@ -306,11 +305,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.18, y: 0.33 },
-    radarTarget: { x: 0.20, y: 0.29 },
-    source: "community",
+    radarPos: { x: 18, y: 33 },
+    radarTarget: { x: 20, y: 29 },
+    source: { name: "community", url: "" },
     video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   ct_a_main_smoke_truck: {
@@ -320,7 +319,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "CT",
     area: "A",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Defensive smoke at A main entrance from CT truck, slowing down T rushes and giving CT defenders safe time to reposition or for a rotation to arrive.",
     stand: "Stand by the light on the CT truck (back of A site). Align with the two windows above.",
@@ -331,11 +330,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.16, y: 0.28 },
-    radarTarget: { x: 0.20, y: 0.32 },
-    source: "community",
+    radarPos: { x: 16, y: 28 },
+    radarTarget: { x: 20, y: 32 },
+    source: { name: "community", url: "" },
     video: "https://steamcommunity.com/sharedfiles/filedetails/?id=3718386401",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   // ─────────────────────────────────────────────
@@ -360,11 +359,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.68, y: 0.55 },
-    radarTarget: { x: 0.75, y: 0.62 },
-    source: "community",
+    radarPos: { x: 68, y: 55 },
+    radarTarget: { x: 75, y: 62 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=400",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "400", note: "" },
   },
 
   t_b_tree_smoke: {
@@ -374,7 +373,7 @@ export const LINEUPS = {
     throw: "JT",
     side: "T",
     area: "B",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Blocks the tree room / CT tunnel — prevents a CT from holding the tunnel exit or rotating unseen into a planted bomb post-plant situation.",
     stand: "Find the corner near T boxes with a view to the tree room. Sun Room also works (Sunroom to Tree). B Main entrance is a running on-the-go option.",
@@ -385,11 +384,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.62, y: 0.60 },
-    radarTarget: { x: 0.80, y: 0.68 },
-    source: "community",
+    radarPos: { x: 62, y: 60 },
+    radarTarget: { x: 80, y: 68 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=296",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "296", note: "" },
   },
 
   t_b_main_smoke: {
@@ -410,11 +409,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.60, y: 0.72 },
-    radarTarget: { x: 0.55, y: 0.72 },
-    source: "community",
+    radarPos: { x: 60, y: 72 },
+    radarTarget: { x: 55, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=259",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "259", note: "" },
   },
 
   t_b_main_molly: {
@@ -424,7 +423,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "B",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Stops CTs from holding the B main entrance tightly. Forces the defender back onto the site before your team commits to the B execute. First throw in a B execute.",
     stand: "Stand in B Halls near the B main entrance (the hallway before B main).",
@@ -435,11 +434,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.62, y: 0.72 },
-    radarTarget: { x: 0.53, y: 0.72 },
-    source: "community",
+    radarPos: { x: 62, y: 72 },
+    radarTarget: { x: 53, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   t_b_sunroom_flash: {
@@ -449,7 +448,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "B",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Pops into B site to blind CTs holding the site. Covers site and heaven positions without blinding teammates approaching from B main.",
     stand: "Stand on the sidewalk where it meets the wall near sun room / the B site flash window. Same position as the headshot molly. Ledge between the ground line and the ledge line.",
@@ -460,11 +459,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.72, y: 0.60 },
-    radarTarget: { x: 0.75, y: 0.65 },
-    source: "community",
+    radarPos: { x: 72, y: 60 },
+    radarTarget: { x: 75, y: 65 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=377",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "377", note: "" },
   },
 
   t_b_site_default_molly: {
@@ -474,7 +473,7 @@ export const LINEUPS = {
     throw: "LMB",
     side: "T",
     area: "B",
-    mustLearn: true,
+    mustLearn: false,
     instant: false,
     purpose: "Burns out the default CT hold position on B site, clearing the most common defensive plant-denial spot and giving T side a safe plant.",
     stand: "Sun Room — stand in the corner on the ground near the crease (same or adjacent position to B Heaven smoke). Ledge position between the ground line and the ledge line works too.",
@@ -485,11 +484,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.72, y: 0.60 },
-    radarTarget: { x: 0.78, y: 0.72 },
-    source: "community",
+    radarPos: { x: 72, y: 60 },
+    radarTarget: { x: 78, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=319",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "319", note: "" },
   },
 
   t_b_headshot_molly: {
@@ -510,11 +509,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.72, y: 0.60 },
-    radarTarget: { x: 0.80, y: 0.69 },
-    source: "community",
+    radarPos: { x: 72, y: 60 },
+    radarTarget: { x: 80, y: 69 },
+    source: { name: "community", url: "" },
     video: "https://www.youtube.com/watch?v=0_klMH393qo&t=345",
-    austincs: true,
+    austincs: { video: "https://www.youtube.com/watch?v=0_klMH393qo", timestamp: "345", note: "" },
   },
 
   // ─────────────────────────────────────────────
@@ -539,11 +538,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.74, y: 0.68 },
-    radarTarget: { x: 0.56, y: 0.72 },
-    source: "community",
+    radarPos: { x: 74, y: 68 },
+    radarTarget: { x: 56, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   ct_b_main_smoke: {
@@ -564,11 +563,11 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.76, y: 0.62 },
-    radarTarget: { x: 0.56, y: 0.72 },
-    source: "community",
+    radarPos: { x: 76, y: 62 },
+    radarTarget: { x: 56, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://steamcommunity.com/sharedfiles/filedetails/?id=3718386401",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
   ct_b_checkers_flash: {
@@ -589,47 +588,335 @@ export const LINEUPS = {
       aim: "",
       result: "",
     },
-    radarPos: { x: 0.72, y: 0.72 },
-    radarTarget: { x: 0.56, y: 0.72 },
-    source: "community",
+    radarPos: { x: 72, y: 72 },
+    radarTarget: { x: 56, y: 72 },
+    source: { name: "community", url: "" },
     video: "https://bo3.gg/articles/cs2-cache-utility-guide-flashes-molotovs-grenades",
-    austincs: false,
+    austincs: { video: "", timestamp: "", note: "" },
   },
 
-];
-
-// Auto-generate MUST_LEARN from mustLearn flag
+};
 
 export const MUST_LEARN = [
   "t_z_connector_smoke",
   "ct_mid_delay_smoke",
-  "t_boost_molly",
   "t_a_cross_smoke",
-  "t_back_a_site_smoke",
-  "t_highway_smoke",
-  "t_forklift_molly",
-  "t_a_main_flash",
-  "ct_a_main_molly_toxic",
-  "ct_a_main_smoke_truck",
   "t_b_heaven_smoke",
-  "t_b_tree_smoke",
-  "t_b_main_molly",
-  "t_b_sunroom_flash",
-  "t_b_site_default_molly",
   "ct_b_main_anti_rush_molly",
 ];
 
-export const COMBOS = [];
-// TODO: Add Cache combos (execute patterns)
+export const COMBOS = [
+  {
+    id: "mid_take",
+    name: "Mid Take",
+    site: "Mid",
+    side: "T",
+    desc: "Z smoke + mid molly. Standard mid control for Cache.",
+    roundTypes: ["FULL"],
+    callout: '"Mid take. Z smoke, molly sandbags, push garage."',
+    lineups: [
+      { lineup: "t_z_connector_smoke", who: "Closest T spawn line" },
+      { lineup: "t_boost_molly", who: "Second player into mid" },
+    ],
+    tip: "Push garage after the smoke blooms. Don't peek Z window without util.",
+  },
+  {
+    id: "a_execute",
+    name: "A Execute",
+    site: "A",
+    side: "T",
+    desc: "Cross smoke + back site smoke + pop flash.",
+    roundTypes: ["FULL", "FORCE"],
+    callout: '"A exec. Cross smoke, back smoke, flash and go."',
+    lineups: [
+      { lineup: "t_a_cross_smoke", who: "A main player" },
+      { lineup: "t_back_a_site_smoke", who: "Same area — second smoke" },
+      { lineup: "t_a_main_flash", who: "Entry with flash" },
+    ],
+    tip: "Both smokes before flash. Entry trades on contact — don't ego peek heaven.",
+  },
+  {
+    id: "b_execute",
+    name: "B Execute",
+    site: "B",
+    side: "T",
+    desc: "Heaven smoke + B main smoke + sunroom flash.",
+    roundTypes: ["FULL", "FORCE"],
+    callout: '"B exec. Heaven smoke, main smoke, flash and go."',
+    lineups: [
+      { lineup: "t_b_heaven_smoke", who: "B main player" },
+      { lineup: "t_b_main_smoke", who: "Same player or second smoke" },
+      { lineup: "t_b_sunroom_flash", who: "Flasher behind entry" },
+    ],
+    tip: "Heaven smoke first. Push together on the flash — sunroom is a common duel angle.",
+  },
+  {
+    id: "ct_mid_stack",
+    name: "CT Mid Stack",
+    site: "Mid",
+    side: "CT",
+    desc: "Garage delay smoke from CT mid.",
+    roundTypes: ["FULL", "ECO", "FORCE"],
+    callout: '"Mid stack. Delay smoke garage, hold connector."',
+    lineups: [
+      { lineup: "ct_mid_delay_smoke", who: "Mid / connector player" },
+    ],
+    tip: "Throw early every round. Don't peek until Ts commit util.",
+  },
+  {
+    id: "ct_b_hold",
+    name: "B Anti-Rush",
+    site: "B",
+    side: "CT",
+    desc: "Anti-rush molly from checkers — stops fast B main hits.",
+    roundTypes: ["FULL"],
+    callout: '"B molly main. Hold checkers, call rotate early."',
+    lineups: [
+      { lineup: "ct_b_main_anti_rush_molly", who: "B anchor from default/checkers" },
+    ],
+    tip: "Listen for footsteps. Molly buys ~15 seconds — enough for a rotate.",
+  },
+  {
+    id: "retake_a",
+    name: "A Retake",
+    site: "A",
+    side: "CT",
+    desc: "Flash from truck + push together.",
+    roundTypes: ["FULL", "FORCE"],
+    callout: '"A retake. Flash from truck, push on 3."',
+    lineups: [
+      { lineup: "ct_a_main_smoke_truck", who: "Rotator with smoke if needed" },
+    ],
+    tip: "Push TOGETHER. Trade kills win retakes more than opening picks.",
+  },
+];
 
-export const UTILITY_BELTS = [];
-// TODO: Add Cache utility belts (per-role loadouts)
+export const UTILITY_BELTS = [
+  {
+    id: "a_belt",
+    name: "A Site Utility Belt",
+    site: "A",
+    side: "T",
+    desc: "One player carries the A execute: 2 smokes + 1 molly + 1 flash (4 grenades).",
+    roundTypes: ["FULL"],
+    callout: '"[Name]\'s A belt. Push on their flash."',
+    sequence: [
+      { lineup: "t_a_cross_smoke", step: 1, note: "Cross smoke from A main." },
+      { lineup: "t_back_a_site_smoke", step: 2, note: "Back site smoke — same area." },
+      { lineup: "t_forklift_molly", step: 3, note: "Molly forklift / default." },
+      { lineup: "t_a_main_flash", step: 4, note: "Pop flash. Team pushes on this." },
+    ],
+    teamRole: "Everyone stages in A main. Push on flash. One player watches mid rotate.",
+  },
+  {
+    id: "b_belt",
+    name: "B Site Utility Belt",
+    site: "B",
+    side: "T",
+    desc: "One player carries B: heaven smoke + main smoke + molly + flash.",
+    roundTypes: ["FULL"],
+    callout: '"[Name]\'s B belt. Push on flash."',
+    sequence: [
+      { lineup: "t_b_heaven_smoke", step: 1, note: "Heaven smoke from B main." },
+      { lineup: "t_b_main_smoke", step: 2, note: "B main smoke — blocks CT rotate." },
+      { lineup: "t_b_main_molly", step: 3, note: "Molly default plant area." },
+      { lineup: "t_b_sunroom_flash", step: 4, note: "Sunroom flash. Push together." },
+    ],
+    teamRole: "Everyone stages B main. Push on flash. Post-plant from checkers / sunroom.",
+  },
+];
 
-export const SCENARIOS = [];
-// TODO: Add Cache scenarios (coaching tips)
+export const SCENARIOS = [
+  {
+    id: "mid_contested",
+    title: "Mid is contested — what now?",
+    side: "T",
+    bullets: [
+      "Connector smoke every round from best spawn — it's your mid key.",
+      "If CTs stack mid, default to A or B with full util instead of forcing mid.",
+      "Garage control wins Cache — don't take mid fights without a smoke down.",
+    ],
+  },
+  {
+    id: "post_plant",
+    title: "Bomb is planted — what now?",
+    side: "T",
+    bullets: [
+      "Spread post-plant angles (checkers, sunroom, heaven on B; forklift, highway on A).",
+      "Save one molly for the bomb if you have it.",
+      "Don't peek together — one HE can wipe a stacked angle.",
+    ],
+  },
+  {
+    id: "watch_flank",
+    title: "Everyone is pushing site — who watches flank?",
+    side: "T",
+    bullets: [
+      "One player glances mid / garage as you commit A or B.",
+      "Most amateur round losses are a single lurker through mid.",
+      "Call when you're clear to commit so the lurk player knows timing.",
+    ],
+  },
+  {
+    id: "solo_anchor",
+    title: "You're solo on site",
+    side: "CT",
+    bullets: [
+      "Smoke + molly buys time — don't peek until util is down.",
+      "Call damage and position early so rotates know which site.",
+      "On Cache, mid info is as important as site damage.",
+    ],
+  },
+  {
+    id: "force_round",
+    title: "Force round utility",
+    side: "T",
+    bullets: [
+      "One good smoke + flash is enough — don't need a full belt.",
+      "Mid connector smoke is highest value on a force.",
+      "Hit the site CTs aren't stacked on.",
+    ],
+  },
+  {
+    id: "eco_round",
+    title: "Eco round — still use util?",
+    side: "T",
+    bullets: [
+      "One smoke can still win mid or open a site for a surprise rush.",
+      "Save guns next round if the util doesn't get a trade.",
+      "CT delay smoke is strong on their eco too — respect it.",
+    ],
+  },
+  {
+    id: "last_alive",
+    title: "Last alive with bomb planted",
+    side: "T",
+    bullets: [
+      "Hold an angle. They must come to you.",
+      "Listen for defuse and footsteps between repositioning.",
+      "Don't take fair duels — time is on your side.",
+    ],
+  },
+  {
+    id: "retake_coordination",
+    title: "Retake coordination",
+    side: "CT",
+    bullets: [
+      "Push together from two entrances (A main + highway, B main + checkers).",
+      "Flash before peek on retakes — Ts have post-plant crosshairs set.",
+      "If two CTs alive, one flashes one trades.",
+    ],
+  },
+  {
+    id: "pistol_round",
+    title: "Pistol round plan",
+    side: "T",
+    bullets: [
+      "Mid connector smoke is still worth it on pistol — denies early picks.",
+      "Rush one site as five after smoke, or split A/B with two each.",
+      "Armor > util on pistol — only buy smoke if everyone agrees on a hit.",
+    ],
+  },
+  {
+    id: "rotate_timing",
+    title: "When to rotate on Cache",
+    side: "CT",
+    bullets: [
+      "Mid info first: connector smoke + footsteps tell you A vs B.",
+      "Don't rotate on one footstep — wait for a second confirm or util.",
+      "Leaving a solo anchor with smoke is better than three CTs stacking wrong site.",
+    ],
+  },
+];
 
-export const SETUP_POSITIONS = [];
-// TODO: Add Cache setup positions
+export const SETUP_POSITIONS = [
+  {
+    id: "t_spawn_z",
+    name: "T Spawn (Z line)",
+    side: "T",
+    area: "Mid",
+    pos: { x: 32, y: 52 },
+    lineups: ["t_z_connector_smoke"],
+    tip: "Instant connector smoke from the third white line — every T round.",
+  },
+  {
+    id: "a_main_entrance",
+    name: "A Main",
+    side: "T",
+    area: "A",
+    pos: { x: 28, y: 38 },
+    lineups: ["t_a_cross_smoke", "t_back_a_site_smoke", "t_highway_smoke", "t_a_main_flash"],
+    tip: "All A execute utility from this corridor.",
+  },
+  {
+    id: "a_forklift",
+    name: "A Site (Forklift)",
+    side: "T",
+    area: "A",
+    pos: { x: 22, y: 32 },
+    lineups: ["t_forklift_molly"],
+    tip: "Molly default / forklift after smokes land.",
+  },
+  {
+    id: "b_main_entrance",
+    name: "B Main",
+    side: "T",
+    area: "B",
+    pos: { x: 55, y: 58 },
+    lineups: ["t_b_heaven_smoke", "t_b_main_smoke", "t_b_main_molly", "t_b_sunroom_flash"],
+    tip: "B execute hub — heaven smoke is mandatory.",
+  },
+  {
+    id: "b_sunroom",
+    name: "B Sunroom",
+    side: "T",
+    area: "B",
+    pos: { x: 62, y: 52 },
+    lineups: ["t_b_tree_smoke", "t_b_site_default_molly"],
+    tip: "Tree smoke and site molly from sunroom angle.",
+  },
+  {
+    id: "ct_mid_connector",
+    name: "CT Mid / Connector",
+    side: "CT",
+    area: "Mid",
+    pos: { x: 52, y: 47 },
+    lineups: ["ct_mid_delay_smoke"],
+    tip: "Garage delay smoke — foundation of CT mid control.",
+  },
+  {
+    id: "ct_a_truck",
+    name: "CT A Truck",
+    side: "CT",
+    area: "A",
+    pos: { x: 18, y: 28 },
+    lineups: ["ct_a_main_smoke_truck", "ct_a_main_molly_toxic"],
+    tip: "Smoke + toxic molly A main for anchor time.",
+  },
+  {
+    id: "ct_b_checkers",
+    name: "CT B Checkers",
+    side: "CT",
+    area: "B",
+    pos: { x: 58, y: 48 },
+    lineups: ["ct_b_main_anti_rush_molly", "ct_b_main_smoke", "ct_b_checkers_flash"],
+    tip: "Anti-rush molly + smoke from checkers — solo B anchor kit.",
+  },
+];
 
-export const SPAWNS = { T: [], CT: [] };
-// TODO: Add Cache spawn data
+export const SPAWNS = {
+  T: [
+    { id: 1, name: "Spawn 1 (Line 3)", pos: { x: 32, y: 52 }, lineups: ["t_z_connector_smoke"] },
+    { id: 2, name: "Spawn 2 (Left)",   pos: { x: 30, y: 54 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (Right)",  pos: { x: 34, y: 54 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (Back)",   pos: { x: 32, y: 56 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (A side)", pos: { x: 28, y: 50 }, lineups: [] },
+  ],
+  CT: [
+    { id: 1, name: "Spawn 1 (Mid)",    pos: { x: 52, y: 47 }, lineups: ["ct_mid_delay_smoke"] },
+    { id: 2, name: "Spawn 2 (A)",      pos: { x: 20, y: 30 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (Center)", pos: { x: 50, y: 45 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (B)",      pos: { x: 58, y: 48 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (Back)",   pos: { x: 48, y: 42 }, lineups: [] },
+  ],
+};

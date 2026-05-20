@@ -24,10 +24,9 @@ export const MAP_NAME = "Overpass";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_overpass_radar_psd.png";
 
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 overpass " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("overpass", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -299,17 +298,18 @@ export const LINEUPS = {
       "Deals 50-80 damage to CTs holding Connector. Softens or kills the rotation player before your team pushes.",
     stand: "Water/Sewers area, near the ladder leading up to Connector.",
     aim: "Arc the HE up through the opening toward the Connector hallway.",
-    notes: "Even 40 damage wins a duel. Throw before your team commits to a site.",
+    notes:
+      "Even 40 damage wins a duel. Throw before your team commits to a site. Screenshots were placeholder flash assets — use video until Water/Connector HE media is captured.",
     source: {
       name: "Profilerr",
       url: "https://profilerr.net/cs2-overpass-smoke-spots/",
     },
     video: yt("connector he water sewers"),
     screenshots: {
-        stand: "",
-        aim: "",
-        result: "",
-      },
+      stand: "",
+      aim: "",
+      result: "",
+    },
     radarPos:    { x: 48, y: 58 },
     radarTarget: { x: 50, y: 42 },
     austincs: { video: "", timestamp: "", note: "" },
@@ -957,3 +957,24 @@ export const SETUP_POSITIONS = [
     tip: "Flash over A from behind. Ts expect Long pushes, not CT — use the surprise angle.",
   },
 ];
+
+// ═══════════════════════════════════════════════════════════════
+//  SPAWNS — 5 per side. Spawn dots on the radar; lineups = instant round-start throws.
+// ═══════════════════════════════════════════════════════════════
+
+export const SPAWNS = {
+  T: [
+    { id: 1, name: "Spawn 1 (Bathrooms)",   pos: { x: 26, y: 68 }, lineups: [] },
+    { id: 2, name: "Spawn 2 (Monster)",     pos: { x: 68, y: 70 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (A Long)",      pos: { x: 22, y: 62 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (Connector)",   pos: { x: 45, y: 65 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (Back)",        pos: { x: 35, y: 72 }, lineups: [] },
+  ],
+  CT: [
+    { id: 1, name: "Spawn 1 (Back)",        pos: { x: 58, y: 18 }, lineups: [] },
+    { id: 2, name: "Spawn 2 (A site)",      pos: { x: 32, y: 22 }, lineups: [] },
+    { id: 3, name: "Spawn 3 (Connector)",   pos: { x: 55, y: 20 }, lineups: [] },
+    { id: 4, name: "Spawn 4 (B site)",      pos: { x: 72, y: 22 }, lineups: [] },
+    { id: 5, name: "Spawn 5 (Short)",       pos: { x: 60, y: 24 }, lineups: [] },
+  ],
+};

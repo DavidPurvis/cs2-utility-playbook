@@ -23,10 +23,9 @@ export const MAP_NAME = "Dust II";
 export const RADAR_URL =
   "https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/de_dust2_radar_psd.png";
 
-const yt = (q) =>
-  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    "cs2 dust2 " + q + " lineup"
-  )}`;
+import { ytSearch } from "./youtube.js";
+
+const yt = (q) => ytSearch("dust2", q);
 
 // ═══════════════════════════════════════════════════════════════
 //  LINEUPS DATABASE
@@ -86,7 +85,7 @@ export const LINEUPS = {
     video: yt("long doors cross smoke"),
     screenshots: {
         stand: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Lineup.webp",
-        aim: "",
+        aim: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Lineup.webp",
         result: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Cover.webp",
       },
     radarPos: { x: 68, y: 62 },
