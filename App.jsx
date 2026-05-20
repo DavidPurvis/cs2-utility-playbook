@@ -85,6 +85,11 @@ function PracticeModal({ lineupId, onClose }) {
   const [step, setStep] = useState(0);
   const [imgFailed, setImgFailed] = useState(false);
   useEffect(() => { setImgFailed(false); }, [lineupId, step]);
+  useEffect(() => {
+    const h = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [onClose]);
   if (!lineupId) return null;
   const L = LINEUPS[lineupId];
   if (!L) {
@@ -215,7 +220,7 @@ function ComboCard({ combo, onPractice }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ background:T.bgPanel, border:`1px solid ${open ? T.borderOpen : T.border}`, borderRadius:10, overflow:"hidden" }}>
-      <div onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer" }}>
+      <button type="button" onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer", width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
             <div style={{ fontSize:15, fontWeight:800, color:T.textPri }}>{combo.name}</div>
@@ -235,7 +240,7 @@ function ComboCard({ combo, onPractice }) {
             <span key={i} style={{ fontSize:16 }}>{UTIL[LINEUPS[l.lineup]?.util]?.icon || "·"}</span>
           ))}
         </div>
-      </div>
+      </button>
       {open && (
         <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
           <div style={{ background:T.bgCallout, border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
@@ -267,7 +272,7 @@ function UtilityBeltCard({ belt, onPractice, names }) {
   const calloutText = belt.callout.replace("[Name]", carrierName || "Carrier");
   return (
     <div style={{ background:T.bgPanel, border:`1px solid ${open ? T.gold+"33" : T.border}`, borderRadius:10, overflow:"hidden" }}>
-      <div onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer" }}>
+      <button type="button" onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer", width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
             <span style={{ fontSize:18 }}>🎒</span>
@@ -283,7 +288,7 @@ function UtilityBeltCard({ belt, onPractice, names }) {
           <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
         </div>
         <div style={{ fontSize:12, color:T.textSec, marginTop:4, lineHeight:1.5 }}>{belt.desc}</div>
-      </div>
+      </button>
       {open && (
         <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
           <div style={{ background:`${T.gold}10`, border:`1px solid ${T.gold}30`, borderRadius:6, padding:10 }}>
@@ -341,8 +346,8 @@ function ScenarioCard({ scenario }) {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ background:T.bgPanel, border:`1px solid ${T.border}`, borderRadius:T.radius, overflow:"hidden" }}>
-      <div onClick={() => setOpen(!open)}
-        style={{ padding:"10px 14px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
+      <button type="button" onClick={() => setOpen(!open)}
+        style={{ padding:"10px 14px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
             background: scenario.side === "T" ? T.tSide+"15" : T.ctSide+"15",
@@ -353,7 +358,7 @@ function ScenarioCard({ scenario }) {
           <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{scenario.title}</div>
         </div>
         <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
-      </div>
+      </button>
       {open && (
         <div style={{ padding:"0 14px 14px" }}>
           <ul style={{ margin:0, paddingLeft:18, color:T.textSec, fontSize:12, lineHeight:1.6 }}>
@@ -419,7 +424,8 @@ function LineupCard({ lineupId, onPractice }) {
   const L = LINEUPS[lineupId];
   if (!L) return null;
   return (
-    <div onClick={() => setOpen(!open)}
+    <div role="button" tabIndex={0} onClick={() => setOpen(!open)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(!open); } }}
       style={{
         background: open ? T.bgHover : T.bgCard,
         border: `1px solid ${open ? T.borderOpenLt : T.border}`,
@@ -492,6 +498,11 @@ function InteractiveMap({ side, onPractice }) {
   const [hoveredLineup, setHoveredLineup] = useState(null);
   const [selectedSpawn, setSelectedSpawn] = useState(null);
   const [mapMode, setMapMode] = useState("positions"); // "positions" or "spawns"
+
+  /** Fire onClick on Enter / Space for keyboard-accessible SVG elements */
+  const svgKeyHandler = useCallback((onClick) => (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); }
+  }, []);
 
   useEffect(() => { setSelectedPos(null); setSelectedSpawn(null); }, [MAP_NAME]);
 
@@ -578,10 +589,10 @@ function InteractiveMap({ side, onPractice }) {
         */}
         <svg
           viewBox="0 0 100 100"
-          preserveAspectRatio="none"
+          preserveAspectRatio="xMidYMid meet"
           role="img"
           aria-label={`${MAP_NAME} radar`}
-          style={{ width:"100%", height:"auto", display:"block", verticalAlign:"top" }}
+          style={{ width:"100%", height:"auto", display:"block", verticalAlign:"top", aspectRatio:"1" }}
         >
           {RADAR_URL ? (
             <image
@@ -590,7 +601,7 @@ function InteractiveMap({ side, onPractice }) {
               y={0}
               width={100}
               height={100}
-              preserveAspectRatio="none"
+              preserveAspectRatio="xMidYMid meet"
               opacity={selected || activeSpawn ? 0.6 : 0.85}
             />
           ) : (
@@ -621,8 +632,10 @@ function InteractiveMap({ side, onPractice }) {
                   fill={isActive ? T.accent : hasLineups ? "#ffcc33" : T.textDim}
                   opacity={isActive ? 0.95 : hasLineups ? 0.8 : 0.4}
                   stroke="#000" strokeWidth={0.3}
-                  style={{ cursor:"pointer", pointerEvents:"all" }}
+                  role="button" tabIndex={0} aria-label={sp.name}
+                  style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                   onClick={() => { setSelectedSpawn(isActive ? null : sp.id); setHoveredLineup(null); }}
+                  onKeyDown={svgKeyHandler(() => { setSelectedSpawn(isActive ? null : sp.id); setHoveredLineup(null); })}
                 />
                 {!isActive && hasLineups && (
                   <text x={sp.pos.x} y={sp.pos.y + 0.6}
@@ -654,10 +667,14 @@ function InteractiveMap({ side, onPractice }) {
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
-                  style={{ cursor:"pointer", pointerEvents:"all" }}
+                  role="button" tabIndex={0} aria-label={L.name}
+                  style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                   onClick={() => onPractice(L.id)}
+                  onKeyDown={svgKeyHandler(() => onPractice(L.id))}
                   onMouseEnter={() => setHoveredLineup(L.id)}
                   onMouseLeave={() => setHoveredLineup(null)}
+                  onFocus={() => setHoveredLineup(L.id)}
+                  onBlur={() => setHoveredLineup(null)}
                 />
                 {isHovered && (
                   <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
@@ -702,10 +719,14 @@ function InteractiveMap({ side, onPractice }) {
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
-                  style={{ cursor:"pointer", pointerEvents:"all" }}
+                  role="button" tabIndex={0} aria-label={L.name}
+                  style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                   onClick={() => onPractice(L.id)}
+                  onKeyDown={svgKeyHandler(() => onPractice(L.id))}
                   onMouseEnter={() => setHoveredLineup(L.id)}
                   onMouseLeave={() => setHoveredLineup(null)}
+                  onFocus={() => setHoveredLineup(L.id)}
+                  onBlur={() => setHoveredLineup(null)}
                 />
                 {isHovered && (
                   <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
@@ -734,8 +755,10 @@ function InteractiveMap({ side, onPractice }) {
                   <circle cx={pos.pos.x} cy={pos.pos.y} r={2.8}
                     fill={T.accent} opacity={0.9}
                     stroke="#000" strokeWidth={0.4}
-                    style={{ cursor:"pointer", pointerEvents:"all" }}
+                    role="button" tabIndex={0} aria-label={`Deselect ${pos.name}`}
+                    style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                     onClick={() => setSelectedPos(null)}
+                    onKeyDown={svgKeyHandler(() => setSelectedPos(null))}
                   />
                   <text x={pos.pos.x} y={pos.pos.y + 0.7}
                     textAnchor="middle" fill="#000" fontSize="2.2" fontWeight="900"
@@ -747,8 +770,10 @@ function InteractiveMap({ side, onPractice }) {
             }
             return (
               <g key={pos.id}
-                style={{ cursor:"pointer", pointerEvents:"all" }}
-                onClick={() => { setSelectedPos(pos.id); setHoveredLineup(null); }}>
+                role="button" tabIndex={0} aria-label={pos.name}
+                style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
+                onClick={() => { setSelectedPos(pos.id); setHoveredLineup(null); }}
+                onKeyDown={svgKeyHandler(() => { setSelectedPos(pos.id); setHoveredLineup(null); })}>
                 {hasMustLearn && (
                   <circle cx={pos.pos.x} cy={pos.pos.y} r={3.8}
                     fill="none" stroke={T.gold} strokeWidth={0.4} opacity={0.6} />
@@ -1202,6 +1227,18 @@ export default function CS2Playbook() {
 
   const openPractice = useCallback((id) => setPracticeId(id), []);
   const closePractice = useCallback(() => setPracticeId(null), []);
+
+  // Close top-most modal on Escape
+  useEffect(() => {
+    const h = (e) => {
+      if (e.key !== "Escape") return;
+      if (practiceId) { setPracticeId(null); return; }
+      if (showRoster) { setShowRoster(false); return; }
+      if (studyPickerOpen) { setStudyPickerOpen(false); setView("playbook"); }
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [practiceId, showRoster, studyPickerOpen]);
 
   const updateName = useCallback((i, value) => {
     setNames((prev) => {
