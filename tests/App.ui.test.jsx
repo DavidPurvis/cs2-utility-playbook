@@ -20,90 +20,94 @@ describe("App UI", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders header, Maps/Training nav, and all selectable maps", async () => {
+  it("renders header, tabs, and map selector", async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getAllByText(/Must Learn — The Core 5/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/MUST LEARN/i).length).toBeGreaterThan(0);
     });
-    expect(screen.getByText(/CS2 UTILITY PLAYBOOK/i)).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "Maps" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: "Training" }).length).toBeGreaterThan(0);
-    for (const label of ["Ancient", "Dust II", "Inferno", "Mirage", "Nuke", "Anubis", "Overpass"]) {
-      expect(screen.getAllByRole("button", { name: label }).length).toBeGreaterThan(0);
-    }
-    expect(screen.getByRole("button", { name: /Cache/i })).toBeInTheDocument();
+    expect(screen.getByText(/CS2 Playbook/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Playbook/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Study/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Train/i).length).toBeGreaterThan(0);
   });
 
-  it("switches to Training section and shows warmup content", async () => {
+  it("switches to Train tab and shows warmup content", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getAllByRole("button", { name: "Training" })[0]);
+    await waitForMapLoaded();
+    const trainBtns = screen.getAllByText(/Train/i);
+    await user.click(trainBtns[0]);
     expect(screen.getByText(/Warmup — before you queue/i)).toBeInTheDocument();
     expect(screen.getByText(/FFA Deathmatch/i)).toBeInTheDocument();
   });
 
-  it("switches maps and updates header label", async () => {
+  it("switches maps via map sheet and updates header label", async () => {
     const user = userEvent.setup();
     render(<App />);
+    await waitForMapLoaded();
+    const mapBtn = screen.getAllByText(/Ancient/i)[0].closest("button");
+    await user.click(mapBtn);
     await waitFor(() => {
-      expect(screen.getAllByText(/Must Learn — The Core 5/i).length).toBeGreaterThan(0);
+      expect(screen.getByText(/SWITCH MAP/i)).toBeInTheDocument();
     });
-    await user.click(screen.getAllByRole("button", { name: "Mirage" })[0]);
+    await user.click(screen.getByText("Mirage").closest("button"));
     await waitFor(() => {
       expect(screen.getAllByText("Mirage").length).toBeGreaterThan(0);
     });
     expect(localStorage.setItem).toHaveBeenCalledWith("cs2_current_map", "mirage");
   });
 
-  it("shows Playbook, Map, and Study view tabs on Maps section", async () => {
+  it("shows Playbook, Study, and Train tabs", async () => {
     render(<App />);
     await waitForMapLoaded();
-    expect(screen.getAllByRole("button", { name: "Playbook" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: "Map" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: "Study" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Playbook/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Study/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Train/i).length).toBeGreaterThan(0);
   });
 
-  it("opens Map view with side toggle", async () => {
+  it("renders map block with side toggle", async () => {
+    render(<App />);
+    await waitForMapLoaded();
+    expect(screen.getByRole("tab", { name: "T" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "CT" })).toBeInTheDocument();
+    expect(screen.getAllByText(/Map ·/i).length).toBeGreaterThan(0);
+  });
+
+  it("filters lineups via search input in All Lineups panel", async () => {
     const user = userEvent.setup();
     render(<App />);
     await waitForMapLoaded();
-    await user.click(screen.getAllByRole("button", { name: "Map" })[0]);
-    expect(screen.getAllByRole("button", { name: /T SIDE/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: /CT SIDE/i }).length).toBeGreaterThan(0);
-  });
-
-  it("filters lineups via search input in expanded reference panel", async () => {
-    const user = userEvent.setup();
-    render(<App />);
-    await waitForMapLoaded();
-    await user.click(screen.getAllByRole("button", { name: /All T-Side Lineups/i })[0]);
-    const search = screen.getByRole("searchbox", { name: /Search lineups/i });
+    const search = screen.getByPlaceholderText(/Search by name/i);
     await user.type(search, "zzznomatchzzz");
-    expect(screen.getAllByRole("button", { name: /All T-Side Lineups \(0\)/i }).length).toBeGreaterThan(0);
+    await waitFor(() => {
+      expect(screen.getByText(/0 lineups/i)).toBeInTheDocument();
+    });
   });
 
-  it("opens Team Roster modal from gear button", async () => {
-    const user = userEvent.setup();
-    render(<App />);
-    await user.click(screen.getAllByTitle("Team Roster")[0]);
-    expect(screen.getAllByText("Team Roster").length).toBeGreaterThan(0);
-    expect(screen.getByPlaceholderText("Player 1...")).toBeInTheDocument();
-  });
-
-  it("opens Study picker when Study tab is clicked", async () => {
+  it("opens Team Roster modal from roster button", async () => {
     const user = userEvent.setup();
     render(<App />);
     await waitForMapLoaded();
-    await user.click(screen.getAllByRole("button", { name: "Study" })[0]);
-    expect(screen.getByText(/Study Sheet/i)).toBeInTheDocument();
+    await user.click(screen.getAllByTitle(/Team roster/i)[0]);
+    expect(screen.getAllByText(/Team Roster/i).length).toBeGreaterThan(0);
+    expect(screen.getByPlaceholderText(/Belt carrier/i)).toBeInTheDocument();
   });
 
-  it("switches T/CT side on playbook view", async () => {
+  it("opens Study view when Study tab is clicked", async () => {
     const user = userEvent.setup();
     render(<App />);
     await waitForMapLoaded();
-    await user.click(screen.getAllByRole("button", { name: /CT SIDE/i })[0]);
-    expect(screen.getAllByRole("button", { name: /CT SIDE/i }).length).toBeGreaterThan(0);
+    const studyBtns = screen.getAllByText(/Study/i);
+    await user.click(studyBtns[0]);
+    expect(screen.getAllByText(/Study Sheet/i).length).toBeGreaterThan(0);
+  });
+
+  it("switches T/CT side via toggle", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await waitForMapLoaded();
+    await user.click(screen.getByRole("tab", { name: "CT" }));
+    expect(screen.getByRole("tab", { name: "CT" })).toHaveAttribute("aria-selected", "true");
   });
 });
 
