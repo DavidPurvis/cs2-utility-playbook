@@ -4,7 +4,6 @@ import { loadMapModule } from "./data/loadMapModule.js";
 import { readJsonStorage, readStorage, writeJsonStorage, writeStorage } from "./lib/storage.js";
 import { MapDataContext, useMapData } from "./context/MapDataContext.jsx";
 import { T, THROW, UTIL, ROUND_TYPES } from "./lib/theme.js";
-import { withYouTubeTimestamp } from "./lib/youtube.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { SideToggle } from "./components/SideToggle.jsx";
 import { TrainingView } from "./components/TrainingView.jsx";
@@ -24,7 +23,7 @@ const SELECTABLE_MAP_IDS = [...PREMIER_MAP_IDS, ...BONUS_MAP_IDS];
 */
 
 function MissingLineup({ lineupId }) {
-  if (import.meta.env?.DEV) console.warn(`Missing lineup: ${lineupId}`);
+  if (import.meta.env.DEV) console.warn(`Missing lineup: ${lineupId}`);
   return (
     <span style={{ fontSize: 11, color: T.danger }} title={lineupId}>
       Missing lineup
@@ -215,7 +214,7 @@ function ComboCard({ combo, onPractice }) {
   const { LINEUPS } = useMapData();
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ background:T.bgPanel, border:`1px solid ${open ? "#ffffff15" : T.border}`, borderRadius:10, overflow:"hidden" }}>
+    <div style={{ background:T.bgPanel, border:`1px solid ${open ? T.borderOpen : T.border}`, borderRadius:10, overflow:"hidden" }}>
       <div onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
@@ -239,9 +238,9 @@ function ComboCard({ combo, onPractice }) {
       </div>
       {open && (
         <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ background:"#001a0f", border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
+          <div style={{ background:T.bgCallout, border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
             <div style={{ fontSize:9, fontWeight:900, color:T.accent, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🎙 Callout</div>
-            <div style={{ fontSize:12, color:"#88ccaa", fontFamily:T.fontMono }}>{combo.callout}</div>
+            <div style={{ fontSize:12, color:T.textCallout, fontFamily:T.fontMono }}>{combo.callout}</div>
           </div>
           <div style={{ background:T.bg, border:`1px solid ${T.border}`, borderRadius:6 }}>
             {combo.lineups.map((l, i) => (
@@ -249,8 +248,8 @@ function ComboCard({ combo, onPractice }) {
             ))}
           </div>
           {combo.tip && (
-            <div style={{ background:"#0a0a18", border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
-              <div style={{ fontSize:9, fontWeight:900, color:"#8888ff", textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>💡 Tip</div>
+            <div style={{ background:T.bgTip, border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
+              <div style={{ fontSize:9, fontWeight:900, color:T.textTip, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>💡 Tip</div>
               <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5 }}>{combo.tip}</div>
             </div>
           )}
@@ -274,7 +273,9 @@ function UtilityBeltCard({ belt, onPractice, names }) {
             <span style={{ fontSize:18 }}>🎒</span>
             <div style={{ fontSize:15, fontWeight:800, color:T.gold }}>{displayName}</div>
             <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
-              background:T.tSide+"15", color:T.tSide, border:`1px solid ${T.tSide}30` }}>
+              background: (belt.side === "T" ? T.tSide : T.ctSide) + "15",
+              color: belt.side === "T" ? T.tSide : T.ctSide,
+              border: `1px solid ${(belt.side === "T" ? T.tSide : T.ctSide)}30` }}>
               {belt.site}
             </span>
             <RoundTypeBadges types={belt.roundTypes} />
@@ -287,11 +288,11 @@ function UtilityBeltCard({ belt, onPractice, names }) {
         <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
           <div style={{ background:`${T.gold}10`, border:`1px solid ${T.gold}30`, borderRadius:6, padding:10 }}>
             <div style={{ fontSize:9, fontWeight:900, color:T.gold, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🛒 Pre-Round Setup</div>
-            <div style={{ fontSize:12, color:"#d4b066", lineHeight:1.5 }}>{belt.preRound}</div>
+            <div style={{ fontSize:12, color:T.textGold, lineHeight:1.5 }}>{belt.preRound}</div>
           </div>
-          <div style={{ background:"#001a0f", border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
+          <div style={{ background:T.bgCallout, border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
             <div style={{ fontSize:9, fontWeight:900, color:T.accent, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🎙 Callout</div>
-            <div style={{ fontSize:12, color:"#88ccaa", fontFamily:T.fontMono }}>{calloutText}</div>
+            <div style={{ fontSize:12, color:T.textCallout, fontFamily:T.fontMono }}>{calloutText}</div>
           </div>
           <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginTop:2 }}>
             Throw Order
@@ -325,8 +326,8 @@ function UtilityBeltCard({ belt, onPractice, names }) {
             })}
           </div>
           {belt.teamRole && (
-            <div style={{ background:"#0a0a18", border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
-              <div style={{ fontSize:9, fontWeight:900, color:"#8888ff", textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>👥 What Everyone Else Does</div>
+            <div style={{ background:T.bgTip, border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
+              <div style={{ fontSize:9, fontWeight:900, color:T.textTip, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>👥 What Everyone Else Does</div>
               <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5 }}>{belt.teamRole}</div>
             </div>
           )}
@@ -421,7 +422,7 @@ function LineupCard({ lineupId, onPractice }) {
     <div onClick={() => setOpen(!open)}
       style={{
         background: open ? T.bgHover : T.bgCard,
-        border: `1px solid ${open ? "#ffffff18" : T.border}`,
+        border: `1px solid ${open ? T.borderOpenLt : T.border}`,
         borderRadius: T.radius, padding: "10px 12px", cursor: "pointer",
       }}>
       <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", justifyContent:"space-between" }}>
@@ -443,20 +444,20 @@ function LineupCard({ lineupId, onPractice }) {
       {open && (
         <div style={{ marginTop:10, display:"flex", flexDirection:"column", gap:8 }}>
           <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5, background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
-            <strong style={{ color:"#aabbcc" }}>Purpose:</strong> {L.purpose}
+            <strong style={{ color:T.textSec }}>Purpose:</strong> {L.purpose}
           </div>
           <div style={{ background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
             <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>📍 Stand</div>
-            <div style={{ fontSize:12, color:"#c0d0e0", lineHeight:1.5 }}>{L.stand}</div>
+            <div style={{ fontSize:12, color:T.textInstr, lineHeight:1.5 }}>{L.stand}</div>
           </div>
           <div style={{ background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
             <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>🎯 Aim & Throw</div>
-            <div style={{ fontSize:12, color:"#c0d0e0", lineHeight:1.5 }}>{L.aim}</div>
+            <div style={{ fontSize:12, color:T.textInstr, lineHeight:1.5 }}>{L.aim}</div>
           </div>
           {L.notes && (
-            <div style={{ background:"#080e08", borderRadius:6, padding:8, border:"1px solid #1a2818" }}>
-              <div style={{ fontSize:10, fontWeight:800, color:"#5a5", textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>💡 Tip</div>
-              <div style={{ fontSize:12, color:"#99bb99", lineHeight:1.5 }}>{L.notes}</div>
+            <div style={{ background:T.bgNotes, borderRadius:6, padding:8, border:`1px solid ${T.borderNotes}` }}>
+              <div style={{ fontSize:10, fontWeight:800, color:T.accent, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>💡 Tip</div>
+              <div style={{ fontSize:12, color:T.textNotes, lineHeight:1.5 }}>{L.notes}</div>
             </div>
           )}
           <ScreenshotGallery screenshots={L.screenshots} source={L.source} video={L.video} austincs={L.austincs} lineup={L} />
@@ -469,6 +470,20 @@ function LineupCard({ lineupId, onPractice }) {
 // ═══════════════════════════════════════════════════════════════
 //  INTERACTIVE MAP — position-based lineup navigation
 // ═══════════════════════════════════════════════════════════════
+
+function dominantUtil(pos, LINEUPS) {
+  const counts = {};
+  for (const id of pos.lineups) {
+    const u = LINEUPS[id]?.util;
+    if (u) counts[u] = (counts[u] || 0) + 1;
+  }
+  let best = null;
+  let max = 0;
+  for (const [k, v] of Object.entries(counts)) {
+    if (v > max) { best = k; max = v; }
+  }
+  return best;
+}
 
 function InteractiveMap({ side, onPractice }) {
   const mapData = useMapData();
@@ -502,19 +517,11 @@ function InteractiveMap({ side, onPractice }) {
       .filter(Boolean);
   }, [selected, LINEUPS]);
 
-  const dominantUtil = (pos) => {
-    const counts = {};
-    for (const id of pos.lineups) {
-      const u = LINEUPS[id]?.util;
-      if (u) counts[u] = (counts[u] || 0) + 1;
-    }
-    let best = null;
-    let max = 0;
-    for (const [k, v] of Object.entries(counts)) {
-      if (v > max) { best = k; max = v; }
-    }
-    return best;
-  };
+  const dominantByPosId = useMemo(() => {
+    const out = {};
+    for (const pos of positions) out[pos.id] = dominantUtil(pos, LINEUPS);
+    return out;
+  }, [positions, LINEUPS]);
 
   return (
     <div style={{ padding:"0 14px" }}>
@@ -713,7 +720,7 @@ function InteractiveMap({ side, onPractice }) {
 
           {mapMode === "positions" && positions.map((pos) => {
             const isSelected = selectedPos === pos.id;
-            const util = dominantUtil(pos);
+            const util = dominantByPosId[pos.id];
             const color = util ? (UTIL[util]?.color || T.textDim) : T.textDim;
             const hasMustLearn = pos.lineups.some((id) => LINEUPS[id]?.mustLearn);
             if (isSelected) {
@@ -963,15 +970,15 @@ function StudySheetView({ name, onExit, onPractice }) {
   const greeting = name ? `${name}'s Study Sheet` : "Study Sheet";
   const subtitle = name ? `Hi ${name}.` : "Anonymous study mode.";
 
-  const copyShareUrl = () => {
+  const copyShareUrl = async () => {
     try {
       const url = new URL(window.location.href);
       url.searchParams.set("p", name || "");
-      navigator.clipboard.writeText(url.toString());
+      await navigator.clipboard.writeText(url.toString());
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
-      if (import.meta.env?.DEV) console.warn("[StudySheet] clipboard failed", err);
+      if (import.meta.env.DEV) console.warn("[StudySheet] clipboard failed", err);
     }
   };
 
@@ -981,7 +988,7 @@ function StudySheetView({ name, onExit, onPractice }) {
         <div style={{ fontSize:10, fontWeight:900, color:T.gold, letterSpacing:4, textTransform:"uppercase" }}>
           ★ Study Sheet
         </div>
-        <div style={{ fontSize:24, fontWeight:900, color:"#eef4f8", letterSpacing:-.5, marginTop:4 }}>
+        <div style={{ fontSize:24, fontWeight:900, color:T.textHighlight, letterSpacing:-.5, marginTop:4 }}>
           {greeting}
         </div>
         <div style={{ fontSize:12, color:T.textSec, marginTop:6 }}>{subtitle}</div>
@@ -1043,10 +1050,16 @@ export default function CS2Playbook() {
     return SELECTABLE_MAP_IDS.includes(saved) ? saved : "ancient";
   });
   const [mapData, setMapData] = useState(null);
+  /** null | "fallback" | "fatal" */
+  const [mapLoadError, setMapLoadError] = useState(null);
   const [side, setSide] = useState("T");
-  const [names, setNames] = useState(() =>
-    readJsonStorage("cs2_player_names", ["", "", "", "", ""])
-  );
+  const [names, setNames] = useState(() => {
+    const stored = readJsonStorage("cs2_player_names", null);
+    if (Array.isArray(stored) && stored.length === 5 && stored.every((v) => typeof v === "string")) {
+      return stored;
+    }
+    return ["", "", "", "", ""];
+  });
   const [showRoster, setShowRoster] = useState(false);
   const [showLineupRef, setShowLineupRef] = useState(false);
   const [areaFilter, setAreaFilter] = useState("ALL");
@@ -1062,16 +1075,32 @@ export default function CS2Playbook() {
   useEffect(() => {
     let cancelled = false;
     const requested = currentMap;
-    loadMapModule(requested)
-      .then((mod) => {
-        if (!cancelled) setMapData(mod);
-      })
-      .catch(() => {
+    setMapData(null);
+    setMapLoadError(null);
+
+    (async () => {
+      try {
+        const mod = await loadMapModule(requested);
+        if (!cancelled && requested === currentMap) {
+          setMapData(mod);
+          setMapLoadError(null);
+        }
+      } catch (err) {
         if (cancelled) return;
-        loadMapModule("ancient").then((mod) => {
-          if (!cancelled && requested === currentMap) setMapData(mod);
-        });
-      });
+        if (import.meta.env.DEV) console.warn("[loadMapModule]", requested, err);
+        try {
+          const mod = await loadMapModule("ancient");
+          if (!cancelled && requested === currentMap) {
+            setMapData(mod);
+            setMapLoadError("fallback");
+          }
+        } catch (err2) {
+          if (import.meta.env.DEV) console.warn("[loadMapModule] ancient fallback failed", err2);
+          if (!cancelled && requested === currentMap) setMapLoadError("fatal");
+        }
+      }
+    })();
+
     return () => {
       cancelled = true;
     };
@@ -1104,7 +1133,7 @@ export default function CS2Playbook() {
         setPracticeId(lineupParam);
       }
     } catch (err) {
-      if (import.meta.env?.DEV) console.warn("[App] URL param parse failed", err);
+      if (import.meta.env.DEV) console.warn("[App] URL param parse failed", err);
     }
   }, []);
 
@@ -1119,7 +1148,7 @@ export default function CS2Playbook() {
       }
       window.history.replaceState({}, "", url.toString());
     } catch (err) {
-      if (import.meta.env?.DEV) console.warn("[App] study URL sync failed", err);
+      if (import.meta.env.DEV) console.warn("[App] study URL sync failed", err);
     }
   }, [studyName]);
 
@@ -1140,14 +1169,14 @@ export default function CS2Playbook() {
   const filteredCombos = useMemo(
     () =>
       (mapData?.COMBOS || []).filter(
-        (c) => c.side === side && (roundFilter === "ALL" || c.roundTypes.includes(roundFilter))
+        (c) => c.side === side && (roundFilter === "ALL" || c.roundTypes?.includes(roundFilter))
       ),
     [side, roundFilter, mapData]
   );
   const filteredBelts = useMemo(
     () =>
       (mapData?.UTILITY_BELTS || []).filter(
-        (b) => b.side === side && (roundFilter === "ALL" || b.roundTypes.includes(roundFilter))
+        (b) => b.side === side && (roundFilter === "ALL" || b.roundTypes?.includes(roundFilter))
       ),
     [side, roundFilter, mapData]
   );
@@ -1193,13 +1222,18 @@ export default function CS2Playbook() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const mapLoading = mapData === null;
+  const mapLoading = mapData === null && mapLoadError !== "fatal";
+  const mapLoadFatal = mapLoadError === "fatal";
 
   // Study mode takes over the whole view (from URL param)
   if (studyName !== null) {
     return (
       <MapDataContext.Provider value={mapData}>
-        {mapLoading ? (
+        {mapLoadFatal ? (
+          <div style={{ padding: 24, textAlign: "center", color: T.danger, fontSize: 13 }}>
+            Could not load map data. Reload the page or try again later.
+          </div>
+        ) : mapLoading ? (
           <div style={{ padding: 24, textAlign: "center", color: T.textSec, fontSize: 13 }}>
             Loading map data…
           </div>
@@ -1218,12 +1252,12 @@ export default function CS2Playbook() {
     <MapDataContext.Provider value={mapData}>
     <div style={{ fontFamily:T.fontUI, background:T.bg, color:T.textPri, minHeight:"100vh", maxWidth:720, margin:"0 auto", paddingBottom:40 }}>
       {/* Header with gear icon for roster */}
-      <div style={{ background:`linear-gradient(180deg,#0a1018,${T.bg})`, borderBottom:`1px solid ${T.border}`, padding:"16px 16px 10px", position:"relative" }}>
+      <div style={{ background:`linear-gradient(180deg,${T.bgInstr},${T.bg})`, borderBottom:`1px solid ${T.border}`, padding:"16px 16px 10px", position:"relative" }}>
         <div style={{ textAlign:"center" }}>
           <div style={{ fontSize:10, fontWeight:900, color:T.accent, letterSpacing:4, textTransform:"uppercase", marginBottom:2 }}>
             CS2 UTILITY PLAYBOOK
           </div>
-          <div style={{ fontSize:18, fontWeight:900, color:"#eef4f8", letterSpacing:-.5 }}>
+          <div style={{ fontSize:18, fontWeight:900, color:T.textHighlight, letterSpacing:-.5 }}>
             {section === "training" ? "Training" : mapLabel}
           </div>
         </div>
@@ -1269,6 +1303,12 @@ export default function CS2Playbook() {
       {/* TRAINING section */}
       {section === "training" && <TrainingView />}
 
+      {section === "maps" && mapLoadFatal && (
+        <div style={{ padding: 32, textAlign: "center", color: T.danger, fontSize: 13 }}>
+          Could not load map data. Reload the page or pick another map.
+        </div>
+      )}
+
       {section === "maps" && mapLoading && (
         <div style={{ padding: 32, textAlign: "center", color: T.textSec, fontSize: 13 }}>
           Loading {mapLabel}…
@@ -1276,8 +1316,14 @@ export default function CS2Playbook() {
       )}
 
       {/* MAPS section */}
-      {section === "maps" && !mapLoading && (
+      {section === "maps" && !mapLoading && !mapLoadFatal && (
         <>
+          {mapLoadError === "fallback" && (
+            <div style={{ margin:"12px 14px 0", padding:"10px 12px", background:`${T.gold}12`, border:`1px solid ${T.gold}40`, borderRadius:T.radius, fontSize:12, color:T.textGold, lineHeight:1.5 }}>
+              Could not load {mapLabel}. Showing Ancient data instead — try another map or reload.
+            </div>
+          )}
+
           {/* Map selector — large, prominent */}
           <div style={{ display:"flex", gap:6, padding:"12px 14px 0", flexWrap:"wrap" }}>
             {MAP_LIST.map((m) => {
@@ -1361,7 +1407,7 @@ export default function CS2Playbook() {
               />
             </div>
 
-            {/* Round-type filter */}
+            {/* Round-type filter — applies to Combos and Utility Belts only, not All Lineups below */}
             <div style={{ display:"flex", gap:6, marginTop:8, flexWrap:"wrap" }}>
               {[["ALL", "ALL"], ["PISTOL", "PISTOL"], ["ECO", "ECO"], ["FORCE", "FORCE"], ["FULL", "FULL"]].map(([key, label]) => {
                 const active = roundFilter === key;
@@ -1496,7 +1542,7 @@ export default function CS2Playbook() {
                 ))}
               </div>
               <div style={{ marginTop:8, fontSize:11, color:T.textDim, lineHeight:1.5, padding:8, background:T.bg, borderRadius:T.radiusSm, border:`1px solid ${T.border}` }}>
-                <strong style={{ color:"#88aa44" }}>Jump Throw Bind:</strong>{" "}
+                <strong style={{ color:T.jumpBind }}>Jump Throw Bind:</strong>{" "}
                 <code style={{ color:T.accent, background:`${T.accent}0f`, padding:"1px 4px", borderRadius:2, fontFamily:"monospace", fontSize:10 }}>
                   alias "+jt" "+jump;+attack"; alias "-jt" "-jump;-attack"; bind "v" "+jt"
                 </code>
@@ -1510,7 +1556,7 @@ export default function CS2Playbook() {
       )}
 
       {/* Practice Modal */}
-      {practiceId && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
+      {practiceId && mapData && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
 
       {/* Team Roster Modal */}
       {showRoster && (

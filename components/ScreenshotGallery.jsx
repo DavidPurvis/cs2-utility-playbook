@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { T } from "../lib/theme.js";
 import { withYouTubeTimestamp } from "../lib/youtube.js";
-import { normalizeAustincs, normalizeExtraSources, normalizeSource } from "../lib/lineupMedia.js";
+import { normalizeAustincs, normalizeExtraSources } from "../lib/lineupMedia.js";
 
 function GalleryImage({ url, label }) {
   const [failed, setFailed] = useState(false);

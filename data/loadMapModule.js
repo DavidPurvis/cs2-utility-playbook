@@ -16,11 +16,6 @@ const loaders = {
 /** @param {string} mapId */
 export async function loadMapModule(mapId) {
   const load = loaders[mapId];
-  if (!load) {
-    if (import.meta.env?.DEV) {
-      console.warn(`[loadMapModule] unknown map "${mapId}", falling back to ancient`);
-    }
-    return loaders.ancient();
-  }
+  if (!load) throw new Error(`[loadMapModule] Unknown map id: "${mapId}"`);
   return load();
 }

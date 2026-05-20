@@ -16,7 +16,7 @@ export default defineConfig({
     open: true,
   },
   build: {
-    sourcemap: false,
+    sourcemap: "hidden",
     target: "es2020",
     rollupOptions: {
       output: {

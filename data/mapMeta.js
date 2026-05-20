@@ -26,7 +26,7 @@ export const MAP_POOL = {
   cache: "bonus",
 };
 
-const LABELS = {
+export const LABELS = {
   ancient: "Ancient",
   dust2: "Dust II",
   inferno: "Inferno",

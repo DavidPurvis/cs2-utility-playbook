@@ -3,10 +3,11 @@
  * Used by unit tests and benchmarks for consistent metrics.
  */
 
+import { PREMIER_MAP_IDS as PREMIER_LIST, WIP_MAP_IDS as WIP_LIST } from "../data/mapMeta.js";
+
 const UTIL_WEIGHT = { SMOKE: 1, FLASH: 1, MOLLY: 1, HE: 1 };
 const VALID_THROW_TYPES = new Set(["JT", "WJT", "LMB", "RMB", "WALK2", "RUN"]);
 export const GRENADE_CARRY_CAP = 4;
-import { PREMIER_MAP_IDS as PREMIER_LIST, WIP_MAP_IDS as WIP_LIST } from "../data/mapMeta.js";
 
 const PREMIER_MAP_IDS = new Set(PREMIER_LIST);
 const WIP_MAP_IDS = new Set(WIP_LIST);
@@ -222,7 +223,9 @@ export function validateMapModule(mod, mapId = "unknown", options = {}) {
           }
         }
       }
-      if (!c.roundTypes?.length) warnings.push(`[${mapId}].COMBOS.${cid}: empty roundTypes`);
+      if (!Array.isArray(c.roundTypes) || !c.roundTypes.length) {
+        errors.push(`[${mapId}].COMBOS.${cid}: missing or empty roundTypes`);
+      }
     }
   }
 
@@ -265,6 +268,9 @@ export function validateMapModule(mod, mapId = "unknown", options = {}) {
               `and at most 1 can realistically be dropped. Split smokes across players.`
           );
         }
+      }
+      if (!Array.isArray(b.roundTypes) || !b.roundTypes.length) {
+        errors.push(`[${mapId}].UTILITY_BELTS.${bid}: missing or empty roundTypes`);
       }
     }
   }

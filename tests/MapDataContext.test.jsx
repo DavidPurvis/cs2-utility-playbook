@@ -24,12 +24,24 @@ describe("MapDataContext", () => {
     expect(screen.getByTestId("map-name")).toHaveTextContent(ancient.MAP_NAME);
   });
 
-  it("allows null provider value while map data is loading", () => {
+  it("allows null provider value while map data is loading (without calling useMapData)", () => {
     render(
       <MapDataContext.Provider value={null}>
         <div data-testid="loading">loading</div>
       </MapDataContext.Provider>
     );
     expect(screen.getByTestId("loading")).toBeInTheDocument();
+  });
+
+  it("throws when useMapData is called with null provider value", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(() =>
+      render(
+        <MapDataContext.Provider value={null}>
+          <Consumer />
+        </MapDataContext.Provider>
+      )
+    ).toThrow(/before map data loaded/);
+    spy.mockRestore();
   });
 });

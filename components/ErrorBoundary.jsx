@@ -12,10 +12,14 @@ export class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    if (import.meta.env?.DEV) {
+    if (import.meta.env.DEV) {
       console.error("[ErrorBoundary]", error, info?.componentStack);
     }
   }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
 
   render() {
     if (this.state.hasError) {
@@ -31,16 +35,33 @@ export class ErrorBoundary extends Component {
           }}
         >
           <strong>Something broke in this section.</strong>
-          {import.meta.env?.DEV && (
+          {import.meta.env.DEV && (
             <div style={{ marginTop: 4, color: T.textSec, fontSize: 11 }}>
               {String(this.state.error?.message || this.state.error)}
             </div>
           )}
-          {!import.meta.env?.DEV && (
+          {!import.meta.env.DEV && (
             <div style={{ marginTop: 4, color: T.textSec, fontSize: 11 }}>
-              Reload the page or switch maps. If it keeps happening, report it to your team lead.
+              Try again or reload the page. If it keeps happening, report it to your team lead.
             </div>
           )}
+          <button
+            type="button"
+            onClick={this.handleRetry}
+            style={{
+              marginTop: 8,
+              padding: "6px 12px",
+              fontSize: 11,
+              fontWeight: 700,
+              cursor: "pointer",
+              background: T.bg,
+              border: `1px solid ${T.borderAlt}`,
+              borderRadius: T.radiusSm,
+              color: T.textPri,
+            }}
+          >
+            Retry
+          </button>
         </div>
       );
     }

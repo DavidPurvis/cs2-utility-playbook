@@ -8,8 +8,7 @@ describe("loadMapModule", () => {
     expect(Object.keys(mod.LINEUPS).length).toBeGreaterThan(0);
   });
 
-  it("falls back to ancient for unknown ids", async () => {
-    const mod = await loadMapModule("not_a_map");
-    expect(mod.LINEUPS).toBeDefined();
+  it("throws for unknown map ids", async () => {
+    await expect(loadMapModule("not_a_map")).rejects.toThrow(/Unknown map id/);
   });
 });
