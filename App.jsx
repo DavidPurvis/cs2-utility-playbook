@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { BONUS_MAP_IDS, getMapLabel, getMapPool, MAP_LIST, PREMIER_MAP_IDS } from "./data/mapMeta.js";
 import { loadMapModule } from "./data/loadMapModule.js";
 import { readJsonStorage, readStorage, writeJsonStorage, writeStorage } from "./lib/storage.js";
@@ -11,38 +11,19 @@ import { ScreenshotGallery } from "./components/ScreenshotGallery.jsx";
 
 const SELECTABLE_MAP_IDS = [...PREMIER_MAP_IDS, ...BONUS_MAP_IDS];
 
-/*
-  CS2 UTILITY PLAYBOOK — v4 (Multi-Map)
-
-  Built for amateur teams (silver to DMG) with 9-5 jobs.
-  Focus: memorable 2-3 player combos + one-player utility belts.
-  Covers the Premier map pool: Ancient, Dust II, Inferno,
-  Mirage, Nuke, Anubis, Overpass, and Cache (bonus).
-
-  Data lives in ./data/<mapname>.js — playbook UI components below; shared theme in lib/.
-*/
-
-function MissingLineup({ lineupId }) {
-  if (import.meta.env.DEV) console.warn(`Missing lineup: ${lineupId}`);
-  return (
-    <span style={{ fontSize: 11, color: T.danger }} title={lineupId}>
-      Missing lineup
-    </span>
-  );
-}
+// ── BADGES ───────────────────────────────────────────────────────
 
 function ThrowBadge({ type }) {
   const t = THROW[type];
   if (!t) return null;
   return (
     <span style={{
-      display:"inline-flex", alignItems:"center", gap:3,
-      background:t.color+"18", border:`1px solid ${t.color}40`, color:t.color,
-      borderRadius:T.radiusSm, padding:"2px 7px",
-      fontSize:11, fontWeight:700, fontFamily:T.fontMono,
-    }}>
-      {t.icon} {t.short}
-    </span>
+      display:"inline-flex", alignItems:"center", gap:5,
+      background: t.color + "14", border: `1px solid ${t.color}30`, color: t.color,
+      borderRadius: T.radiusSm, padding: "2px 7px",
+      fontSize: 10.5, fontWeight: 600, fontFamily: T.fontMono,
+      letterSpacing: 0.4, lineHeight: 1.4,
+    }}>{t.icon} {t.short}</span>
   );
 }
 
@@ -50,8 +31,8 @@ function UtilBadge({ type }) {
   const u = UTIL[type];
   if (!u) return null;
   return (
-    <span style={{ display:"inline-flex", alignItems:"center", gap:3, fontSize:12, fontWeight:700, color:u.color }}>
-      {u.icon} {u.label}
+    <span style={{ display:"inline-flex", alignItems:"center", gap:5, fontSize:12, fontWeight:600, color:u.color }}>
+      <span style={{ fontSize: 14 }}>{u.icon}</span> {u.label}
     </span>
   );
 }
@@ -59,13 +40,15 @@ function UtilBadge({ type }) {
 function RoundTypeBadges({ types }) {
   if (!types || types.length === 0) return null;
   return (
-    <span style={{ display:"inline-flex", alignItems:"center", gap:3, flexWrap:"wrap" }}>
+    <span style={{ display:"inline-flex", alignItems:"center", gap:4, flexWrap:"wrap" }}>
       {types.map(rt => {
         const r = ROUND_TYPES[rt];
         if (!r) return null;
         return (
           <span key={rt} title={r.label}
-            style={{ fontSize:9, fontWeight:800, color:r.color, background:r.color+"15", border:`1px solid ${r.color}40`, borderRadius:3, padding:"1px 5px", letterSpacing:0.5 }}>
+            style={{ fontSize: 9.5, fontWeight: 700, color: r.color, background: r.color + "12",
+              border: `1px solid ${r.color}30`, borderRadius: 3, padding: "1.5px 5px", letterSpacing: 0.6,
+              fontFamily: T.fontMono }}>
             {r.short}
           </span>
         );
@@ -74,114 +57,731 @@ function RoundTypeBadges({ types }) {
   );
 }
 
-function MustLearnStar({ size = 14 }) {
+function MustStar({ size = 13 }) {
+  return <span style={{ color: T.gold, fontSize: size, fontWeight: 800 }} title="Must learn">★</span>;
+}
+
+function SiteTag({ site, side }) {
+  const c = side === "T" ? T.tSide : T.ctSide;
   return (
-    <span style={{ color:T.gold, fontSize:size, fontWeight:900 }} title="Must learn — top priority">★</span>
+    <span style={{ fontSize: 9.5, fontWeight: 700, padding: "2px 6px", borderRadius: 3,
+      background: c + "14", color: c, border: `1px solid ${c}30`,
+      fontFamily: T.fontMono, letterSpacing: 0.6 }}>{site}</span>
   );
 }
 
-function PracticeModal({ lineupId, onClose }) {
+function SectionLabel({ children, color, style, nowrap }) {
+  return (
+    <div style={{
+      fontSize: 10, fontWeight: 700, color: color || T.textDim,
+      textTransform: "uppercase", letterSpacing: 1.8,
+      fontFamily: T.fontUI,
+      whiteSpace: nowrap ? "nowrap" : undefined,
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+// ── PRIMARY ACTION ───────────────────────────────────────────────
+
+function PrimaryPractice({ onClick, size = "md", label = "PRACTICE" }) {
+  const dims = {
+    lg: { pad: "12px 18px", fs: 13 },
+    md: { pad: "9px 14px",  fs: 12 },
+    sm: { pad: "5px 11px",  fs: 11 },
+  }[size];
+  return (
+    <button type="button" className="pa-btn-hov pa-row-cta"
+      onClick={(e) => { e.stopPropagation(); onClick && onClick(); }}
+      style={{
+        background: T.accent, border: `1px solid ${T.accent}`,
+        borderRadius: 6, color: "#001a14",
+        fontSize: dims.fs, fontWeight: 700, letterSpacing: 0.6,
+        padding: dims.pad, cursor: "pointer", whiteSpace: "nowrap",
+        fontFamily: T.fontUI,
+      }}>▶ {label}</button>
+  );
+}
+
+function PracticePill({ onClick, label = "PRACTICE" }) {
+  return (
+    <button type="button" className="pa-row-cta pa-btn-hov"
+      onClick={(e) => { e.stopPropagation(); onClick && onClick(); }}
+      style={{
+        background: "transparent", border: `1px solid ${T.borderLt}`,
+        borderRadius: 6, color: T.textSec,
+        fontSize: 10.5, fontWeight: 700, letterSpacing: 0.6,
+        padding: "5px 10px", cursor: "pointer", whiteSpace: "nowrap",
+        fontFamily: T.fontUI,
+      }}>▶ {label}</button>
+  );
+}
+
+function GhostButton({ onClick, children, color, style }) {
+  const c = color || T.textSec;
+  return (
+    <button type="button" className="pa-btn-hov" onClick={onClick}
+      style={{
+        background: "transparent", border: `1px solid ${T.borderAlt}`,
+        borderRadius: 6, color: c, fontSize: 11.5, fontWeight: 600,
+        padding: "7px 12px", cursor: "pointer", letterSpacing: 0.2,
+        ...style,
+      }}>{children}</button>
+  );
+}
+
+// ── ACCORDION ────────────────────────────────────────────────────
+
+function Accordion({ title, count, accent, defaultOpen, children, glyph, subtitle, rightSlot }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  const ac = accent || T.accent;
+  return (
+    <div style={{
+      background: T.bgPanel,
+      border: `1px solid ${open ? ac + "33" : T.border}`,
+      borderRadius: T.radiusLg, overflow: "hidden",
+      transition: "border-color .14s ease",
+    }}>
+      <button type="button" onClick={() => setOpen(!open)}
+        style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          width: "100%", padding: "16px 18px",
+          background: "transparent", border: "none", cursor: "pointer",
+          color: T.textPri, gap: 12, textAlign: "left",
+          fontFamily: T.fontUI,
+        }}>
+        <div style={{ display:"flex", alignItems:"center", gap: 12, minWidth: 0 }}>
+          {glyph && <span style={{ fontSize: 18, color: ac, lineHeight: 1 }}>{glyph}</span>}
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap: 10, flexWrap:"wrap" }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: T.textPri, letterSpacing: -0.1 }}>{title}</span>
+              {count != null && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700, color: ac, background: ac + "14",
+                  border: `1px solid ${ac}30`, borderRadius: 999,
+                  padding: "1px 8px", fontFamily: T.fontMono, letterSpacing: 0.4,
+                }}>{count}</span>
+              )}
+            </div>
+            {subtitle && (
+              <div style={{ fontSize: 12, color: T.textDim, marginTop: 4, lineHeight: 1.4 }}>{subtitle}</div>
+            )}
+          </div>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          {rightSlot}
+          <span style={{
+            color: open ? ac : T.textFaint, fontSize: 12,
+            transition: "transform .18s ease, color .14s ease",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}>▾</span>
+        </div>
+      </button>
+      {open && (
+        <div style={{
+          padding: "0 18px 18px",
+          display: "flex", flexDirection: "column", gap: 10,
+          borderTop: `1px solid ${T.border}`, paddingTop: 14,
+        }}>{children}</div>
+      )}
+    </div>
+  );
+}
+
+// ── MUST LEARN HERO ─────────────────────────────────────────────
+
+function MustLearnHero({ side, onPractice, compact }) {
+  const { LINEUPS, MUST_LEARN } = useMapData();
+  const items = MUST_LEARN.map(id => LINEUPS[id]).filter(Boolean);
+  return (
+    <div style={{
+      background: `linear-gradient(170deg, ${T.gold}10 0%, ${T.gold}03 50%, transparent 100%), ${T.bgPanel}`,
+      border: `1px solid ${T.gold}33`, borderRadius: T.radiusLg, overflow: "hidden",
+    }}>
+      <div style={{ padding: compact ? "14px 16px 12px" : "16px 18px 14px", borderBottom: `1px solid ${T.gold}1a` }}>
+        <div style={{ display:"flex", alignItems:"center", gap: 10 }}>
+          <span style={{ color: T.gold, fontSize: compact ? 14 : 16 }}>★</span>
+          <SectionLabel color={T.gold} nowrap>Must Learn · Core 5</SectionLabel>
+        </div>
+        {!compact && (
+          <div style={{ fontSize: 12.5, color: T.textSec, marginTop: 6, lineHeight: 1.5 }}>
+            Both sides, all sites. Learn these first.
+          </div>
+        )}
+        {compact && (
+          <div style={{ fontSize: 11.5, color: T.textDim, marginTop: 4 }}>
+            Sticky reference · one tap to practice
+          </div>
+        )}
+      </div>
+      <div role="list">
+        {items.map((L, i) => {
+          const sideC = L.side === "T" ? T.tSide : T.ctSide;
+          return (
+            <div key={L.id} role="listitem" data-row tabIndex={0}
+              onClick={() => onPractice(L.id)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(L.id); } }}
+              aria-label={`Practice ${L.name}`}
+              style={{
+                display: "flex", alignItems: "center",
+                gap: compact ? 10 : 12,
+                padding: compact ? "10px 16px" : "12px 18px",
+                borderTop: i === 0 ? "none" : `1px solid ${T.border}`,
+              }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, width: 28, flexShrink: 0 }}>
+                <span style={{ fontSize: compact ? 16 : 20, color: UTIL[L.util]?.color, lineHeight: 1 }}>
+                  {UTIL[L.util]?.icon}
+                </span>
+                <span style={{ fontSize: 8.5, fontWeight: 700, color: sideC, letterSpacing: 0.8, fontFamily: T.fontMono }}>{L.side}</span>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontSize: compact ? 13 : 14, fontWeight: 600,
+                  color: T.textPri, letterSpacing: -0.1,
+                }}>{L.name}</div>
+                <div style={{
+                  fontSize: 11, color: T.textDim, marginTop: 3,
+                  display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap",
+                }}>
+                  {!compact && <ThrowBadge type={L.throw} />}
+                  <span>{L.area}</span>
+                </div>
+              </div>
+              <PracticePill onClick={() => onPractice(L.id)} label={compact ? "▶" : "PRACTICE"} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── FILTER CHIPS ─────────────────────────────────────────────────
+
+function FilterChips({ value, onChange }) {
+  const opts = [
+    { id: "ALL", label: "All", color: T.textPri },
+    ...Object.entries(ROUND_TYPES).map(([k, v]) => ({ id: k, label: v.short, color: v.color })),
+  ];
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+        <SectionLabel>Round filter</SectionLabel>
+        <span style={{ fontSize: 10.5, color: T.textFaint, letterSpacing: 0 }}>
+          affects Combos &amp; Belts
+        </span>
+      </div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {opts.map(o => {
+          const active = value === o.id;
+          return (
+            <button key={o.id} type="button" className="pa-btn-hov"
+              onClick={() => onChange(o.id)}
+              style={{
+                fontSize: 11, fontWeight: 600, padding: "5px 11px",
+                background: active ? o.color + "18" : "transparent",
+                color: active ? o.color : T.textSec,
+                border: `1px solid ${active ? o.color + "55" : T.borderLt}`,
+                borderRadius: 999, cursor: "pointer", letterSpacing: 0.5,
+                fontFamily: o.id === "ALL" ? T.fontUI : T.fontMono,
+              }}>{o.label}</button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── COMBO CARD ───────────────────────────────────────────────────
+
+function ComboCard({ combo, onPractice, onStepCombo }) {
   const { LINEUPS } = useMapData();
-  const [step, setStep] = useState(0);
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{
+      background: T.bgPanel,
+      border: `1px solid ${open ? T.accent + "30" : T.border}`,
+      borderRadius: T.radius, overflow: "hidden",
+      transition: "border-color .14s ease",
+    }}>
+      <button type="button" onClick={() => setOpen(!open)}
+        style={{
+          padding: "14px 16px", cursor: "pointer", width: "100%",
+          background: "transparent", border: "none", textAlign: "left",
+          color: T.textPri, fontFamily: T.fontUI,
+        }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap: 10, flexWrap: "wrap" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.textPri, letterSpacing: -0.1 }}>{combo.name}</div>
+              <SiteTag site={combo.site} side={combo.side} />
+              <RoundTypeBadges types={combo.roundTypes} />
+            </div>
+            <div style={{ fontSize: 12.5, color: T.textSec, marginTop: 5, lineHeight: 1.5 }}>{combo.desc}</div>
+            <div style={{ display: "flex", gap: 4, marginTop: 8, alignItems: "center" }}>
+              {combo.lineups.map((l, i) => {
+                const u = UTIL[LINEUPS[l.lineup]?.util];
+                return <span key={i} style={{ fontSize: 14, color: u?.color || T.textDim, lineHeight: 1 }}>{u?.icon || "·"}</span>;
+              })}
+              <span style={{ marginLeft: 6, fontSize: 10.5, color: T.textDim, letterSpacing: 0.3 }}>
+                {combo.lineups.length} lineups
+              </span>
+            </div>
+          </div>
+          <span style={{
+            color: open ? T.accent : T.textFaint, fontSize: 12, lineHeight: 1, paddingTop: 4,
+            transition: "transform .18s ease, color .14s ease",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}>▾</span>
+        </div>
+      </button>
+      {open && (
+        <div style={{
+          padding: "14px 16px 16px",
+          display: "flex", flexDirection: "column", gap: 10,
+          borderTop: `1px solid ${T.border}`,
+        }}>
+          <div style={{ background: T.bgCallout, border: `1px solid ${T.accent}28`, borderRadius: 6, padding: "10px 12px" }}>
+            <SectionLabel color={T.accent} style={{ marginBottom: 4 }}>Callout</SectionLabel>
+            <div style={{ fontSize: 12.5, color: T.textCallout, lineHeight: 1.5, fontFamily: T.fontMono, letterSpacing: 0 }}>{combo.callout}</div>
+          </div>
+          <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 6, overflow: "hidden" }}>
+            {combo.lineups.map((l, i) => {
+              const L = LINEUPS[l.lineup];
+              if (!L) return null;
+              return (
+                <div key={i} data-row tabIndex={0}
+                  onClick={() => onPractice(l.lineup)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(l.lineup); } }}
+                  aria-label={`Practice ${L.name}`}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 14px",
+                    borderBottom: i < combo.lineups.length - 1 ? `1px solid ${T.border}` : "none",
+                  }}>
+                  <span style={{ fontSize: 18, color: UTIL[L.util]?.color, lineHeight: 1, flexShrink: 0 }}>{UTIL[L.util]?.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.textPri,
+                      display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", letterSpacing: -0.05 }}>
+                      {L.name}
+                      {L.mustLearn && <MustStar size={11} />}
+                      <ThrowBadge type={L.throw} />
+                    </div>
+                    {l.who && <div style={{ fontSize: 11.5, color: T.textDim, marginTop: 3 }}>{l.who}</div>}
+                  </div>
+                  <PracticePill onClick={() => onPractice(l.lineup)} />
+                </div>
+              );
+            })}
+          </div>
+          {combo.tip && (
+            <div style={{ background: T.bgTip, border: `1px solid ${T.borderLt}`, borderRadius: 6, padding: "10px 12px" }}>
+              <SectionLabel color={T.textTip} style={{ marginBottom: 4 }}>Tip</SectionLabel>
+              <div style={{ fontSize: 12.5, color: T.textSec, lineHeight: 1.5 }}>{combo.tip}</div>
+            </div>
+          )}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
+            <PrimaryPractice onClick={() => onStepCombo(combo.id)} size="md" label="STEP THROUGH COMBO" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── BELT CARD ────────────────────────────────────────────────────
+
+function BeltCard({ belt, onPractice, onStepBelt, carrierName }) {
+  const { LINEUPS } = useMapData();
+  const [open, setOpen] = useState(false);
+  const displayName = carrierName ? `${carrierName}'s ${belt.name.replace("Utility Belt", "Belt")}` : belt.name;
+  const calloutText = belt.callout.replace("[Name]", carrierName || "Carrier");
+  return (
+    <div style={{
+      background: T.bgPanel,
+      border: `1px solid ${open ? T.gold + "33" : T.border}`,
+      borderRadius: T.radius, overflow: "hidden",
+      transition: "border-color .14s ease",
+    }}>
+      <button type="button" onClick={() => setOpen(!open)}
+        style={{
+          padding: "14px 16px", cursor: "pointer", width: "100%",
+          background: "transparent", border: "none", textAlign: "left",
+          color: T.textPri, fontFamily: T.fontUI,
+        }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 16, color: T.gold }}>◆</span>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.gold, letterSpacing: -0.1 }}>{displayName}</div>
+              <SiteTag site={belt.site} side={belt.side} />
+              <RoundTypeBadges types={belt.roundTypes} />
+            </div>
+            <div style={{ fontSize: 12.5, color: T.textSec, marginTop: 5, lineHeight: 1.5 }}>{belt.desc}</div>
+          </div>
+          <span style={{
+            color: open ? T.gold : T.textFaint, fontSize: 12, lineHeight: 1, paddingTop: 4,
+            transition: "transform .18s ease, color .14s ease",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}>▾</span>
+        </div>
+      </button>
+      {open && (
+        <div style={{
+          padding: "14px 16px 16px",
+          display: "flex", flexDirection: "column", gap: 10,
+          borderTop: `1px solid ${T.border}`,
+        }}>
+          <div style={{ background: T.gold + "0a", border: `1px solid ${T.gold}28`, borderRadius: 6, padding: "10px 12px" }}>
+            <SectionLabel color={T.gold} style={{ marginBottom: 4 }}>Pre-Round Setup</SectionLabel>
+            <div style={{ fontSize: 12.5, color: T.textGold, lineHeight: 1.5 }}>{belt.preRound}</div>
+          </div>
+          <div style={{ background: T.bgCallout, border: `1px solid ${T.accent}28`, borderRadius: 6, padding: "10px 12px" }}>
+            <SectionLabel color={T.accent} style={{ marginBottom: 4 }}>Callout</SectionLabel>
+            <div style={{ fontSize: 12.5, color: T.textCallout, lineHeight: 1.5, fontFamily: T.fontMono }}>{calloutText}</div>
+          </div>
+          <SectionLabel style={{ marginTop: 4 }}>Throw Order</SectionLabel>
+          <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 6, overflow: "hidden" }}>
+            {belt.sequence.map((s, i) => {
+              const L = LINEUPS[s.lineup];
+              if (!L) return null;
+              const isCarrier = !s.carrier || s.carrier === "carrier";
+              return (
+                <div key={i} data-row tabIndex={0}
+                  onClick={() => onPractice(s.lineup)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(s.lineup); } }}
+                  aria-label={`Practice ${L.name}`}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 14px",
+                    borderBottom: i < belt.sequence.length - 1 ? `1px solid ${T.border}` : "none",
+                    opacity: isCarrier ? 1 : 0.92,
+                  }}>
+                  <span style={{
+                    width: 24, height: 24, borderRadius: 12,
+                    background: T.gold + "1a", color: T.gold,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 11, fontWeight: 700, flexShrink: 0, fontFamily: T.fontMono,
+                  }}>{s.step}</span>
+                  <span style={{ fontSize: 18, color: UTIL[L.util]?.color, lineHeight: 1, flexShrink: 0 }}>{UTIL[L.util]?.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.textPri,
+                      display:"flex", alignItems:"center", gap: 6, flexWrap: "wrap", letterSpacing: -0.05 }}>
+                      {L.name}
+                      <ThrowBadge type={L.throw} />
+                      {!isCarrier && (
+                        <span style={{ fontSize: 9.5, fontWeight: 700, color: T.austin,
+                          background: T.austin + "14", border: `1px solid ${T.austin}38`,
+                          borderRadius: 3, padding: "1.5px 5px", letterSpacing: 0.6, fontFamily: T.fontMono }}>2ND PLAYER</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: T.textDim, marginTop: 3, lineHeight: 1.4 }}>{s.note}</div>
+                  </div>
+                  <PracticePill onClick={() => onPractice(s.lineup)} />
+                </div>
+              );
+            })}
+          </div>
+          {belt.teamRole && (
+            <div style={{ background: T.bgTip, border: `1px solid ${T.borderLt}`, borderRadius: 6, padding: "10px 12px" }}>
+              <SectionLabel color={T.textTip} style={{ marginBottom: 4 }}>What Everyone Else Does</SectionLabel>
+              <div style={{ fontSize: 12.5, color: T.textSec, lineHeight: 1.5 }}>{belt.teamRole}</div>
+            </div>
+          )}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
+            <PrimaryPractice onClick={() => onStepBelt(belt.id)} size="md" label="STEP THROUGH BELT" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── SCENARIO CARD ────────────────────────────────────────────────
+
+function ScenarioCard({ scenario }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{
+      background: T.bgPanel,
+      border: `1px solid ${open ? T.textTip + "33" : T.border}`,
+      borderRadius: T.radius, overflow: "hidden",
+      transition: "border-color .14s ease",
+    }}>
+      <button type="button" onClick={() => setOpen(!open)}
+        style={{
+          padding: "12px 16px", cursor: "pointer", width: "100%",
+          background: "transparent", border: "none", textAlign: "left",
+          color: T.textPri, fontFamily: T.fontUI,
+          display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12,
+        }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          <SiteTag site={scenario.side} side={scenario.side} />
+          <div style={{ fontSize: 13.5, fontWeight: 600, color: T.textPri, letterSpacing: -0.05 }}>{scenario.title}</div>
+        </div>
+        <span style={{
+          color: open ? T.textTip : T.textFaint, fontSize: 12,
+          transition: "transform .18s ease, color .14s ease",
+          transform: open ? "rotate(180deg)" : "rotate(0deg)",
+        }}>▾</span>
+      </button>
+      {open && (
+        <div style={{ padding: "12px 16px 16px", borderTop: `1px solid ${T.border}` }}>
+          <ul style={{ margin: 0, paddingLeft: 18, color: T.textSec, fontSize: 12.5, lineHeight: 1.65 }}>
+            {scenario.bullets.map((b, i) => <li key={i} style={{ marginTop: 6 }}>{b}</li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── ALL LINEUPS PANEL ───────────────────────────────────────────
+
+function AllLineupsPanel({ side, onPractice }) {
+  const { LINEUPS } = useMapData();
+  const [q, setQ] = useState("");
+  const list = useMemo(() => {
+    const all = Object.values(LINEUPS).filter(L => L.side === side);
+    const needle = q.trim().toLowerCase();
+    if (!needle) return all;
+    return all.filter(L =>
+      L.name.toLowerCase().includes(needle) ||
+      (L.area || "").toLowerCase().includes(needle) ||
+      (L.purpose || "").toLowerCase().includes(needle)
+    );
+  }, [LINEUPS, side, q]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ position: "relative" }}>
+        <input type="text" placeholder="Search by name, area, or purpose…"
+          value={q} onChange={e => setQ(e.target.value)}
+          style={{
+            width: "100%", boxSizing: "border-box",
+            background: T.bg, border: `1px solid ${T.borderLt}`, borderRadius: T.radiusSm,
+            color: T.textPri, fontSize: 13, padding: "10px 12px 10px 34px",
+            fontFamily: T.fontUI, outline: "none",
+            transition: "border-color .14s ease",
+          }}
+          onFocus={e => e.target.style.borderColor = T.accent + "60"}
+          onBlur={e => e.target.style.borderColor = T.borderLt}
+        />
+        <span style={{ position: "absolute", left: 12, top: 10, color: T.textDim, fontSize: 13, fontFamily: T.fontMono }}>⌕</span>
+        {q && (
+          <button type="button" onClick={() => setQ("")} style={{
+            position: "absolute", right: 8, top: 8, background: "transparent", border: "none",
+            color: T.textDim, fontSize: 14, cursor: "pointer", padding: 4,
+          }}>✕</button>
+        )}
+      </div>
+      <SectionLabel>{list.length} lineup{list.length === 1 ? "" : "s"} · {side} side</SectionLabel>
+      <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 6, overflow: "hidden" }}>
+        {list.map((L, i) => (
+          <div key={L.id} data-row tabIndex={0}
+            onClick={() => onPractice(L.id)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(L.id); } }}
+            aria-label={`Practice ${L.name}`}
+            style={{
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "11px 14px",
+              borderBottom: i < list.length - 1 ? `1px solid ${T.border}` : "none",
+            }}>
+            <span style={{ fontSize: 18, color: UTIL[L.util]?.color, lineHeight: 1, flexShrink: 0 }}>{UTIL[L.util]?.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: T.textPri,
+                display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", letterSpacing: -0.05 }}>
+                {L.name}
+                {L.mustLearn && <MustStar size={11} />}
+                <ThrowBadge type={L.throw} />
+              </div>
+              <div style={{ fontSize: 11.5, color: T.textDim, marginTop: 3 }}>{L.area}</div>
+            </div>
+            <PracticePill onClick={() => onPractice(L.id)} />
+          </div>
+        ))}
+        {list.length === 0 && (
+          <div style={{ padding: "20px 14px", textAlign: "center", color: T.textDim, fontSize: 12.5 }}>
+            No lineups match &quot;{q}&quot;.{" "}
+            <button type="button" onClick={() => setQ("")} style={{
+              background: "transparent", border: "none", color: T.accent, cursor: "pointer", fontSize: 12.5, fontWeight: 600,
+              padding: 0, marginLeft: 4,
+            }}>Clear search →</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── PRACTICE MODAL (multi-lineup) ────────────────────────────────
+
+function PracticeModal({ context, onClose }) {
+  const { LINEUPS } = useMapData();
+  const [stepIdx, setStepIdx] = useState(0);
+  const [lineupIdx, setLineupIdx] = useState(context.currentIdx ?? 0);
   const [imgFailed, setImgFailed] = useState(false);
-  useEffect(() => { setImgFailed(false); }, [lineupId, step]);
+
+  useEffect(() => { setStepIdx(0); setImgFailed(false); }, [lineupIdx]);
+  useEffect(() => { setImgFailed(false); }, [stepIdx]);
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [onClose]);
-  if (!lineupId) return null;
-  const L = LINEUPS[lineupId];
-  if (!L) {
-    return (
-      <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000c", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
-        <div style={{ background:T.bgPanel, padding:20, borderRadius:8, color:T.danger }}>
-          Unknown lineup: {lineupId}
-          <button type="button" onClick={onClose} style={{ display:"block", marginTop:12 }}>Close</button>
-        </div>
-      </div>
-    );
-  }
+
+  const id = context.ids[lineupIdx];
+  const L = LINEUPS[id];
+  if (!L) return null;
+
   const steps = [
-    { title: "1. Stand here", body: L.stand, img: L.screenshots?.stand },
-    { title: "2. Aim here",   body: L.aim,   img: L.screenshots?.aim },
-    { title: `3. Throw — ${THROW[L.throw]?.label || L.throw}`, body: L.notes || "Throw it.", img: L.screenshots?.result, throwType: L.throw },
+    { title: "Stand here", body: L.stand, img: L.screenshots?.stand },
+    { title: "Aim here",   body: L.aim,   img: L.screenshots?.aim },
+    { title: `Throw — ${THROW[L.throw]?.label || L.throw}`, body: L.notes || "Throw it.", throwType: L.throw, img: L.screenshots?.result },
   ];
-  const cur = steps[step];
+  const cur = steps[stepIdx];
+  const lastStep = stepIdx === steps.length - 1;
+  const lastLineup = lineupIdx === context.ids.length - 1;
+  const showNextLineup = context.type !== "single" && lastStep && !lastLineup;
+  const ctxLabel = context.type === "combo" ? "COMBO" : context.type === "belt" ? "BELT" : "PRACTICE";
+
   return (
     <div onClick={onClose}
-      style={{ position:"fixed", inset:0, background:"#000c", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
-      <div onClick={(e) => e.stopPropagation()}
-        style={{ background:T.bgPanel, border:`1px solid ${T.borderAlt}`, borderRadius:12, maxWidth:500, width:"100%", maxHeight:"90vh", overflow:"auto" }}>
-        <div style={{ padding:"14px 16px", borderBottom:`1px solid ${T.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <div>
-            <div style={{ fontSize:10, fontWeight:800, color:T.accent, letterSpacing:2, textTransform:"uppercase" }}>Practice Mode</div>
-            <div style={{ fontSize:15, fontWeight:800, color:T.textPri, marginTop:2 }}>{L.name}</div>
+      style={{ position: "fixed", inset: 0, background: "#000c", zIndex: 1000,
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
+        backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}>
+      <div onClick={(e) => e.stopPropagation()} className="pa-modal" style={{
+        background: T.bgPanel, border: `1px solid ${T.borderAlt}`, borderRadius: T.radiusLg,
+        width: "100%", maxHeight: "90vh", overflow: "auto",
+        boxShadow: "0 24px 80px #000a, 0 0 0 1px " + T.borderAlt }}>
+
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${T.border}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <SectionLabel color={T.accent}>
+              {ctxLabel} {context.type !== "single" && `· ${lineupIdx + 1} of ${context.ids.length}`}
+            </SectionLabel>
+            <div style={{ fontSize: 17, fontWeight: 700, color: T.textPri, marginTop: 4, letterSpacing: -0.2 }}>{L.name}</div>
+            {context.type !== "single" && context.title && (
+              <div style={{ fontSize: 12, color: T.textDim, marginTop: 3 }}>{context.title}</div>
+            )}
           </div>
-          <button onClick={onClose}
-            style={{ background:"transparent", border:"none", color:T.textDim, fontSize:24, cursor:"pointer", padding:0, lineHeight:1 }}>
-            ✕
-          </button>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: T.textDim,
+            fontSize: 22, cursor: "pointer", padding: 4, lineHeight: 1, borderRadius: 4 }}>✕</button>
         </div>
-        <div style={{ padding:16 }}>
-          <div style={{ display:"flex", gap:4, marginBottom:14 }}>
-            {steps.map((_, i) => (
-              <div key={i} style={{ flex:1, height:3, background: i <= step ? T.accent : T.border, borderRadius:2 }} />
-            ))}
-          </div>
-          <div style={{ fontSize:18, fontWeight:800, color:T.textPri, marginBottom:8 }}>{cur.title}</div>
-          {cur.throwType && (
-            <div style={{ marginBottom:10 }}>
-              <ThrowBadge type={cur.throwType} />
+
+        <div style={{ padding: 20 }}>
+          {context.type !== "single" && (
+            <div style={{ display: "flex", gap: 4, marginBottom: 16 }}>
+              {context.ids.map((_, i) => (
+                <div key={i} style={{
+                  flex: 1, height: 4,
+                  background: i <= lineupIdx ? T.accent : T.border,
+                  borderRadius: 2, opacity: i <= lineupIdx ? 1 : 0.45,
+                  transition: "background .18s ease",
+                }} />
+              ))}
             </div>
           )}
+
+          <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
+            {steps.map((_, i) => (
+              <div key={i} style={{ flex: 1, height: 3,
+                background: i <= stepIdx ? T.accent : T.border, borderRadius: 2,
+                transition: "background .18s ease" }} />
+            ))}
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <span style={{
+              fontSize: 11, fontWeight: 700, color: T.textDim, fontFamily: T.fontMono,
+              width: 22, height: 22, display: "inline-flex", alignItems: "center", justifyContent: "center",
+              background: T.bgHover, border: `1px solid ${T.border}`, borderRadius: 4,
+            }}>{stepIdx + 1}</span>
+            <div style={{ fontSize: 17, fontWeight: 700, color: T.textPri, letterSpacing: -0.2 }}>{cur.title}</div>
+          </div>
+
+          {cur.throwType && <div style={{ marginBottom: 12 }}><ThrowBadge type={cur.throwType} /></div>}
+
           {cur.img && !imgFailed ? (
-            <div style={{ marginBottom:12, borderRadius:8, overflow:"hidden", border:`1px solid ${T.borderAlt}`, background:T.bgDeep }}>
-              <img src={cur.img} alt={cur.title} style={{ width:"100%", display:"block" }}
+            <div style={{ marginBottom: 14, borderRadius: 8, overflow: "hidden", border: `1px solid ${T.borderAlt}`, background: T.bgDeep }}>
+              <img src={cur.img} alt={cur.title} style={{ width: "100%", display: "block" }}
                 onError={() => setImgFailed(true)} />
             </div>
           ) : cur.img && imgFailed ? (
-            <div style={{ marginBottom:12, borderRadius:8, border:`1px dashed ${T.danger}66`, background:T.bgDeep, padding:"20px 12px", textAlign:"center" }}>
-              <div style={{ fontSize:11, color:T.danger }}>Screenshot failed to load</div>
+            <div style={{ marginBottom: 14, borderRadius: 8, border: `1px dashed ${T.danger}66`, background: T.bgDeep, padding: "20px 12px", textAlign: "center" }}>
+              <div style={{ fontSize: 11, color: T.danger }}>Screenshot failed to load</div>
               {L.video && (
                 <a href={L.video} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize:10, fontWeight:700, color:T.danger, textDecoration:"none", marginTop:6, display:"inline-block" }}>
+                  style={{ fontSize: 10, fontWeight: 700, color: T.danger, textDecoration: "none", marginTop: 6, display: "inline-block" }}>
                   ▶ Watch video instead
                 </a>
               )}
             </div>
           ) : (
-            <div style={{ marginBottom:12, borderRadius:8, border:`1px dashed ${T.borderAlt}`, background:T.bgDeep, padding:"20px 12px", textAlign:"center" }}>
-              <div style={{ fontSize:11, color:T.textDim }}>No screenshot yet</div>
+            <div style={{ marginBottom: 14, borderRadius: 8, border: `1px dashed ${T.borderAlt}`,
+              background: T.bgDeep, padding: "28px 12px", textAlign: "center" }}>
+              <div style={{ fontSize: 24, opacity: 0.3 }}>◐</div>
+              <div style={{ fontSize: 11.5, color: T.textDim, marginTop: 6 }}>No screenshot yet</div>
               {L.video && (
                 <a href={L.video} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize:10, fontWeight:700, color:T.danger, textDecoration:"none", marginTop:6, display:"inline-block" }}>
+                  style={{ fontSize: 10, fontWeight: 700, color: T.accent, textDecoration: "none", marginTop: 6, display: "inline-block" }}>
                   ▶ Watch video instead
                 </a>
               )}
             </div>
           )}
-          <div style={{ fontSize:14, color:T.textPri, lineHeight:1.6, padding:12, background:T.bg, borderRadius:6, border:`1px solid ${T.border}` }}>
+
+          <div style={{ fontSize: 14, color: T.textPri, lineHeight: 1.6, padding: "12px 14px",
+            background: T.bg, borderRadius: 6, border: `1px solid ${T.border}` }}>
             {cur.body}
           </div>
-          {step === steps.length - 1 && (L.video || L.source) && (
-            <div style={{ marginTop:10 }}>
+
+          {lastStep && (L.video || L.source) && (
+            <div style={{ marginTop: 10 }}>
               <ScreenshotGallery screenshots={{}} source={L.source} video={L.video} austincs={L.austincs} lineup={L} />
             </div>
           )}
-          <div style={{ display:"flex", gap:8, marginTop:14 }}>
-            <button disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}
-              style={{ flex:1, padding:"10px", background: step === 0 ? T.bg : T.bgCard, border:`1px solid ${T.borderLt}`, borderRadius:6, color: step === 0 ? T.textFaint : T.textSec, fontSize:13, fontWeight:700, cursor: step === 0 ? "not-allowed" : "pointer" }}>
+
+          <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+            <button type="button" className="pa-btn-hov"
+              disabled={stepIdx === 0 && lineupIdx === 0}
+              onClick={() => {
+                if (stepIdx > 0) setStepIdx(stepIdx - 1);
+                else if (lineupIdx > 0) { setLineupIdx(lineupIdx - 1); setStepIdx(2); }
+              }}
+              style={{ flex: 1, padding: "11px",
+                background: (stepIdx === 0 && lineupIdx === 0) ? T.bg : T.bgHover,
+                border: `1px solid ${T.borderLt}`, borderRadius: 6,
+                color: (stepIdx === 0 && lineupIdx === 0) ? T.textFaint : T.textSec,
+                fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: T.fontUI }}>
               ← Back
             </button>
-            {step < steps.length - 1 ? (
-              <button onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
-                style={{ flex:1, padding:"10px", background:T.accent+"20", border:`1px solid ${T.accent}50`, borderRadius:6, color:T.accent, fontSize:13, fontWeight:800, cursor:"pointer" }}>
+            {!lastStep ? (
+              <button type="button" className="pa-btn-hov"
+                onClick={() => setStepIdx(stepIdx + 1)}
+                style={{ flex: 1, padding: "11px",
+                  background: T.accent, border: `1px solid ${T.accent}`,
+                  borderRadius: 6, color: "#001a14", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                  fontFamily: T.fontUI, letterSpacing: 0.3 }}>
                 Next →
               </button>
+            ) : showNextLineup ? (
+              <button type="button" className="pa-btn-hov"
+                onClick={() => setLineupIdx(lineupIdx + 1)}
+                style={{ flex: 1, padding: "11px",
+                  background: T.accent, border: `1px solid ${T.accent}`,
+                  borderRadius: 6, color: "#001a14", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                  fontFamily: T.fontUI, letterSpacing: 0.3 }}>
+                Next lineup →
+              </button>
             ) : (
-              <button onClick={onClose}
-                style={{ flex:1, padding:"10px", background:T.accent+"20", border:`1px solid ${T.accent}50`, borderRadius:6, color:T.accent, fontSize:13, fontWeight:800, cursor:"pointer" }}>
+              <button type="button" className="pa-btn-hov"
+                onClick={onClose}
+                style={{ flex: 1, padding: "11px",
+                  background: T.accent, border: `1px solid ${T.accent}`,
+                  borderRadius: 6, color: "#001a14", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                  fontFamily: T.fontUI, letterSpacing: 0.3 }}>
                 Done ✓
               </button>
             )}
@@ -192,290 +792,97 @@ function PracticeModal({ lineupId, onClose }) {
   );
 }
 
-function LineupRow({ lineupId, who, onPractice }) {
-  const { LINEUPS } = useMapData();
-  const L = LINEUPS[lineupId];
-  if (!L) return <div style={{ padding:"8px 12px", borderBottom:`1px solid ${T.border}` }}><MissingLineup lineupId={lineupId} /></div>;
-  return (
-    <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", borderBottom:`1px solid ${T.border}` }}>
-      <span style={{ fontSize:14 }}>{UTIL[L.util]?.icon}</span>
-      <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ fontSize:13, fontWeight:700, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-          {L.name}
-          {L.mustLearn && <MustLearnStar size={11} />}
-          <ThrowBadge type={L.throw} />
-        </div>
-        {who && <div style={{ fontSize:11, color:T.textDim, marginTop:2 }}>{who}</div>}
-      </div>
-      <button onClick={(e) => { e.stopPropagation(); onPractice(lineupId); }}
-        style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
-        Practice
-      </button>
-    </div>
-  );
-}
+// ── MAP SHEET ────────────────────────────────────────────────────
 
-function ComboCard({ combo, onPractice }) {
-  const { LINEUPS } = useMapData();
-  const [open, setOpen] = useState(false);
+function MapSheet({ open, onClose, current, onPick }) {
+  if (!open) return null;
   return (
-    <div style={{ background:T.bgPanel, border:`1px solid ${open ? T.borderOpen : T.border}`, borderRadius:10, overflow:"hidden" }}>
-      <button type="button" onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer", width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-            <div style={{ fontSize:15, fontWeight:800, color:T.textPri }}>{combo.name}</div>
-            <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
-              background: combo.side === "T" ? T.tSide+"15" : T.ctSide+"15",
-              color: combo.side === "T" ? T.tSide : T.ctSide,
-              border: `1px solid ${combo.side === "T" ? T.tSide+"30" : T.ctSide+"30"}` }}>
-              {combo.site}
-            </span>
-            <RoundTypeBadges types={combo.roundTypes} />
-          </div>
-          <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "#000a", zIndex: 900,
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+      backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: T.bgPanel, border: `1px solid ${T.borderAlt}`,
+        borderTopLeftRadius: 16, borderTopRightRadius: 16,
+        width: "100%", maxWidth: 720, padding: "16px 18px 28px",
+        boxShadow: "0 -24px 80px #000a",
+      }}>
+        <div style={{ width: 40, height: 4, background: T.borderAlt, borderRadius: 2,
+          margin: "2px auto 14px" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <SectionLabel>Switch map</SectionLabel>
+          <button onClick={onClose} style={{ background: "transparent", border: "none",
+            color: T.textDim, fontSize: 18, cursor: "pointer", padding: 4 }}>✕</button>
         </div>
-        <div style={{ fontSize:12, color:T.textSec, marginTop:4, lineHeight:1.5 }}>{combo.desc}</div>
-        <div style={{ display:"flex", gap:3, marginTop:6 }}>
-          {combo.lineups.map((l, i) => (
-            <span key={i} style={{ fontSize:16 }}>{UTIL[LINEUPS[l.lineup]?.util]?.icon || "·"}</span>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 8 }}>
+          {MAP_LIST.filter(m => getMapPool(m.id) === "premier").map(m => {
+            const active = m.id === current;
+            return (
+              <button key={m.id} type="button" className="pa-btn-hov"
+                onClick={() => onPick(m.id)}
+                style={{
+                  display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4,
+                  background: active ? T.accent + "12" : T.bgHover,
+                  border: `1px solid ${active ? T.accent + "55" : T.borderLt}`,
+                  borderRadius: T.radius, padding: "14px 16px", cursor: "pointer",
+                  fontFamily: T.fontUI,
+                }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: active ? T.accent : T.textPri, letterSpacing: -0.1 }}>
+                  {m.label}
+                </div>
+                <div style={{ fontSize: 10.5, color: T.textDim, letterSpacing: 0.8, textTransform: "uppercase", fontFamily: T.fontMono }}>
+                  Premier
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ marginTop: 16 }}><SectionLabel>Bonus</SectionLabel></div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 8, marginTop: 8 }}>
+          {MAP_LIST.filter(m => getMapPool(m.id) === "bonus").map(m => (
+            <button key={m.id} type="button" className="pa-btn-hov"
+              onClick={() => onPick(m.id)}
+              style={{
+                display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4,
+                background: T.bgHover, border: `1px dashed ${T.borderLt}`,
+                borderRadius: T.radius, padding: "14px 16px", cursor: "pointer",
+                fontFamily: T.fontUI,
+              }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.textPri, letterSpacing: -0.1 }}>{m.label}</div>
+              <div style={{ fontSize: 10.5, color: T.textDim, letterSpacing: 0.8, textTransform: "uppercase", fontFamily: T.fontMono }}>
+                Bonus
+              </div>
+            </button>
           ))}
         </div>
-      </button>
-      {open && (
-        <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ background:T.bgCallout, border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
-            <div style={{ fontSize:9, fontWeight:900, color:T.accent, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🎙 Callout</div>
-            <div style={{ fontSize:12, color:T.textCallout, fontFamily:T.fontMono }}>{combo.callout}</div>
-          </div>
-          <div style={{ background:T.bg, border:`1px solid ${T.border}`, borderRadius:6 }}>
-            {combo.lineups.map((l, i) => (
-              <LineupRow key={i} lineupId={l.lineup} who={l.who} onPractice={onPractice} />
-            ))}
-          </div>
-          {combo.tip && (
-            <div style={{ background:T.bgTip, border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
-              <div style={{ fontSize:9, fontWeight:900, color:T.textTip, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>💡 Tip</div>
-              <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5 }}>{combo.tip}</div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function UtilityBeltCard({ belt, onPractice, names }) {
-  const { LINEUPS } = useMapData();
-  const [open, setOpen] = useState(false);
-  const carrierName = names.find((n) => n && n.trim()) || null;
-  const displayName = carrierName ? `${carrierName}'s ${belt.name.replace("Utility Belt", "Belt")}` : belt.name;
-  const calloutText = belt.callout.replace("[Name]", carrierName || "Carrier");
-  return (
-    <div style={{ background:T.bgPanel, border:`1px solid ${open ? T.gold+"33" : T.border}`, borderRadius:10, overflow:"hidden" }}>
-      <button type="button" onClick={() => setOpen(!open)} style={{ padding:"12px 14px", cursor:"pointer", width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-            <span style={{ fontSize:18 }}>🎒</span>
-            <div style={{ fontSize:15, fontWeight:800, color:T.gold }}>{displayName}</div>
-            <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
-              background: (belt.side === "T" ? T.tSide : T.ctSide) + "15",
-              color: belt.side === "T" ? T.tSide : T.ctSide,
-              border: `1px solid ${(belt.side === "T" ? T.tSide : T.ctSide)}30` }}>
-              {belt.site}
-            </span>
-            <RoundTypeBadges types={belt.roundTypes} />
-          </div>
-          <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
-        </div>
-        <div style={{ fontSize:12, color:T.textSec, marginTop:4, lineHeight:1.5 }}>{belt.desc}</div>
-      </button>
-      {open && (
-        <div style={{ padding:"0 14px 14px", display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ background:`${T.gold}10`, border:`1px solid ${T.gold}30`, borderRadius:6, padding:10 }}>
-            <div style={{ fontSize:9, fontWeight:900, color:T.gold, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🛒 Pre-Round Setup</div>
-            <div style={{ fontSize:12, color:T.textGold, lineHeight:1.5 }}>{belt.preRound}</div>
-          </div>
-          <div style={{ background:T.bgCallout, border:`1px solid ${T.accent}20`, borderRadius:6, padding:10 }}>
-            <div style={{ fontSize:9, fontWeight:900, color:T.accent, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>🎙 Callout</div>
-            <div style={{ fontSize:12, color:T.textCallout, fontFamily:T.fontMono }}>{calloutText}</div>
-          </div>
-          <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginTop:2 }}>
-            Throw Order
-          </div>
-          <div style={{ background:T.bg, border:`1px solid ${T.border}`, borderRadius:6 }}>
-            {belt.sequence.map((s, i) => {
-              const L = LINEUPS[s.lineup];
-              if (!L) return null;
-              return (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px",
-                  borderBottom: i < belt.sequence.length - 1 ? `1px solid ${T.border}` : "none" }}>
-                  <span style={{ width:22, height:22, borderRadius:11, background:T.gold+"20", color:T.gold,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:900, flexShrink:0 }}>
-                    {s.step}
-                  </span>
-                  <span style={{ fontSize:14 }}>{UTIL[L.util]?.icon}</span>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-                      {L.name}
-                      <ThrowBadge type={L.throw} />
-                    </div>
-                    <div style={{ fontSize:11, color:T.textDim, marginTop:2 }}>{s.note}</div>
-                  </div>
-                  <button onClick={(e) => { e.stopPropagation(); onPractice(s.lineup); }}
-                    style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-                      color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
-                    Practice
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-          {belt.teamRole && (
-            <div style={{ background:T.bgTip, border:`1px solid ${T.borderLt}`, borderRadius:6, padding:10 }}>
-              <div style={{ fontSize:9, fontWeight:900, color:T.textTip, textTransform:"uppercase", letterSpacing:2, marginBottom:3 }}>👥 What Everyone Else Does</div>
-              <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5 }}>{belt.teamRole}</div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ScenarioCard({ scenario }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ background:T.bgPanel, border:`1px solid ${T.border}`, borderRadius:T.radius, overflow:"hidden" }}>
-      <button type="button" onClick={() => setOpen(!open)}
-        style={{ padding:"10px 14px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, width:"100%", background:"transparent", border:"none", textAlign:"left" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
-            background: scenario.side === "T" ? T.tSide+"15" : T.ctSide+"15",
-            color: scenario.side === "T" ? T.tSide : T.ctSide,
-            border: `1px solid ${scenario.side === "T" ? T.tSide+"30" : T.ctSide+"30"}` }}>
-            {scenario.side}
-          </span>
-          <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{scenario.title}</div>
-        </div>
-        <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
-      </button>
-      {open && (
-        <div style={{ padding:"0 14px 14px" }}>
-          <ul style={{ margin:0, paddingLeft:18, color:T.textSec, fontSize:12, lineHeight:1.6 }}>
-            {scenario.bullets.map((b, i) => (
-              <li key={i} style={{ marginTop:4 }}>{b}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MustLearnSection({ onPractice, big }) {
-  const { LINEUPS, MUST_LEARN } = useMapData();
-  const labelSize = big ? 13 : 11;
-  const titleSize = big ? 16 : 13;
-  const tagSize   = big ? 12 : 10;
-  return (
-    <div style={{ marginTop:12, background:`linear-gradient(135deg, ${T.gold}08, ${T.gold}03)`, border:`1px solid ${T.gold}33`, borderRadius:T.radius, padding:12 }}>
-      <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:6 }}>
-        <span style={{ fontSize:14, color:T.gold }}>★</span>
-        <div style={{ fontSize:labelSize, fontWeight:900, color:T.gold, textTransform:"uppercase", letterSpacing:2 }}>
-          Must Learn — The Core 5
-        </div>
-      </div>
-      {!big && (
-        <div style={{ fontSize:11, color:T.textSec, marginBottom:10, lineHeight:1.5 }}>
-          If everyone on the team only learns 5 lineups, learn these. Both sides, all sites.
-        </div>
-      )}
-      <div style={{ display:"flex", flexDirection:"column", gap: big ? 8 : 4 }}>
-        {MUST_LEARN.map((id) => {
-          const L = LINEUPS[id];
-          if (!L) return null;
-          return (
-            <div key={id}
-              style={{ display:"flex", alignItems:"center", gap:big ? 12 : 8, background:T.bg, border:`1px solid ${T.border}`, borderRadius:6, padding: big ? "12px 14px" : "8px 10px" }}>
-              <span style={{ fontSize: big ? 24 : 16 }}>{UTIL[L.util]?.icon}</span>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:titleSize, fontWeight:700, color:T.textPri }}>{L.name}</div>
-                <div style={{ fontSize:tagSize, color:T.textDim, marginTop: big ? 3 : 1, display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
-                  <ThrowBadge type={L.throw} />
-                  <span>{L.side} side · {L.area}</span>
-                </div>
-              </div>
-              <button onClick={() => onPractice(id)}
-                style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-                  color:T.accent, fontSize: big ? 12 : 11, fontWeight:800, padding: big ? "8px 14px" : "5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
-                {big ? "PRACTICE" : "Practice"}
-              </button>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
 }
 
-function LineupCard({ lineupId, onPractice }) {
-  const { LINEUPS } = useMapData();
-  const [open, setOpen] = useState(false);
-  const L = LINEUPS[lineupId];
-  if (!L) return null;
+// ── TOAST ────────────────────────────────────────────────────────
+
+function Toast({ msg, onDone }) {
+  useEffect(() => {
+    if (!msg) return;
+    const t = setTimeout(onDone, 2000);
+    return () => clearTimeout(t);
+  }, [msg, onDone]);
+  if (!msg) return null;
   return (
-    <div role="button" tabIndex={0} onClick={() => setOpen(!open)}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(!open); } }}
-      style={{
-        background: open ? T.bgHover : T.bgCard,
-        border: `1px solid ${open ? T.borderOpenLt : T.border}`,
-        borderRadius: T.radius, padding: "10px 12px", cursor: "pointer",
-      }}>
-      <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", justifyContent:"space-between" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-          <UtilBadge type={L.util} />
-          <ThrowBadge type={L.throw} />
-          {L.mustLearn && <MustLearnStar />}
-        </div>
-        <span style={{ color:T.textFaint, fontSize:11 }}>{open ? "▲" : "▼"}</span>
-      </div>
-      <div style={{ marginTop:5, display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-        <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{L.name}</div>
-        <button onClick={(e) => { e.stopPropagation(); onPractice(lineupId); }}
-          style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-            color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
-          Practice
-        </button>
-      </div>
-      {open && (
-        <div style={{ marginTop:10, display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ fontSize:12, color:T.textSec, lineHeight:1.5, background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
-            <strong style={{ color:T.textSec }}>Purpose:</strong> {L.purpose}
-          </div>
-          <div style={{ background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
-            <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>📍 Stand</div>
-            <div style={{ fontSize:12, color:T.textInstr, lineHeight:1.5 }}>{L.stand}</div>
-          </div>
-          <div style={{ background:T.bg, borderRadius:6, padding:8, border:`1px solid ${T.border}` }}>
-            <div style={{ fontSize:10, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>🎯 Aim & Throw</div>
-            <div style={{ fontSize:12, color:T.textInstr, lineHeight:1.5 }}>{L.aim}</div>
-          </div>
-          {L.notes && (
-            <div style={{ background:T.bgNotes, borderRadius:6, padding:8, border:`1px solid ${T.borderNotes}` }}>
-              <div style={{ fontSize:10, fontWeight:800, color:T.accent, textTransform:"uppercase", letterSpacing:1.5, marginBottom:3 }}>💡 Tip</div>
-              <div style={{ fontSize:12, color:T.textNotes, lineHeight:1.5 }}>{L.notes}</div>
-            </div>
-          )}
-          <ScreenshotGallery screenshots={L.screenshots} source={L.source} video={L.video} austincs={L.austincs} lineup={L} />
-        </div>
-      )}
-    </div>
+    <div className="pa-toast" role="status" style={{
+      position: "fixed", left: "50%", top: 76, transform: "translateX(-50%)",
+      background: T.bgPanel, border: `1px solid ${T.accent}45`,
+      color: T.accent, fontSize: 12, fontWeight: 600, letterSpacing: 0.3,
+      padding: "9px 16px", borderRadius: 999, zIndex: 1100,
+      boxShadow: "0 8px 24px #000c, 0 0 0 1px " + T.borderAlt,
+      fontFamily: T.fontUI,
+    }}>{msg}</div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  INTERACTIVE MAP — position-based lineup navigation
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+//  INTERACTIVE MAP — real radar with position dots + landing markers
+// ══════════════════════════════════════════════════════════════════
 
 function dominantUtil(pos, LINEUPS) {
   const counts = {};
@@ -483,8 +890,7 @@ function dominantUtil(pos, LINEUPS) {
     const u = LINEUPS[id]?.util;
     if (u) counts[u] = (counts[u] || 0) + 1;
   }
-  let best = null;
-  let max = 0;
+  let best = null, max = 0;
   for (const [k, v] of Object.entries(counts)) {
     if (v > max) { best = k; max = v; }
   }
@@ -497,9 +903,8 @@ function InteractiveMap({ side, onPractice }) {
   const [selectedPos, setSelectedPos] = useState(null);
   const [hoveredLineup, setHoveredLineup] = useState(null);
   const [selectedSpawn, setSelectedSpawn] = useState(null);
-  const [mapMode, setMapMode] = useState("positions"); // "positions" or "spawns"
+  const [mapMode, setMapMode] = useState("positions");
 
-  /** Fire onClick on Enter / Space for keyboard-accessible SVG elements */
   const svgKeyHandler = useCallback((onClick) => (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); }
   }, []);
@@ -507,12 +912,7 @@ function InteractiveMap({ side, onPractice }) {
   useEffect(() => { setSelectedPos(null); setSelectedSpawn(null); }, [MAP_NAME]);
 
   const spawns = useMemo(() => mapData.SPAWNS?.[side] || [], [side, mapData.SPAWNS]);
-
-  const positions = useMemo(
-    () => SETUP_POSITIONS.filter((p) => p.side === side),
-    [side, SETUP_POSITIONS]
-  );
-
+  const positions = useMemo(() => SETUP_POSITIONS.filter((p) => p.side === side), [side, SETUP_POSITIONS]);
   const selected = positions.find((p) => p.id === selectedPos) || null;
   const activeSpawn = spawns.find((s) => s.id === selectedSpawn) || null;
 
@@ -523,9 +923,7 @@ function InteractiveMap({ side, onPractice }) {
 
   const selectedLineups = useMemo(() => {
     if (!selected) return [];
-    return selected.lineups
-      .map((id) => LINEUPS[id])
-      .filter(Boolean);
+    return selected.lineups.map((id) => LINEUPS[id]).filter(Boolean);
   }, [selected, LINEUPS]);
 
   const dominantByPosId = useMemo(() => {
@@ -535,40 +933,39 @@ function InteractiveMap({ side, onPractice }) {
   }, [positions, LINEUPS]);
 
   return (
-    <div style={{ padding:"0 14px" }}>
-      {/* Mode toggle: Positions vs Spawns */}
-      <div style={{ display:"flex", gap:4, marginTop:10 }}>
+    <div>
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
         {[
           { id: "positions", label: "Setup Positions" },
-          { id: "spawns",    label: "Instant Utility (Spawns)" },
-        ].map((m) => {
+          { id: "spawns",    label: "Spawn Instant Utility" },
+        ].map(m => {
           const active = mapMode === m.id;
           return (
-            <button key={m.id} onClick={() => { setMapMode(m.id); setSelectedPos(null); setSelectedSpawn(null); setHoveredLineup(null); }}
+            <button key={m.id} type="button" className="pa-btn-hov"
+              onClick={() => { setMapMode(m.id); setSelectedPos(null); setSelectedSpawn(null); setHoveredLineup(null); }}
               style={{
-                flex:1, padding:"8px 6px", fontSize:11, fontWeight:800, cursor:"pointer",
-                background: active ? T.accent+"15" : T.bgCard,
-                border: `1px solid ${active ? T.accent+"40" : T.borderLt}`,
-                borderRadius:T.radiusSm, color: active ? T.accent : T.textDim, letterSpacing:0.5,
-              }}>
-              {m.label}
-            </button>
+                flex: 1, padding: "9px 12px", fontSize: 12, fontWeight: 600,
+                background: active ? T.accent + "14" : T.bgHover,
+                border: `1px solid ${active ? T.accent + "55" : T.borderLt}`,
+                borderRadius: 6,
+                color: active ? T.accent : T.textSec,
+                cursor: "pointer", letterSpacing: 0.2, fontFamily: T.fontUI,
+              }}>{m.label}</button>
           );
         })}
       </div>
 
-      {/* Spawn selector bar */}
       {mapMode === "spawns" && spawns.length > 0 && (
-        <div style={{ display:"flex", gap:4, marginTop:8, flexWrap:"wrap" }}>
+        <div style={{ display:"flex", gap:4, marginBottom:10, flexWrap:"wrap" }}>
           {spawns.map((sp) => {
             const active = selectedSpawn === sp.id;
             const hasLineups = sp.lineups.length > 0;
             return (
-              <button key={sp.id}
+              <button key={sp.id} className="pa-btn-hov"
                 onClick={() => { setSelectedSpawn(active ? null : sp.id); setHoveredLineup(null); }}
                 style={{
                   flex:"1 1 auto", padding:"6px 10px", fontSize:10, fontWeight:700, cursor:"pointer",
-                  background: active ? T.accent+"20" : T.bgCard,
+                  background: active ? T.accent+"20" : T.bgPanel,
                   border: `1px solid ${active ? T.accent+"60" : hasLineups ? T.accent+"25" : T.borderLt}`,
                   borderRadius:T.radiusSm,
                   color: active ? T.accent : hasLineups ? T.textPri : T.textDim,
@@ -582,28 +979,14 @@ function InteractiveMap({ side, onPractice }) {
         </div>
       )}
 
-      <div style={{ marginTop:mapMode === "spawns" ? 8 : 14, borderRadius:T.radius, overflow:"hidden", border:`1px solid ${T.borderAlt}`, position:"relative", background:T.bgDeep, lineHeight:0 }}>
-        {/*
-          Radar + overlays live in ONE SVG so dots use the same 0–100 space as the bitmap.
-          A separate <img> + absolutely positioned SVG can misalign (aspect / subpixel / Safari).
-        */}
-        <svg
-          viewBox="0 0 100 100"
-          preserveAspectRatio="xMidYMid meet"
-          role="img"
+      <div style={{ borderRadius: T.radius, overflow: "hidden", border: `1px solid ${T.borderAlt}`, position: "relative", background: T.bgDeep, lineHeight: 0 }}>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" role="img"
           aria-label={`${MAP_NAME} radar`}
-          style={{ width:"100%", height:"auto", display:"block", verticalAlign:"top", aspectRatio:"1" }}
-        >
+          style={{ width: "100%", height: "auto", display: "block", verticalAlign: "top", aspectRatio: "1" }}>
           {RADAR_URL ? (
-            <image
-              href={RADAR_URL}
-              x={0}
-              y={0}
-              width={100}
-              height={100}
+            <image href={RADAR_URL} x={0} y={0} width={100} height={100}
               preserveAspectRatio="xMidYMid meet"
-              opacity={selected || activeSpawn ? 0.6 : 0.85}
-            />
+              opacity={selected || activeSpawn ? 0.6 : 0.85} />
           ) : (
             <>
               <rect x={0} y={0} width={100} height={100} fill={T.bgDeep} />
@@ -614,7 +997,6 @@ function InteractiveMap({ side, onPractice }) {
             </>
           )}
 
-          {/* Spawn mode: show spawn dots and utility landing lines */}
           {mapMode === "spawns" && spawns.map((sp) => {
             const isActive = selectedSpawn === sp.id;
             const hasLineups = sp.lineups.length > 0;
@@ -629,7 +1011,7 @@ function InteractiveMap({ side, onPractice }) {
                 )}
                 <circle cx={sp.pos.x} cy={sp.pos.y}
                   r={isActive ? 2.8 : 2}
-                  fill={isActive ? T.accent : hasLineups ? "#ffcc33" : T.textDim}
+                  fill={isActive ? T.accent : hasLineups ? T.gold : T.textDim}
                   opacity={isActive ? 0.95 : hasLineups ? 0.8 : 0.4}
                   stroke="#000" strokeWidth={0.3}
                   role="button" tabIndex={0} aria-label={sp.name}
@@ -648,22 +1030,18 @@ function InteractiveMap({ side, onPractice }) {
             );
           })}
 
-          {/* Spawn mode: lines from active spawn to utility landing positions */}
           {mapMode === "spawns" && activeSpawn && spawnLineups.map((L) => {
             if (!L.radarTarget) return null;
             const isHovered = hoveredLineup === L.id;
             const color = UTIL[L.util]?.color || "#888";
             return (
               <g key={`spawnline-${L.id}`}>
-                <line
-                  x1={activeSpawn.pos.x} y1={activeSpawn.pos.y}
+                <line x1={activeSpawn.pos.x} y1={activeSpawn.pos.y}
                   x2={L.radarTarget.x} y2={L.radarTarget.y}
                   stroke={color} strokeWidth={isHovered ? 0.6 : 0.35}
                   strokeDasharray={isHovered ? "none" : "1.2,0.8"}
-                  opacity={isHovered ? 0.9 : 0.5}
-                />
-                <circle
-                  cx={L.radarTarget.x} cy={L.radarTarget.y}
+                  opacity={isHovered ? 0.9 : 0.5} />
+                <circle cx={L.radarTarget.x} cy={L.radarTarget.y}
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
@@ -674,8 +1052,7 @@ function InteractiveMap({ side, onPractice }) {
                   onMouseEnter={() => setHoveredLineup(L.id)}
                   onMouseLeave={() => setHoveredLineup(null)}
                   onFocus={() => setHoveredLineup(L.id)}
-                  onBlur={() => setHoveredLineup(null)}
-                />
+                  onBlur={() => setHoveredLineup(null)} />
                 {isHovered && (
                   <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
                     textAnchor="middle" fill="#fff" fontSize="2.2" fontWeight="700"
@@ -687,35 +1064,26 @@ function InteractiveMap({ side, onPractice }) {
             );
           })}
 
-          {/* Position mode: draw throw-spot dot (radarPos) + line to landing (radarTarget) */}
           {mapMode === "positions" && selected && selectedLineups.map((L) => {
             if (!L.radarTarget) return null;
             const isHovered = hoveredLineup === L.id;
             const color = UTIL[L.util]?.color || "#888";
-            // Use radarPos (exact throw spot) when available, fall back to the position group center
             const throwX = L.radarPos ? L.radarPos.x : selected.pos.x;
             const throwY = L.radarPos ? L.radarPos.y : selected.pos.y;
             return (
               <g key={`line-${L.id}`}>
-                {/* Throw-spot indicator — small crosshair dot at the exact stand position */}
                 {L.radarPos && isHovered && (
-                  <circle
-                    cx={throwX} cy={throwY}
-                    r={1.4}
+                  <circle cx={throwX} cy={throwY} r={1.4}
                     fill="#ffffff" opacity={0.85}
                     stroke={color} strokeWidth={0.35}
-                    style={{ pointerEvents:"none" }}
-                  />
+                    style={{ pointerEvents:"none" }} />
                 )}
-                <line
-                  x1={throwX} y1={throwY}
+                <line x1={throwX} y1={throwY}
                   x2={L.radarTarget.x} y2={L.radarTarget.y}
                   stroke={color} strokeWidth={isHovered ? 0.6 : 0.35}
                   strokeDasharray={isHovered ? "none" : "1.2,0.8"}
-                  opacity={isHovered ? 0.9 : 0.5}
-                />
-                <circle
-                  cx={L.radarTarget.x} cy={L.radarTarget.y}
+                  opacity={isHovered ? 0.9 : 0.5} />
+                <circle cx={L.radarTarget.x} cy={L.radarTarget.y}
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
@@ -726,8 +1094,7 @@ function InteractiveMap({ side, onPractice }) {
                   onMouseEnter={() => setHoveredLineup(L.id)}
                   onMouseLeave={() => setHoveredLineup(null)}
                   onFocus={() => setHoveredLineup(L.id)}
-                  onBlur={() => setHoveredLineup(null)}
-                />
+                  onBlur={() => setHoveredLineup(null)} />
                 {isHovered && (
                   <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
                     textAnchor="middle" fill="#fff" fontSize="2.2" fontWeight="700"
@@ -758,8 +1125,7 @@ function InteractiveMap({ side, onPractice }) {
                     role="button" tabIndex={0} aria-label={`Deselect ${pos.name}`}
                     style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                     onClick={() => setSelectedPos(null)}
-                    onKeyDown={svgKeyHandler(() => setSelectedPos(null))}
-                  />
+                    onKeyDown={svgKeyHandler(() => setSelectedPos(null))} />
                   <text x={pos.pos.x} y={pos.pos.y + 0.7}
                     textAnchor="middle" fill="#000" fontSize="2.2" fontWeight="900"
                     style={{ pointerEvents:"none" }}>
@@ -769,8 +1135,7 @@ function InteractiveMap({ side, onPractice }) {
               );
             }
             return (
-              <g key={pos.id}
-                role="button" tabIndex={0} aria-label={pos.name}
+              <g key={pos.id} role="button" tabIndex={0} aria-label={pos.name}
                 style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                 onClick={() => { setSelectedPos(pos.id); setHoveredLineup(null); }}
                 onKeyDown={svgKeyHandler(() => { setSelectedPos(pos.id); setHoveredLineup(null); })}>
@@ -779,9 +1144,7 @@ function InteractiveMap({ side, onPractice }) {
                     fill="none" stroke={T.gold} strokeWidth={0.4} opacity={0.6} />
                 )}
                 <circle cx={pos.pos.x} cy={pos.pos.y} r={2.4}
-                  fill={color} opacity={0.85}
-                  stroke="#000" strokeWidth={0.3}
-                />
+                  fill={color} opacity={0.85} stroke="#000" strokeWidth={0.3} />
                 <text x={pos.pos.x} y={pos.pos.y + 0.7}
                   textAnchor="middle" fill="#000" fontSize="2" fontWeight="900"
                   style={{ pointerEvents:"none" }}>
@@ -794,25 +1157,21 @@ function InteractiveMap({ side, onPractice }) {
 
         <div style={{ position:"absolute", bottom:6, left:8, fontSize:9, fontWeight:700, color:"#ffffff55", background:"#00000088", padding:"2px 6px", borderRadius:3 }}>
           {mapMode === "spawns"
-            ? (activeSpawn ? `🎯 ${activeSpawn.name} — ${spawnLineups.length} instant lineup${spawnLineups.length !== 1 ? "s" : ""}` : "Select a spawn to see instant utility")
-            : (selected ? `📍 ${selected.name}` : "Click a position to see available lineups")}
+            ? (activeSpawn ? `${activeSpawn.name} — ${spawnLineups.length} instant lineup${spawnLineups.length !== 1 ? "s" : ""}` : "Select a spawn to see instant utility")
+            : (selected ? `${selected.name}` : "Click a position to see available lineups")}
         </div>
         {(selected || activeSpawn) && (
-          <button
-            onClick={() => { setSelectedPos(null); setSelectedSpawn(null); }}
+          <button onClick={() => { setSelectedPos(null); setSelectedSpawn(null); }}
             style={{ position:"absolute", top:8, right:8, background:"#000a", border:`1px solid ${T.borderAlt}`, borderRadius:4, color:T.textSec, fontSize:10, fontWeight:700, padding:"4px 8px", cursor:"pointer" }}>
             ✕ Clear
           </button>
         )}
       </div>
 
-      {/* Spawn mode detail panel */}
       {mapMode === "spawns" && activeSpawn && (
         <div style={{ marginTop:10, background:T.bgPanel, border:`1px solid ${T.accent}30`, borderRadius:T.radius, overflow:"hidden" }}>
           <div style={{ padding:"10px 14px", borderBottom:`1px solid ${T.border}` }}>
-            <div style={{ fontSize:15, fontWeight:800, color:T.textPri }}>
-              🎯 {activeSpawn.name}
-            </div>
+            <div style={{ fontSize:15, fontWeight:700, color:T.textPri }}>{activeSpawn.name}</div>
             <div style={{ fontSize:11, color:T.textSec, marginTop:2 }}>
               {spawnLineups.length} instant lineup{spawnLineups.length !== 1 ? "s" : ""} from this spawn
             </div>
@@ -820,95 +1179,83 @@ function InteractiveMap({ side, onPractice }) {
           {spawnLineups.length > 0 ? (
             <div style={{ background:T.bg }}>
               {spawnLineups.map((L) => (
-                <div key={L.id}
+                <div key={L.id} data-row tabIndex={0}
+                  onClick={() => onPractice(L.id)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(L.id); } }}
                   onMouseEnter={() => setHoveredLineup(L.id)}
                   onMouseLeave={() => setHoveredLineup(null)}
                   style={{
-                    display:"flex", alignItems:"center", gap:8,
+                    display:"flex", alignItems:"center", gap:10,
                     padding:"10px 14px",
                     borderBottom:`1px solid ${T.border}`,
                     background: hoveredLineup === L.id ? T.bgHover : "transparent",
                     transition:"background 0.15s",
                   }}>
-                  <span style={{ fontSize:16 }}>{UTIL[L.util]?.icon}</span>
+                  <span style={{ fontSize:18, color: UTIL[L.util]?.color, lineHeight: 1, flexShrink: 0 }}>{UTIL[L.util]?.icon}</span>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
                       {L.name}
-                      {L.mustLearn && <MustLearnStar size={11} />}
+                      {L.mustLearn && <MustStar size={11} />}
                       <ThrowBadge type={L.throw} />
-                      <span style={{ fontSize:9, fontWeight:800, color:T.gold, background:T.gold+"15", border:`1px solid ${T.gold}30`, borderRadius:3, padding:"1px 5px" }}>INSTANT</span>
+                      <span style={{ fontSize:9, fontWeight:700, color:T.gold, background:T.gold+"15", border:`1px solid ${T.gold}30`, borderRadius:3, padding:"1.5px 5px" }}>INSTANT</span>
                     </div>
                     <div style={{ fontSize:11, color:T.textDim, marginTop:2, lineHeight:1.4 }}>{L.purpose}</div>
                   </div>
-                  <button onClick={() => onPractice(L.id)}
-                    style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
-                    Practice
-                  </button>
+                  <PracticePill onClick={() => onPractice(L.id)} />
                 </div>
               ))}
             </div>
           ) : (
             <div style={{ padding:"16px 14px", textAlign:"center", color:T.textDim, fontSize:12 }}>
-              No instant utility from this spawn yet. Try a different spawn.
+              No instant utility from this spawn yet.
             </div>
           )}
         </div>
       )}
 
-      {/* Position mode detail panel */}
       {mapMode === "positions" && selected && (
         <div style={{ marginTop:10, background:T.bgPanel, border:`1px solid ${T.accent}30`, borderRadius:T.radius, overflow:"hidden" }}>
           <div style={{ padding:"10px 14px", borderBottom:`1px solid ${T.border}` }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, justifyContent:"space-between" }}>
               <div>
-                <div style={{ fontSize:15, fontWeight:800, color:T.textPri }}>
-                  📍 {selected.name}
-                </div>
+                <div style={{ fontSize:15, fontWeight:700, color:T.textPri }}>{selected.name}</div>
                 <div style={{ fontSize:11, color:T.textSec, marginTop:2 }}>
                   {selected.lineups.length} lineup{selected.lineups.length !== 1 ? "s" : ""} from this position
                 </div>
               </div>
-              <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:3,
-                background: side === "T" ? T.tSide+"15" : T.ctSide+"15",
-                color: side === "T" ? T.tSide : T.ctSide,
-                border: `1px solid ${side === "T" ? T.tSide+"30" : T.ctSide+"30"}` }}>
-                {selected.area}
-              </span>
+              <SiteTag site={selected.area} side={side} />
             </div>
             {selected.tip && (
-              <div style={{ fontSize:11, color:T.textDim, marginTop:6, lineHeight:1.5, fontStyle:"italic" }}>
-                {selected.tip}
-              </div>
+              <div style={{ fontSize:11, color:T.textDim, marginTop:6, lineHeight:1.5, fontStyle:"italic" }}>{selected.tip}</div>
             )}
           </div>
           <div style={{ background:T.bg }}>
             {selectedLineups.map((L) => (
-              <div key={L.id}
+              <div key={L.id} data-row tabIndex={0}
+                onClick={() => onPractice(L.id)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPractice(L.id); } }}
                 onMouseEnter={() => setHoveredLineup(L.id)}
                 onMouseLeave={() => setHoveredLineup(null)}
                 style={{
-                  display:"flex", alignItems:"center", gap:8,
+                  display:"flex", alignItems:"center", gap:10,
                   padding:"10px 14px",
                   borderBottom:`1px solid ${T.border}`,
                   background: hoveredLineup === L.id ? T.bgHover : "transparent",
                   transition:"background 0.15s",
                 }}>
-                <span style={{ fontSize:16 }}>{UTIL[L.util]?.icon}</span>
+                <span style={{ fontSize:18, color: UTIL[L.util]?.color, lineHeight: 1, flexShrink: 0 }}>{UTIL[L.util]?.icon}</span>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+                  <div style={{ fontSize:13, fontWeight:600, color:T.textPri, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
                     {L.name}
-                    {L.mustLearn && <MustLearnStar size={11} />}
+                    {L.mustLearn && <MustStar size={11} />}
                     <ThrowBadge type={L.throw} />
                     {L.instant && (
-                      <span style={{ fontSize:9, fontWeight:800, color:T.gold, background:T.gold+"15", border:`1px solid ${T.gold}30`, borderRadius:3, padding:"1px 5px" }}>INSTANT</span>
+                      <span style={{ fontSize:9, fontWeight:700, color:T.gold, background:T.gold+"15", border:`1px solid ${T.gold}30`, borderRadius:3, padding:"1.5px 5px" }}>INSTANT</span>
                     )}
                   </div>
                   <div style={{ fontSize:11, color:T.textDim, marginTop:2, lineHeight:1.4 }}>{L.purpose}</div>
                 </div>
-                <button onClick={() => onPractice(L.id)}
-                  style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
-                  Practice
-                </button>
+                <PracticePill onClick={() => onPractice(L.id)} />
               </div>
             ))}
           </div>
@@ -920,11 +1267,11 @@ function InteractiveMap({ side, onPractice }) {
           {positions.map((pos) => {
             const hasMustLearn = pos.lineups.some((id) => LINEUPS[id]?.mustLearn);
             return (
-              <button key={pos.id}
+              <button key={pos.id} className="pa-btn-hov"
                 onClick={() => setSelectedPos(pos.id)}
                 style={{
                   flex:"1 1 140px", padding:"8px 10px",
-                  background:T.bgCard, border:`1px solid ${hasMustLearn ? T.gold+"40" : T.borderLt}`,
+                  background:T.bgPanel, border:`1px solid ${hasMustLearn ? T.gold+"40" : T.borderLt}`,
                   borderRadius:6, cursor:"pointer", textAlign:"left",
                 }}>
                 <div style={{ fontSize:12, fontWeight:700, color:T.textPri, display:"flex", alignItems:"center", gap:4 }}>
@@ -943,57 +1290,170 @@ function InteractiveMap({ side, onPractice }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  STUDY SHEET (buddy cheat sheet)
-// ═══════════════════════════════════════════════════════════════
+// ── MAP BLOCK — inline in Playbook ──────────────────────────────
 
-function StudyPicker({ names, onPick, onClose }) {
-  const filledNames = names.filter((n) => n && n.trim());
+function MapBlock({ side, onPractice }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div onClick={onClose}
-      style={{ position:"fixed", inset:0, background:"#000c", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
-      <div onClick={(e) => e.stopPropagation()}
-        style={{ background:T.bgPanel, border:`1px solid ${T.borderAlt}`, borderRadius:12, maxWidth:400, width:"100%" }}>
-        <div style={{ padding:"14px 16px", borderBottom:`1px solid ${T.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <div>
-            <div style={{ fontSize:10, fontWeight:800, color:T.gold, letterSpacing:2, textTransform:"uppercase" }}>Study Sheet</div>
-            <div style={{ fontSize:15, fontWeight:800, color:T.textPri, marginTop:2 }}>Who is studying?</div>
-          </div>
-          <button onClick={onClose}
-            style={{ background:"transparent", border:"none", color:T.textDim, fontSize:24, cursor:"pointer", padding:0, lineHeight:1 }}>
-            ✕
-          </button>
-        </div>
-        <div style={{ padding:14, display:"flex", flexDirection:"column", gap:6 }}>
-          {filledNames.length === 0 && (
-            <div style={{ fontSize:12, color:T.textDim, padding:"6px 4px", lineHeight:1.5 }}>
-              Add player names in the Team Roster to personalize the sheet, or just open an anonymous version below.
+    <div style={{
+      background: T.bgPanel,
+      border: `1px solid ${T.accent}28`,
+      borderRadius: T.radiusLg, overflow: "hidden",
+    }}>
+      <div style={{
+        padding: "14px 18px", borderBottom: collapsed ? "none" : `1px solid ${T.border}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 16, color: T.accent, lineHeight: 1 }}>▣</span>
+            <div style={{ fontSize: 15, fontWeight: 700, color: T.textPri, letterSpacing: -0.1 }}>
+              Map · <span style={{ color: side === "T" ? T.tSide : T.ctSide }}>{side} side</span>
             </div>
-          )}
-          {filledNames.map((n, i) => (
-            <button key={i} onClick={() => onPick(n.trim())}
-              style={{ padding:"12px 14px", background:T.bg, border:`1px solid ${T.borderLt}`, borderRadius:6,
-                color:T.textPri, fontSize:14, fontWeight:700, cursor:"pointer", textAlign:"left" }}>
-              {n.trim()}
-            </button>
-          ))}
-          <button onClick={() => onPick("")}
-            style={{ padding:"10px 14px", background:T.bgCard, border:`1px dashed ${T.borderLt}`, borderRadius:6,
-              color:T.textDim, fontSize:12, fontWeight:700, cursor:"pointer", textAlign:"center", marginTop:filledNames.length ? 6 : 0 }}>
-            No name — just give me the sheet
-          </button>
+          </div>
+          <div style={{ fontSize: 12, color: T.textDim, marginTop: 4, lineHeight: 1.4 }}>
+            Click any position or spawn dot for the lineups thrown from there.
+          </div>
+        </div>
+        <button type="button" className="pa-btn-hov"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? "Expand map" : "Collapse map"}
+          style={{
+            background: "transparent", border: `1px solid ${T.borderLt}`,
+            borderRadius: 6, color: T.textDim, cursor: "pointer",
+            padding: "5px 10px", fontSize: 10.5, fontWeight: 600,
+            fontFamily: T.fontMono, letterSpacing: 0.8,
+          }}>{collapsed ? "SHOW" : "HIDE"}</button>
+      </div>
+      {!collapsed && (
+        <div style={{ padding: 18 }}>
+          <InteractiveMap side={side} onPractice={onPractice} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SetPiecesDivider() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 10, marginBottom: 2 }}>
+      <div style={{ flex: 1, height: 1, background: T.border }} />
+      <span style={{
+        fontSize: 10, fontWeight: 700, color: T.textDim,
+        textTransform: "uppercase", letterSpacing: 2,
+        fontFamily: T.fontUI,
+      }}>Set Pieces</span>
+      <div style={{ flex: 1, height: 1, background: T.border }} />
+    </div>
+  );
+}
+
+// ── EMPTY STATE ──────────────────────────────────────────────────
+
+function EmptyState({ filter, kind, onResetFilter }) {
+  const ftxt = ROUND_TYPES[filter]?.label || filter;
+  return (
+    <div style={{ background: T.bg, border: `1px dashed ${T.borderLt}`, borderRadius: 6,
+      padding: "16px 14px", textAlign: "center" }}>
+      <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>
+        No {kind}s for <b style={{ color: T.textPri }}>{ftxt}</b> rounds on this side.
+      </div>
+      <button type="button" className="pa-btn-hov" onClick={onResetFilter}
+        style={{
+          marginTop: 10, background: T.accent + "15", border: `1px solid ${T.accent}40`,
+          borderRadius: T.radiusSm, color: T.accent, fontSize: 11, fontWeight: 800,
+          padding: "6px 12px", cursor: "pointer",
+        }}>
+        Show all rounds →
+      </button>
+    </div>
+  );
+}
+
+// ── PLAYBOOK VIEW (responsive 2-column) ──────────────────────────
+
+function PlaybookView({ side, filter, onFilter, onPractice, onStepCombo, onStepBelt, carrierName }) {
+  const { LINEUPS, MUST_LEARN, COMBOS, UTILITY_BELTS, SCENARIOS } = useMapData();
+
+  const sideCombos    = useMemo(() => COMBOS.filter(c => c.side === side), [COMBOS, side]);
+  const sideBelts     = useMemo(() => UTILITY_BELTS.filter(b => b.side === side), [UTILITY_BELTS, side]);
+  const sideScenarios = useMemo(() => SCENARIOS.filter(s => s.side === side), [SCENARIOS, side]);
+
+  const applyFilter = (items) => filter === "ALL" ? items : items.filter(x => x.roundTypes?.includes(filter));
+  const filteredCombos = applyFilter(sideCombos);
+  const filteredBelts  = applyFilter(sideBelts);
+
+  return (
+    <div className="pa-two-col">
+      <div className="pa-col-main" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="pa-must-mobile">
+          <MustLearnHero side={side} onPractice={onPractice} />
+        </div>
+
+        <MapBlock side={side} onPractice={onPractice} />
+
+        <Accordion title="All Lineups" glyph="▣" accent={T.accent}
+          subtitle="Searchable reference — every grenade on this side"
+          defaultOpen={true}>
+          <AllLineupsPanel side={side} onPractice={onPractice} />
+        </Accordion>
+
+        <SetPiecesDivider />
+        <FilterChips value={filter} onChange={onFilter} />
+
+        <Accordion title="Combos" glyph="◈" accent={T.accent}
+          count={filteredCombos.length}
+          subtitle="2-3 player coordinated setups">
+          <ErrorBoundary>
+            {filteredCombos.length === 0 ? (
+              <EmptyState filter={filter} kind="combo" onResetFilter={() => onFilter("ALL")} />
+            ) : filteredCombos.map(c => (
+              <ComboCard key={c.id} combo={c} onPractice={onPractice} onStepCombo={onStepCombo} />
+            ))}
+          </ErrorBoundary>
+        </Accordion>
+
+        <Accordion title="Utility Belts" glyph="◆" accent={T.gold}
+          count={filteredBelts.length}
+          subtitle="One carrier · full execute sequence">
+          <ErrorBoundary>
+            {filteredBelts.length === 0 ? (
+              <EmptyState filter={filter} kind="belt" onResetFilter={() => onFilter("ALL")} />
+            ) : filteredBelts.map(b => (
+              <BeltCard key={b.id} belt={b} onPractice={onPractice} onStepBelt={onStepBelt} carrierName={carrierName} />
+            ))}
+          </ErrorBoundary>
+        </Accordion>
+
+        <Accordion title="Scenarios" glyph="▲" accent={T.textTip}
+          count={sideScenarios.length}
+          subtitle="Game-sense reminders, no lineups">
+          {sideScenarios.map(s => <ScenarioCard key={s.id} scenario={s} />)}
+        </Accordion>
+
+        <div style={{ height: 20 }} />
+      </div>
+
+      <div className="pa-col-rail pa-rail-desktop">
+        <div className="pa-rail-sticky">
+          <MustLearnHero side={side} onPractice={onPractice} compact />
         </div>
       </div>
     </div>
   );
 }
 
-function StudySheetView({ name, onExit, onPractice }) {
-  const { COMBOS, UTILITY_BELTS } = useMapData();
+// ── STUDY VIEW ───────────────────────────────────────────────────
+
+function StudyView({ side, names, onPractice }) {
+  const { LINEUPS, MUST_LEARN, COMBOS, UTILITY_BELTS } = useMapData();
+  const [picking, setPicking] = useState(false);
+  const [name, setName] = useState(names[0] || "");
   const [showCombos, setShowCombos] = useState(false);
   const [copied, setCopied] = useState(false);
+
   const greeting = name ? `${name}'s Study Sheet` : "Study Sheet";
-  const subtitle = name ? `Hi ${name}.` : "Anonymous study mode.";
 
   const copyShareUrl = async () => {
     try {
@@ -1002,643 +1462,500 @@ function StudySheetView({ name, onExit, onPractice }) {
       await navigator.clipboard.writeText(url.toString());
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      if (import.meta.env.DEV) console.warn("[StudySheet] clipboard failed", err);
-    }
+    } catch { /* ignore */ }
   };
 
   return (
-    <div className="study-sheet-view" style={{ fontFamily:T.fontUI, background:T.bg, color:T.textPri, minHeight:"100vh", maxWidth:720, margin:"0 auto", padding:"0 14px 40px" }}>
-      <div style={{ background:`linear-gradient(180deg, ${T.gold}10, ${T.bg})`, borderBottom:`1px solid ${T.gold}33`, padding:"20px 16px 14px", margin:"0 -14px", textAlign:"center" }}>
-        <div style={{ fontSize:10, fontWeight:900, color:T.gold, letterSpacing:4, textTransform:"uppercase" }}>
+    <div className="pa-content-narrow" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ background: `linear-gradient(180deg, ${T.gold}15, transparent)`,
+        border: `1px solid ${T.gold}33`, borderRadius: T.radius, padding: "20px 16px", textAlign: "center" }}>
+        <div style={{ fontSize: 11, fontWeight: 900, color: T.gold, letterSpacing: 3, textTransform: "uppercase" }}>
           ★ Study Sheet
         </div>
-        <div style={{ fontSize:24, fontWeight:900, color:T.textHighlight, letterSpacing:-.5, marginTop:4 }}>
-          {greeting}
+        <div style={{ fontSize: 26, fontWeight: 900, color: T.textHighlight, marginTop: 8, letterSpacing: -0.3 }}>{greeting}</div>
+        <div style={{ fontSize: 12, color: T.textSec, marginTop: 6 }}>
+          Distraction-free. Print-friendly. Shareable with <code style={{ fontFamily: T.fontMono, color: T.textPri }}>?p=</code>.
         </div>
-        <div style={{ fontSize:12, color:T.textSec, marginTop:6 }}>{subtitle}</div>
+        <button type="button" className="pa-btn-hov" onClick={() => setPicking(true)}
+          style={{
+            marginTop: 12, background: T.bgPanel, border: `1px solid ${T.borderLt}`,
+            borderRadius: 999, color: T.textSec, fontSize: 11, fontWeight: 800,
+            padding: "6px 14px", cursor: "pointer",
+          }}>
+          {name ? "Change player" : "Pick a player"} ▾
+        </button>
       </div>
 
-      <MustLearnSection onPractice={onPractice} big />
+      <MustLearnHero side={side} onPractice={onPractice} />
 
-      <div style={{ display:"flex", gap:8, marginTop:16, flexWrap:"wrap" }}>
-        <button type="button" className="no-print" onClick={copyShareUrl}
-          style={{ flex:"1 1 200px", padding:"10px 14px", background:copied ? T.accent+"20" : T.bgCard, border:`1px solid ${copied ? T.accent+"60" : T.borderLt}`, borderRadius:6, color:copied ? T.accent : T.textSec, fontSize:12, fontWeight:800, cursor:"pointer" }}>
-          {copied ? "✓ Link copied" : "🔗 Copy share link"}
-        </button>
-        <button type="button" className="no-print" onClick={() => setShowCombos((v) => !v)}
-          style={{ flex:"1 1 200px", padding:"10px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`, borderRadius:6, color:T.textSec, fontSize:12, fontWeight:800, cursor:"pointer" }}>
-          {showCombos ? "▲ Hide combos" : "▼ Show combos & belts"}
-        </button>
+      <div className="no-print" style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+        <GhostButton onClick={copyShareUrl}>
+          {copied ? "✓ Link copied" : "⇗ Copy share link"}
+        </GhostButton>
+        <GhostButton onClick={() => window.print()}>Print sheet</GhostButton>
+        <GhostButton onClick={() => setShowCombos(!showCombos)}>
+          {showCombos ? "Hide combos" : "Show combos & belts"}
+        </GhostButton>
       </div>
 
       {showCombos && (
-        <div style={{ marginTop:16 }}>
-          <div style={{ fontSize:11, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
-            Combos — How These Lineups Get Used Together
-          </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <SectionLabel>Combos</SectionLabel>
           <ErrorBoundary>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {COMBOS.map((c) => (
-                <ComboCard key={c.id} combo={c} onPractice={onPractice} />
-              ))}
-            </div>
+            {COMBOS.map(c => (
+              <ComboCard key={c.id} combo={c} onPractice={onPractice} onStepCombo={() => {}} />
+            ))}
           </ErrorBoundary>
-          <div style={{ fontSize:11, fontWeight:800, color:T.gold, textTransform:"uppercase", letterSpacing:2, marginTop:16, marginBottom:8 }}>
-            🎒 Utility Belts
-          </div>
+          <SectionLabel color={T.gold}>Utility Belts</SectionLabel>
           <ErrorBoundary>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {UTILITY_BELTS.map((b) => (
-                <UtilityBeltCard key={b.id} belt={b} onPractice={onPractice} names={name ? [name] : [""]} />
-              ))}
-            </div>
+            {UTILITY_BELTS.map(b => (
+              <BeltCard key={b.id} belt={b} onPractice={onPractice} onStepBelt={() => {}} carrierName={name || null} />
+            ))}
           </ErrorBoundary>
         </div>
       )}
 
-      <button type="button" className="no-print" onClick={onExit}
-        style={{ width:"100%", marginTop:24, padding:"12px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`, borderRadius:T.radius, color:T.textDim, fontSize:13, fontWeight:700, cursor:"pointer" }}>
-        ← Exit Study Mode (back to full playbook)
-      </button>
+      {picking && (
+        <div onClick={() => setPicking(false)} style={{ position:"fixed", inset:0, background:"#000c",
+          zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            background: T.bgPanel, border: `1px solid ${T.borderAlt}`, borderRadius: 12,
+            maxWidth: 400, width: "100%" }}>
+            <div style={{ padding: "14px 16px", borderBottom: `1px solid ${T.border}` }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: T.gold, letterSpacing: 2, textTransform: "uppercase" }}>Study Sheet</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: T.textPri, marginTop: 2 }}>Who is studying?</div>
+            </div>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 6 }}>
+              {names.filter(Boolean).map((n, i) => (
+                <button key={i} type="button" className="pa-btn-hov"
+                  onClick={() => { setName(n); setPicking(false); }}
+                  style={{ padding: "12px 14px", background: T.bg, border: `1px solid ${T.borderLt}`,
+                    borderRadius: 6, color: T.textPri, fontSize: 14, fontWeight: 700, cursor: "pointer", textAlign: "left" }}>
+                  {n}
+                </button>
+              ))}
+              {names.filter(Boolean).length === 0 && (
+                <div style={{ fontSize: 12, color: T.textDim, padding: "6px 4px", lineHeight: 1.5 }}>
+                  Add player names in Roster to personalize the sheet.
+                </div>
+              )}
+              <button type="button" className="pa-btn-hov"
+                onClick={() => { setName(""); setPicking(false); }}
+                style={{ padding: "10px 14px", background: T.bgPanel, border: `1px dashed ${T.borderLt}`,
+                  borderRadius: 6, color: T.textDim, fontSize: 12, fontWeight: 700, cursor: "pointer", textAlign: "center" }}>
+                Anonymous
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  MAIN APP
-// ═══════════════════════════════════════════════════════════════
+// ── ROSTER MODAL ────────────────────────────────────────────────
+
+function RosterModal({ open, onClose, names, onChange }) {
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000c",
+      zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: T.bgPanel, border: `1px solid ${T.borderAlt}`, borderRadius: 12,
+        maxWidth: 460, width: "100%" }}>
+        <div style={{ padding: "14px 16px", borderBottom: `1px solid ${T.border}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 800, color: T.accent, letterSpacing: 2, textTransform: "uppercase" }}>
+              Team Roster
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: T.textPri, marginTop: 2 }}>
+              Names appear on belts &amp; the study sheet
+            </div>
+          </div>
+          <button type="button" onClick={onClose} style={{ background: "transparent", border: "none",
+            color: T.textDim, fontSize: 22, cursor: "pointer", padding: 0, lineHeight: 1 }}>✕</button>
+        </div>
+        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 8 }}>
+          {[0, 1, 2, 3, 4].map(i => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 28, fontSize: 10, fontWeight: 800, color: T.textDim, letterSpacing: 1 }}>P{i + 1}</div>
+              <input type="text" placeholder={i === 0 ? "Belt carrier (default)" : "Player"}
+                value={names[i] || ""}
+                onChange={e => { const next = [...names]; next[i] = e.target.value; onChange(next); }}
+                style={{
+                  flex: 1, boxSizing: "border-box",
+                  background: T.bg, border: `1px solid ${T.borderLt}`, borderRadius: T.radiusSm,
+                  color: T.textPri, fontSize: 13, padding: "9px 12px",
+                  fontFamily: T.fontUI, outline: "none",
+                }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ROSTER NUDGE ────────────────────────────────────────────────
+
+function RosterNudge({ onOpen, onDismiss }) {
+  return (
+    <div style={{
+      background: T.bgPanel, border: `1px solid ${T.accent}40`,
+      borderRadius: T.radius, padding: "14px 16px",
+      display: "flex", gap: 12, alignItems: "flex-start",
+    }}>
+      <span style={{ fontSize: 24 }}>👥</span>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: T.textPri }}>Add your team&apos;s names</div>
+        <div style={{ fontSize: 11, color: T.textDim, marginTop: 4, lineHeight: 1.5 }}>
+          The belt carrier&apos;s name appears on Utility Belt cards, and you can share a personalized Study Sheet with each player.
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+          <button type="button" className="pa-btn-hov" onClick={onOpen}
+            style={{
+              background: T.accent + "22", border: `1px solid ${T.accent}50`,
+              borderRadius: T.radiusSm, color: T.accent, fontSize: 11, fontWeight: 800,
+              padding: "6px 12px", cursor: "pointer",
+            }}>Add names</button>
+          <button type="button" onClick={onDismiss}
+            style={{
+              background: "transparent", border: "none",
+              color: T.textDim, fontSize: 11, fontWeight: 700, padding: "6px 8px", cursor: "pointer",
+            }}>Not now</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── HEADER ───────────────────────────────────────────────────────
+
+function Header({ mapLabel, side, onSide, onOpenMaps, onOpenRoster, tab, onTab }) {
+  return (
+    <div style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: T.bg + "f5",
+      backdropFilter: "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      borderBottom: `1px solid ${T.border}`,
+    }}>
+      <div className="pa-shell">
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", flexWrap: "wrap", justifyContent: "space-between" }}>
+          <div className="pa-brand" style={{ alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <div style={{
+              width: 30, height: 30, borderRadius: 7,
+              background: `linear-gradient(135deg, ${T.accent}, ${T.accent}88)`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 16, fontWeight: 900, color: "#001a10",
+              boxShadow: `0 0 0 1px ${T.accent}40`,
+              flexShrink: 0,
+            }}>◆</div>
+            <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15, flexShrink: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: T.textHighlight, letterSpacing: -0.2, whiteSpace: "nowrap" }}>
+                CS2 Playbook
+              </div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: T.textDim, letterSpacing: 1.2, marginTop: 3, whiteSpace: "nowrap", fontFamily: T.fontMono }}>
+                UTILITY · v1
+              </div>
+            </div>
+          </div>
+
+          <button type="button" className="pa-btn-hov" onClick={onOpenMaps}
+            style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: T.bgPanel, border: `1px solid ${T.borderLt}`,
+              cursor: "pointer", color: T.textPri,
+              padding: "8px 14px", borderRadius: T.radius, flexShrink: 0,
+            }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: T.textDim, letterSpacing: 2, textTransform: "uppercase" }}>Map</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ fontSize: 16, fontWeight: 900, color: T.textHighlight, letterSpacing: -0.3 }}>{mapLabel}</div>
+              <span style={{ color: T.textDim, fontSize: 11 }}>▾</span>
+            </div>
+          </button>
+
+          <TabBar tab={tab} onTab={onTab} variant="top" />
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+            <SideToggle side={side} onSideChange={onSide} />
+            <button type="button" className="pa-btn-hov" onClick={onOpenRoster}
+              title="Team roster"
+              style={{
+                background: T.bgPanel, border: `1px solid ${T.borderLt}`,
+                borderRadius: T.radius, color: T.textSec, fontSize: 14,
+                height: 36, padding: "0 12px", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 6, fontWeight: 800,
+              }}>
+              <span style={{ fontSize: 14 }}>👥</span>
+              <span style={{ fontSize: 11, letterSpacing: 1 }}>ROSTER</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TAB BAR ──────────────────────────────────────────────────────
+
+function TabBar({ tab, onTab, variant = "bottom" }) {
+  const tabs = [
+    { id: "playbook", label: "Playbook", glyph: "◆" },
+    { id: "study",    label: "Study",    glyph: "★" },
+    { id: "train",    label: "Train",    glyph: "▲" },
+  ];
+  if (variant === "top") {
+    return (
+      <div className="pa-tabbar-top" style={{
+        gap: 4, padding: "4px", background: T.bgPanel, border: `1px solid ${T.borderLt}`,
+        borderRadius: T.radius, flexShrink: 0,
+      }}>
+        {tabs.map(t => {
+          const active = tab === t.id;
+          return (
+            <button key={t.id} type="button" className="pa-btn-hov"
+              onClick={() => onTab(t.id)}
+              style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: active ? T.accent + "20" : "transparent",
+                border: `1px solid ${active ? T.accent + "50" : "transparent"}`,
+                borderRadius: T.radiusSm,
+                color: active ? T.accent : T.textSec,
+                padding: "6px 12px", cursor: "pointer",
+                fontSize: 12, fontWeight: 800, letterSpacing: 0.5,
+              }}>
+              <span style={{ fontSize: 14, opacity: active ? 1 : 0.6 }}>{t.glyph}</span>
+              <span>{t.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+  return (
+    <div className="pa-tabbar-bottom" style={{
+      position: "sticky", bottom: 0, zIndex: 50,
+      background: T.bgPanel, borderTop: `1px solid ${T.border}`,
+      padding: "6px 4px 10px",
+    }}>
+      {tabs.map(t => {
+        const active = tab === t.id;
+        return (
+          <button key={t.id} type="button" className="pa-btn-hov"
+            onClick={() => onTab(t.id)}
+            style={{
+              flex: 1, background: "transparent", border: "none",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+              padding: "8px 4px", cursor: "pointer",
+              color: active ? T.accent : T.textDim,
+            }}>
+            <span style={{ fontSize: 18, lineHeight: 1, opacity: active ? 1 : 0.55 }}>{t.glyph}</span>
+            <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: 1, textTransform: "uppercase" }}>{t.label}</span>
+            <span style={{
+              width: 16, height: 2, borderRadius: 1,
+              background: active ? T.accent : "transparent", marginTop: 1,
+            }} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  APP
+// ══════════════════════════════════════════════════════════════════
+
+function useToast() {
+  const [msg, setMsg] = useState(null);
+  return { msg, set: setMsg, clear: useCallback(() => setMsg(null), []) };
+}
 
 export default function CS2Playbook() {
+  const [tab, setTab] = useState("playbook");
+  const [side, setSide] = useState("T");
+  const [filter, setFilter] = useState("ALL");
   const [currentMap, setCurrentMap] = useState(() => {
     const saved = readStorage("cs2_current_map", "ancient");
     return SELECTABLE_MAP_IDS.includes(saved) ? saved : "ancient";
   });
   const [mapData, setMapData] = useState(null);
-  /** null | "fallback" | "fatal" */
   const [mapLoadError, setMapLoadError] = useState(null);
-  const [side, setSide] = useState("T");
+  const [mapsOpen, setMapsOpen] = useState(false);
+  const [rosterOpen, setRosterOpen] = useState(false);
+  const [rosterDismissed, setRosterDismissed] = useState(false);
   const [names, setNames] = useState(() => {
     const stored = readJsonStorage("cs2_player_names", null);
-    if (Array.isArray(stored) && stored.length === 5 && stored.every((v) => typeof v === "string")) {
-      return stored;
-    }
+    if (Array.isArray(stored) && stored.length === 5 && stored.every((v) => typeof v === "string")) return stored;
     return ["", "", "", "", ""];
   });
-  const [showRoster, setShowRoster] = useState(false);
-  const [showLineupRef, setShowLineupRef] = useState(false);
-  const [areaFilter, setAreaFilter] = useState("ALL");
-  const [roundFilter, setRoundFilter] = useState("ALL");
-  const [practiceId, setPracticeId] = useState(null);
-  const [view, setView] = useState("playbook"); // "playbook", "map", or "study"
-  const [section, setSection] = useState("maps"); // "maps" or "training"
-  // studyName tri-state: null = off, "" = anonymous sheet, non-empty string = named sheet
-  const [studyName, setStudyName] = useState(null);
-  const [studyPickerOpen, setStudyPickerOpen] = useState(false);
-  const [lineupSearch, setLineupSearch] = useState("");
+  const [practice, setPractice] = useState(null);
+  const toast = useToast();
 
+  const mapLabel = getMapLabel(currentMap);
+  const carrierName = names.find(n => n && n.trim()) || null;
+  const showRosterNudge = !rosterDismissed && !names.some(n => n && n.trim());
+
+  // Load map data
   useEffect(() => {
     let cancelled = false;
-    const requested = currentMap;
     setMapData(null);
     setMapLoadError(null);
-
     (async () => {
       try {
-        const mod = await loadMapModule(requested);
-        if (!cancelled && requested === currentMap) {
-          setMapData(mod);
-          setMapLoadError(null);
-        }
-      } catch (err) {
+        const mod = await loadMapModule(currentMap);
+        if (!cancelled) { setMapData(mod); setMapLoadError(null); }
+      } catch {
         if (cancelled) return;
-        if (import.meta.env.DEV) console.warn("[loadMapModule]", requested, err);
         try {
           const mod = await loadMapModule("ancient");
-          if (!cancelled && requested === currentMap) {
-            setMapData(mod);
-            setMapLoadError("fallback");
-          }
-        } catch (err2) {
-          if (import.meta.env.DEV) console.warn("[loadMapModule] ancient fallback failed", err2);
-          if (!cancelled && requested === currentMap) setMapLoadError("fatal");
+          if (!cancelled) { setMapData(mod); setMapLoadError("fallback"); }
+        } catch {
+          if (!cancelled) setMapLoadError("fatal");
         }
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [currentMap]);
 
-  const switchMap = useCallback((id) => {
-    setCurrentMap(id);
-    setSide("T");
-    setAreaFilter("ALL");
-    setRoundFilter("ALL");
-    setShowLineupRef(false);
-    setLineupSearch("");
-    setPracticeId(null);
-    writeStorage("cs2_current_map", id);
-  }, []);
-
-  // On mount: read ?map= ?lineup= ?p= URL params
+  // URL params
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const mapParam = params.get("map");
       const lineupParam = params.get("lineup");
-      const hasStudy = params.has("p");
-      if (mapParam || lineupParam || hasStudy) setSection("maps");
       if (mapParam && SELECTABLE_MAP_IDS.includes(mapParam)) setCurrentMap(mapParam);
-      if (hasStudy) setStudyName(params.get("p") ?? "");
       if (lineupParam) {
-        setView("playbook");
-        setShowLineupRef(true);
-        setPracticeId(lineupParam);
+        setPractice({ type: "single", ids: [lineupParam], currentIdx: 0, title: null });
       }
-    } catch (err) {
-      if (import.meta.env.DEV) console.warn("[App] URL param parse failed", err);
-    }
+      if (params.has("p")) setTab("study");
+    } catch { /* ignore */ }
   }, []);
 
-  // Sync study mode to URL
-  useEffect(() => {
-    try {
-      const url = new URL(window.location.href);
-      if (studyName === null) {
-        url.searchParams.delete("p");
-      } else {
-        url.searchParams.set("p", studyName);
-      }
-      window.history.replaceState({}, "", url.toString());
-    } catch (err) {
-      if (import.meta.env.DEV) console.warn("[App] study URL sync failed", err);
-    }
-  }, [studyName]);
-
-  // Debounced localStorage write for names
+  // Persist names
   useEffect(() => {
     const handle = setTimeout(() => writeJsonStorage("cs2_player_names", names), 300);
     return () => clearTimeout(handle);
   }, [names]);
 
-  const mapAreas = useMemo(() => {
-    const areas = new Set();
-    for (const L of Object.values(mapData?.LINEUPS || {})) {
-      if (L.area) areas.add(L.area);
-    }
-    return ["ALL", ...Array.from(areas).sort()];
+  const handlePractice = useCallback((id) => {
+    setPractice({ type: "single", ids: [id], currentIdx: 0, title: null });
+  }, []);
+
+  const handleStepCombo = useCallback((comboId) => {
+    if (!mapData) return;
+    const c = mapData.COMBOS.find(x => x.id === comboId);
+    if (!c) return;
+    setPractice({ type: "combo", ids: c.lineups.map(l => l.lineup), currentIdx: 0, title: c.name });
   }, [mapData]);
 
-  const filteredCombos = useMemo(
-    () =>
-      (mapData?.COMBOS || []).filter(
-        (c) => c.side === side && (roundFilter === "ALL" || c.roundTypes?.includes(roundFilter))
-      ),
-    [side, roundFilter, mapData]
-  );
-  const filteredBelts = useMemo(
-    () =>
-      (mapData?.UTILITY_BELTS || []).filter(
-        (b) => b.side === side && (roundFilter === "ALL" || b.roundTypes?.includes(roundFilter))
-      ),
-    [side, roundFilter, mapData]
-  );
-  const filteredScenarios = useMemo(
-    () => (mapData?.SCENARIOS || []).filter((s) => s.side === side),
-    [side, mapData]
-  );
-  const filteredLineups = useMemo(() => {
-    const q = lineupSearch.trim().toLowerCase();
-    let all = Object.values(mapData?.LINEUPS || {}).filter((l) => l.side === side);
-    if (areaFilter !== "ALL") all = all.filter((l) => l.area === areaFilter);
-    if (q) {
-      all = all.filter(
-        (l) =>
-          l.name?.toLowerCase().includes(q) ||
-          l.area?.toLowerCase().includes(q) ||
-          l.util?.toLowerCase().includes(q) ||
-          l.id?.toLowerCase().includes(q)
-      );
+  const handleStepBelt = useCallback((beltId) => {
+    if (!mapData) return;
+    const b = mapData.UTILITY_BELTS.find(x => x.id === beltId);
+    if (!b) return;
+    setPractice({ type: "belt", ids: b.sequence.map(s => s.lineup), currentIdx: 0, title: b.name });
+  }, [mapData]);
+
+  const pickMap = useCallback((id) => {
+    if (id !== currentMap) {
+      setCurrentMap(id);
+      setMapsOpen(false);
+      writeStorage("cs2_current_map", id);
+      const nameNew = getMapLabel(id);
+      toast.set(side !== "T" ? `${nameNew} · side reset to T` : nameNew);
+      if (side !== "T") setSide("T");
+      setFilter("ALL");
+      setPractice(null);
+    } else {
+      setMapsOpen(false);
     }
-    return all;
-  }, [side, areaFilter, lineupSearch, mapData]);
+  }, [currentMap, side, toast]);
 
-  const openPractice = useCallback((id) => setPracticeId(id), []);
-  const closePractice = useCallback(() => setPracticeId(null), []);
-
-  // Close top-most modal on Escape
+  // Escape handler
   useEffect(() => {
     const h = (e) => {
       if (e.key !== "Escape") return;
-      if (practiceId) { setPracticeId(null); return; }
-      if (showRoster) { setShowRoster(false); return; }
-      if (studyPickerOpen) { setStudyPickerOpen(false); setView("playbook"); }
+      if (practice) { setPractice(null); return; }
+      if (rosterOpen) { setRosterOpen(false); return; }
+      if (mapsOpen) { setMapsOpen(false); }
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [practiceId, showRoster, studyPickerOpen]);
-
-  const updateName = useCallback((i, value) => {
-    setNames((prev) => {
-      const next = [...prev];
-      next[i] = value;
-      return next;
-    });
-  }, []);
-
-  const openStudyMode = useCallback((name) => {
-    setStudyName(name);
-    setStudyPickerOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-  const exitStudyMode = useCallback(() => {
-    setStudyName(null);
-    setView("playbook");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }, [practice, rosterOpen, mapsOpen]);
 
   const mapLoading = mapData === null && mapLoadError !== "fatal";
   const mapLoadFatal = mapLoadError === "fatal";
 
-  // Study mode takes over the whole view (from URL param)
-  if (studyName !== null) {
-    return (
-      <MapDataContext.Provider value={mapData}>
-        {mapLoadFatal ? (
-          <div style={{ padding: 24, textAlign: "center", color: T.danger, fontSize: 13 }}>
-            Could not load map data. Reload the page or try again later.
-          </div>
-        ) : mapLoading ? (
-          <div style={{ padding: 24, textAlign: "center", color: T.textSec, fontSize: 13 }}>
-            Loading map data…
-          </div>
-        ) : (
-          <StudySheetView name={studyName} onExit={exitStudyMode} onPractice={openPractice} />
-        )}
-        {practiceId && mapData && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
-      </MapDataContext.Provider>
-    );
-  }
-
-  const namedCount = names.filter((n) => n && n.trim()).length;
-  const mapLabel = getMapLabel(currentMap);
-
   return (
     <MapDataContext.Provider value={mapData}>
-    <div style={{ fontFamily:T.fontUI, background:T.bg, color:T.textPri, minHeight:"100vh", maxWidth:720, margin:"0 auto", paddingBottom:40 }}>
-      {/* Header with gear icon for roster */}
-      <div style={{ background:`linear-gradient(180deg,${T.bgInstr},${T.bg})`, borderBottom:`1px solid ${T.border}`, padding:"16px 16px 10px", position:"relative" }}>
-        <div style={{ textAlign:"center" }}>
-          <div style={{ fontSize:10, fontWeight:900, color:T.accent, letterSpacing:4, textTransform:"uppercase", marginBottom:2 }}>
-            CS2 UTILITY PLAYBOOK
-          </div>
-          <div style={{ fontSize:18, fontWeight:900, color:T.textHighlight, letterSpacing:-.5 }}>
-            {section === "training" ? "Training" : mapLabel}
-          </div>
-        </div>
-        <button onClick={() => setShowRoster(true)}
-          style={{
-            position:"absolute", top:16, right:16,
-            background:"transparent", border:`1px solid ${T.borderLt}`, borderRadius:6,
-            color: namedCount > 0 ? T.textSec : T.textDim,
-            fontSize:10, fontWeight:800, cursor:"pointer", padding:"5px 8px",
-            display:"flex", alignItems:"center", gap:4, letterSpacing:0.5,
-          }}
-          title="Team Roster">
-          <span style={{ fontSize:14, lineHeight:1 }}>⚙</span>
-          <span>TEAM</span>
-        </button>
-      </div>
+    <div style={{
+      minHeight: "100vh", background: T.bg, color: T.textPri,
+      fontFamily: T.fontUI, display: "flex", flexDirection: "column",
+    }}>
+      <Header
+        mapLabel={mapLabel} side={side} onSide={setSide}
+        onOpenMaps={() => setMapsOpen(true)}
+        onOpenRoster={() => setRosterOpen(true)}
+        tab={tab} onTab={setTab}
+      />
 
-      {/* Top-level nav: Maps | Training */}
-      <div style={{ display:"flex", gap:0, padding:"0 14px", marginTop:0, borderBottom:`1px solid ${T.border}` }}>
-        {[
-          { id: "maps",     label: "Maps" },
-          { id: "training", label: "Training" },
-        ].map((s) => {
-          const active = section === s.id;
-          return (
-            <button key={s.id} onClick={() => {
-              setSection(s.id);
-              if (s.id === "training") {
-                setStudyPickerOpen(false);
-                setView("playbook");
-              }
-            }}
-              style={{
-                flex:1, padding:"10px 8px", fontSize:13, fontWeight:900, cursor:"pointer",
-                background:"transparent", border:"none",
-                borderBottom: active ? `2px solid ${T.accent}` : "2px solid transparent",
-                color: active ? T.accent : T.textDim, letterSpacing:1.5,
-              }}>
-              {s.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* TRAINING section */}
-      {section === "training" && <TrainingView />}
-
-      {section === "maps" && mapLoadFatal && (
-        <div style={{ padding: 32, textAlign: "center", color: T.danger, fontSize: 13 }}>
-          Could not load map data. Reload the page or pick another map.
-        </div>
-      )}
-
-      {section === "maps" && mapLoading && (
-        <div style={{ padding: 32, textAlign: "center", color: T.textSec, fontSize: 13 }}>
-          Loading {mapLabel}…
-        </div>
-      )}
-
-      {/* MAPS section */}
-      {section === "maps" && !mapLoading && !mapLoadFatal && (
-        <>
-          {mapLoadError === "fallback" && (
-            <div style={{ margin:"12px 14px 0", padding:"10px 12px", background:`${T.gold}12`, border:`1px solid ${T.gold}40`, borderRadius:T.radius, fontSize:12, color:T.textGold, lineHeight:1.5 }}>
-              Could not load {mapLabel}. Showing Ancient data instead — try another map or reload.
+      <div className="pa-shell" style={{ flex: 1, width: "100%" }}>
+        <div className="pa-content">
+          {mapLoadFatal && (
+            <div style={{ padding: 32, textAlign: "center", color: T.danger, fontSize: 13 }}>
+              Could not load map data. Reload the page or pick another map.
             </div>
           )}
 
-          {/* Map selector — 4-col grid keeps both rows even */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:6, padding:"12px 14px 0" }}>
-            {MAP_LIST.map((m) => {
-              const active = currentMap === m.id;
-              const pool = getMapPool(m.id);
-              return (
-                <button key={m.id} onClick={() => switchMap(m.id)}
-                  title={pool === "bonus" ? "Bonus map (not in the active Premier pool)" : undefined}
-                  style={{
-                    padding:"11px 6px", fontSize:12, fontWeight:900, cursor:"pointer",
-                    background: active ? T.accent+"18" : T.bgCard,
-                    border: `2px solid ${active ? T.accent+"70" : T.borderLt}`,
-                    borderRadius:8, color: active ? T.accent : T.textSec,
-                    letterSpacing:0.5, transition:"all 0.15s",
-                  }}>
-                  {m.label}
-                  {pool === "bonus" && (
-                    <span style={{ display:"block", fontSize:8, fontWeight:700, color:T.gold, marginTop:2, letterSpacing:0.5 }}>
-                      BONUS
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          {mapLoading && (
+            <div style={{ padding: 32, textAlign: "center", color: T.textSec, fontSize: 13 }}>
+              Loading {mapLabel}…
+            </div>
+          )}
 
-          {/* View tabs: Playbook | Map | Study */}
-          <div style={{ display:"flex", gap:0, padding:"0 14px", marginTop:10, borderBottom:`1px solid ${T.border}` }}>
-            {[
-              { id: "playbook", label: "Playbook" },
-              { id: "map",      label: "Map" },
-              { id: "study",    label: "Study" },
-            ].map((tab) => {
-              const active = tab.id === "study"
-                ? (view === "study" || studyPickerOpen)
-                : view === tab.id;
-              return (
-                <button key={tab.id} onClick={() => {
-                  if (tab.id === "study") {
-                    setView("study");
-                    setStudyPickerOpen(true);
-                  } else {
-                    setStudyPickerOpen(false);
-                    setView(tab.id);
-                  }
-                }}
-                  style={{
-                    flex:1, padding:"10px 8px", fontSize:13, fontWeight:900, cursor:"pointer",
-                    background:"transparent", border:"none",
-                    borderBottom: active ? `2px solid ${T.accent}` : "2px solid transparent",
-                    color: active ? T.accent : T.textDim, letterSpacing:1.5,
-                  }}>
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+          {mapLoadError === "fallback" && mapData && (
+            <div style={{ marginBottom: 14, padding: "10px 12px", background: `${T.gold}12`, border: `1px solid ${T.gold}40`, borderRadius: T.radius, fontSize: 12, color: T.textGold, lineHeight: 1.5 }}>
+              Could not load {mapLabel}. Showing Ancient data instead.
+            </div>
+          )}
 
-          {/* MAP VIEW */}
-          {view === "map" && (
+          {mapData && !mapLoadFatal && tab === "playbook" && (
             <>
-              <div style={{ padding:"0 14px" }}>
-                <SideToggle side={side} onSideChange={setSide} />
-              </div>
-              <InteractiveMap side={side} onPractice={openPractice} />
+              {showRosterNudge && (
+                <div style={{ marginBottom: 14 }}>
+                  <RosterNudge onOpen={() => setRosterOpen(true)} onDismiss={() => setRosterDismissed(true)} />
+                </div>
+              )}
+              <PlaybookView
+                side={side} filter={filter} onFilter={setFilter}
+                onPractice={handlePractice}
+                onStepCombo={handleStepCombo}
+                onStepBelt={handleStepBelt}
+                carrierName={carrierName}
+              />
             </>
           )}
 
-          {/* PLAYBOOK VIEW */}
-          {view === "playbook" && (
-          <div style={{ padding:"0 14px" }}>
-            <SideToggle
-              side={side}
-              onSideChange={setSide}
-              resetFilters={() => { setAreaFilter("ALL"); setRoundFilter("ALL"); }}
-            />
-
-            {/* Round-type filter — applies to Combos and Utility Belts only, not All Lineups below */}
-            <div style={{ display:"flex", gap:6, marginTop:8, flexWrap:"wrap" }}>
-              {[["ALL", "ALL"], ["PISTOL", "PISTOL"], ["ECO", "ECO"], ["FORCE", "FORCE"], ["FULL", "FULL"]].map(([key, label]) => {
-                const active = roundFilter === key;
-                const color = ROUND_TYPES[key]?.color || T.accent;
-                return (
-                  <button key={key} onClick={() => setRoundFilter(key)}
-                    style={{
-                      flex:1, minWidth:55, padding:"6px 4px", fontSize:10, fontWeight:800, cursor:"pointer",
-                      background: active ? color + "15" : T.bgCard,
-                      border: `1px solid ${active ? color + "40" : T.borderLt}`,
-                      borderRadius:T.radiusSm,
-                      color: active ? color : T.textDim,
-                      letterSpacing:1,
-                    }}>
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <MustLearnSection onPractice={openPractice} />
-
-            {/* Combos */}
-            {filteredCombos.length > 0 && (
-              <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:11, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
-                  Combos — 2-3 player setups
-                </div>
-                <ErrorBoundary>
-                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {filteredCombos.map((c) => (
-                      <ComboCard key={c.id} combo={c} onPractice={openPractice} />
-                    ))}
-                  </div>
-                </ErrorBoundary>
-              </div>
-            )}
-
-            {/* Utility Belts */}
-            {filteredBelts.length > 0 && (
-              <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:11, fontWeight:800, color:T.gold, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
-                  🎒 Utility Belts
-                </div>
-                <ErrorBoundary>
-                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {filteredBelts.map((b) => (
-                      <UtilityBeltCard key={b.id} belt={b} onPractice={openPractice} names={names} />
-                    ))}
-                  </div>
-                </ErrorBoundary>
-              </div>
-            )}
-
-            {filteredCombos.length === 0 && filteredBelts.length === 0 && (
-              <div style={{ marginTop:20, padding:16, textAlign:"center", background:T.bgPanel, border:`1px solid ${T.border}`, borderRadius:T.radius, color:T.textDim, fontSize:12 }}>
-                No combos or belts match the current round filter. Try clearing the filter.
-              </div>
-            )}
-
-            {/* Scenarios */}
-            {filteredScenarios.length > 0 && (
-              <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:11, fontWeight:800, color:T.textDim, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
-                  Scenarios
-                </div>
-                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-                  {filteredScenarios.map((s) => <ScenarioCard key={s.id} scenario={s} />)}
-                </div>
-              </div>
-            )}
-
-            {/* All lineups reference */}
-            <div style={{ marginTop:24 }}>
-              <button onClick={() => setShowLineupRef(!showLineupRef)}
-                style={{ width:"100%", padding:"10px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`,
-                  borderRadius:T.radius, color:T.textSec, fontSize:13, fontWeight:700, cursor:"pointer",
-                  display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                <span>All {side}-Side Lineups ({filteredLineups.length})</span>
-                <span style={{ fontSize:10 }}>{showLineupRef ? "HIDE ▲" : "SHOW ▼"}</span>
-              </button>
-              {showLineupRef && (
-                <div style={{ marginTop:8 }}>
-                  <input
-                    type="search"
-                    placeholder="Search lineups by name, area, util…"
-                    value={lineupSearch}
-                    onChange={(e) => setLineupSearch(e.target.value)}
-                    aria-label="Search lineups"
-                    style={{
-                      width:"100%", marginBottom:8, padding:"8px 10px", fontSize:13,
-                      background:T.bg, border:`1px solid ${T.borderAlt}`, borderRadius:T.radiusSm,
-                      color:T.textPri, outline:"none",
-                    }}
-                  />
-                  <div style={{ display:"flex", gap:6, marginBottom:8 }}>
-                    {mapAreas.map((area) => (
-                      <button key={area} onClick={() => setAreaFilter(area)}
-                        style={{
-                          flex:1, padding:"6px 8px", fontSize:11, fontWeight:800, cursor:"pointer",
-                          background: areaFilter === area ? T.bgActiveFilter : T.bgCard,
-                          border: `1px solid ${areaFilter === area ? T.accent + "40" : T.borderLt}`,
-                          borderRadius:T.radiusSm,
-                          color: areaFilter === area ? T.accent : T.textDim,
-                          letterSpacing:1,
-                        }}>
-                        {area.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                  <ErrorBoundary>
-                    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-                      {filteredLineups.map((L) => (
-                        <LineupCard key={L.id} lineupId={L.id} onPractice={openPractice} />
-                      ))}
-                    </div>
-                  </ErrorBoundary>
-                </div>
-              )}
-            </div>
-
-            {/* Throw type reference */}
-            <div style={{ marginTop:20, background:T.bgPanel, border:`1px solid ${T.border}`, borderRadius:T.radius, padding:12 }}>
-              <div style={{ fontSize:11, fontWeight:900, color:T.textMute, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
-                Throw Types
-              </div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-                {Object.entries(THROW).map(([k, t]) => (
-                  <div key={k}
-                    style={{ display:"flex", alignItems:"center", gap:4, background:T.bg, borderRadius:T.radiusSm, padding:"3px 7px", border:`1px solid ${t.color}18` }}>
-                    <ThrowBadge type={k} />
-                    <span style={{ fontSize:10, color:T.textDim }}>{t.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ marginTop:8, fontSize:11, color:T.textDim, lineHeight:1.5, padding:8, background:T.bg, borderRadius:T.radiusSm, border:`1px solid ${T.border}` }}>
-                <strong style={{ color:T.jumpBind }}>Jump Throw Bind:</strong>{" "}
-                <code style={{ color:T.accent, background:`${T.accent}0f`, padding:"1px 4px", borderRadius:2, fontFamily:"monospace", fontSize:10 }}>
-                  alias "+jt" "+jump;+attack"; alias "-jt" "-jump;-attack"; bind "v" "+jt"
-                </code>
-                <br />
-                Hold left-click → press V (jump throw).
-              </div>
-            </div>
-          </div>
+          {mapData && !mapLoadFatal && tab === "study" && (
+            <StudyView side={side} names={names.filter(Boolean)} onPractice={handlePractice} />
           )}
-        </>
-      )}
 
-      {/* Practice Modal */}
-      {practiceId && mapData && <PracticeModal lineupId={practiceId} onClose={closePractice} />}
-
-      {/* Team Roster Modal */}
-      {showRoster && (
-        <div onClick={() => setShowRoster(false)}
-          style={{ position:"fixed", inset:0, background:"#000c", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
-          <div onClick={(e) => e.stopPropagation()}
-            style={{ background:T.bgPanel, border:`1px solid ${T.borderAlt}`, borderRadius:12, maxWidth:400, width:"100%" }}>
-            <div style={{ padding:"14px 16px", borderBottom:`1px solid ${T.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-              <div>
-                <div style={{ fontSize:10, fontWeight:800, color:T.accent, letterSpacing:2, textTransform:"uppercase" }}>Settings</div>
-                <div style={{ fontSize:15, fontWeight:800, color:T.textPri, marginTop:2 }}>Team Roster</div>
-              </div>
-              <button onClick={() => setShowRoster(false)}
-                style={{ background:"transparent", border:"none", color:T.textDim, fontSize:24, cursor:"pointer", padding:0, lineHeight:1 }}>
-                ✕
-              </button>
-            </div>
-            <div style={{ padding:14, display:"flex", flexDirection:"column", gap:6 }}>
-              <div style={{ fontSize:11, color:T.textDim, marginBottom:4 }}>
-                Names persist across reloads. The first name becomes the default belt carrier.
-              </div>
-              {names.map((n, i) => (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <span style={{ color:T.textDim, fontSize:10, fontWeight:800, fontFamily:"monospace", minWidth:30 }}>P{i + 1}</span>
-                  <input type="text" placeholder={`Player ${i + 1}...`} value={n}
-                    onChange={(e) => updateName(i, e.target.value)}
-                    style={{ flex:1, background:T.bg, border:`1px solid ${T.borderAlt}`, borderRadius:T.radiusSm,
-                      padding:"5px 8px", color:T.textPri, fontSize:13, outline:"none" }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          {tab === "train" && <TrainingView />}
         </div>
-      )}
+      </div>
 
-      {/* Study Picker Modal */}
-      {studyPickerOpen && (
-        <StudyPicker
-          names={names}
-          onPick={openStudyMode}
-          onClose={() => {
-            setStudyPickerOpen(false);
-            setView("playbook");
-          }}
-        />
+      <TabBar tab={tab} onTab={setTab} variant="bottom" />
+
+      <MapSheet open={mapsOpen} onClose={() => setMapsOpen(false)}
+        current={currentMap} onPick={pickMap} />
+      <RosterModal open={rosterOpen} onClose={() => setRosterOpen(false)}
+        names={names} onChange={setNames} />
+      {practice && mapData && (
+        <PracticeModal context={practice} onClose={() => setPractice(null)} />
       )}
+      <Toast msg={toast.msg} onDone={toast.clear} />
     </div>
     </MapDataContext.Provider>
   );

@@ -5,7 +5,7 @@ import { screen, waitFor } from "@testing-library/react";
 export async function waitForMapLoaded() {
   await waitFor(
     () => {
-      expect(screen.getAllByText(/Must Learn — The Core 5/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/MUST LEARN/i).length).toBeGreaterThan(0);
     },
     { timeout: 3000 }
   );

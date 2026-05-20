@@ -10,14 +10,15 @@ describe("SideToggle", () => {
     const resetFilters = vi.fn();
     render(<SideToggle side="T" onSideChange={onSideChange} resetFilters={resetFilters} />);
 
-    await user.click(screen.getByRole("button", { name: /CT SIDE/i }));
+    await user.click(screen.getByRole("tab", { name: "CT" }));
     expect(onSideChange).toHaveBeenCalledWith("CT");
     expect(resetFilters).toHaveBeenCalled();
   });
 
-  it("renders T and CT attack/defend labels", () => {
+  it("renders T and CT tabs", () => {
     render(<SideToggle side="CT" onSideChange={() => {}} />);
-    expect(screen.getAllByRole("button", { name: /T SIDE/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: /CT SIDE/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("tab", { name: "T" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "CT" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "CT" })).toHaveAttribute("aria-selected", "true");
   });
 });

@@ -23,26 +23,36 @@ describe("App regression guards", () => {
   it("shows Must Learn for every Premier map after switching", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getAllByText(/Must Learn — The Core 5/i).length).toBeGreaterThan(0);
-    });
+    await waitForMapLoaded();
+
     for (const id of PREMIER_MAP_IDS) {
       const label = MAPS[id].label;
-      await user.click(screen.getAllByRole("button", { name: label })[0]);
-      expect(screen.getAllByText(/Must Learn — The Core 5/i).length).toBeGreaterThan(0);
-      expect(screen.getAllByText(/Combos — 2-3 player setups/i).length).toBeGreaterThan(0);
+      // Open map sheet
+      const mapBtn = screen.getAllByText(/Ancient|Dust II|Inferno|Mirage|Nuke|Anubis|Overpass/i)[0].closest("button");
+      await user.click(mapBtn);
+      await waitFor(() => {
+        expect(screen.getByText(/SWITCH MAP/i)).toBeInTheDocument();
+      });
+      await user.click(screen.getAllByText(label).find(el => el.closest("[style*='grid']"))?.closest("button") || screen.getAllByText(label)[0].closest("button"));
+      await waitFor(() => {
+        expect(screen.getAllByText(/MUST LEARN/i).length).toBeGreaterThan(0);
+      });
+      expect(screen.getAllByText(/Combos/i).length).toBeGreaterThan(0);
     }
   }, 20000);
 
-  it("renders a map button for every MAP_LIST entry", async () => {
+  it("renders all Premier maps in map sheet", async () => {
+    const user = userEvent.setup();
     render(<App />);
     await waitForMapLoaded();
+    // Open map sheet
+    const mapBtn = screen.getAllByText(/Ancient/i)[0].closest("button");
+    await user.click(mapBtn);
+    await waitFor(() => {
+      expect(screen.getByText(/SWITCH MAP/i)).toBeInTheDocument();
+    });
     for (const m of MAP_LIST) {
-      if (m.id === "cache") {
-        expect(screen.getByRole("button", { name: /Cache/i })).toBeInTheDocument();
-      } else {
-        expect(screen.getAllByRole("button", { name: m.label }).length).toBeGreaterThan(0);
-      }
+      expect(screen.getAllByText(m.label).length).toBeGreaterThan(0);
     }
   });
 
@@ -50,8 +60,8 @@ describe("App regression guards", () => {
     const user = userEvent.setup();
     render(<App />);
     await waitForMapLoaded();
-    await user.click(screen.getAllByRole("button", { name: "PISTOL" })[0]);
-    await user.click(screen.getAllByRole("button", { name: "FULL" })[0]);
-    expect(screen.getAllByRole("button", { name: "FULL" }).length).toBeGreaterThan(0);
+    await user.click(screen.getAllByText("PIST")[0]);
+    await user.click(screen.getAllByText("FULL")[0]);
+    expect(screen.getAllByText("FULL").length).toBeGreaterThan(0);
   });
 });
