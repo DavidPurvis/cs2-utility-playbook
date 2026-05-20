@@ -203,8 +203,8 @@ function LineupRow({ lineupId, who, onPractice }) {
         {who && <div style={{ fontSize:11, color:T.textDim, marginTop:2 }}>{who}</div>}
       </div>
       <button onClick={(e) => { e.stopPropagation(); onPractice(lineupId); }}
-        style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:10, fontWeight:800, padding:"4px 8px", cursor:"pointer", whiteSpace:"nowrap" }}>
-        PRACTICE
+        style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
+        Practice
       </button>
     </div>
   );
@@ -318,8 +318,8 @@ function UtilityBeltCard({ belt, onPractice, names }) {
                   </div>
                   <button onClick={(e) => { e.stopPropagation(); onPractice(s.lineup); }}
                     style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-                      color:T.accent, fontSize:10, fontWeight:800, padding:"4px 8px", cursor:"pointer", whiteSpace:"nowrap" }}>
-                    PRACTICE
+                      color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
+                    Practice
                   </button>
                 </div>
               );
@@ -402,8 +402,8 @@ function MustLearnSection({ onPractice, big }) {
               </div>
               <button onClick={() => onPractice(id)}
                 style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-                  color:T.accent, fontSize: big ? 12 : 10, fontWeight:800, padding: big ? "8px 14px" : "5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
-                PRACTICE
+                  color:T.accent, fontSize: big ? 12 : 11, fontWeight:800, padding: big ? "8px 14px" : "5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
+                {big ? "PRACTICE" : "Practice"}
               </button>
             </div>
           );
@@ -437,8 +437,8 @@ function LineupCard({ lineupId, onPractice }) {
         <div style={{ fontSize:13, fontWeight:700, color:T.textPri }}>{L.name}</div>
         <button onClick={(e) => { e.stopPropagation(); onPractice(lineupId); }}
           style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm,
-            color:T.accent, fontSize:10, fontWeight:800, padding:"4px 8px", cursor:"pointer", whiteSpace:"nowrap" }}>
-          PRACTICE
+            color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap" }}>
+          Practice
         </button>
       </div>
       {open && (
@@ -816,8 +816,8 @@ function InteractiveMap({ side, onPractice }) {
                     <div style={{ fontSize:11, color:T.textDim, marginTop:2, lineHeight:1.4 }}>{L.purpose}</div>
                   </div>
                   <button onClick={() => onPractice(L.id)}
-                    style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:10, fontWeight:800, padding:"6px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
-                    PRACTICE
+                    style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
+                    Practice
                   </button>
                 </div>
               ))}
@@ -881,8 +881,8 @@ function InteractiveMap({ side, onPractice }) {
                   <div style={{ fontSize:11, color:T.textDim, marginTop:2, lineHeight:1.4 }}>{L.purpose}</div>
                 </div>
                 <button onClick={() => onPractice(L.id)}
-                  style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:10, fontWeight:800, padding:"6px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
-                  PRACTICE
+                  style={{ background:T.accent+"15", border:`1px solid ${T.accent}40`, borderRadius:T.radiusSm, color:T.accent, fontSize:11, fontWeight:800, padding:"5px 10px", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0 }}>
+                  Practice
                 </button>
               </div>
             ))}
@@ -1266,10 +1266,12 @@ export default function CS2Playbook() {
             position:"absolute", top:16, right:16,
             background:"transparent", border:`1px solid ${T.borderLt}`, borderRadius:6,
             color: namedCount > 0 ? T.textSec : T.textDim,
-            fontSize:16, cursor:"pointer", padding:"4px 8px", lineHeight:1,
+            fontSize:10, fontWeight:800, cursor:"pointer", padding:"5px 8px",
+            display:"flex", alignItems:"center", gap:4, letterSpacing:0.5,
           }}
           title="Team Roster">
-          ⚙
+          <span style={{ fontSize:14, lineHeight:1 }}>⚙</span>
+          <span>TEAM</span>
         </button>
       </div>
 
@@ -1324,8 +1326,8 @@ export default function CS2Playbook() {
             </div>
           )}
 
-          {/* Map selector — large, prominent */}
-          <div style={{ display:"flex", gap:6, padding:"12px 14px 0", flexWrap:"wrap" }}>
+          {/* Map selector — 4-col grid keeps both rows even */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:6, padding:"12px 14px 0" }}>
             {MAP_LIST.map((m) => {
               const active = currentMap === m.id;
               const pool = getMapPool(m.id);
@@ -1333,7 +1335,7 @@ export default function CS2Playbook() {
                 <button key={m.id} onClick={() => switchMap(m.id)}
                   title={pool === "bonus" ? "Bonus map (not in the active Premier pool)" : undefined}
                   style={{
-                    flex:"1 1 90px", padding:"12px 6px", fontSize:12, fontWeight:900, cursor:"pointer",
+                    padding:"11px 6px", fontSize:12, fontWeight:900, cursor:"pointer",
                     background: active ? T.accent+"18" : T.bgCard,
                     border: `2px solid ${active ? T.accent+"70" : T.borderLt}`,
                     borderRadius:8, color: active ? T.accent : T.textSec,
@@ -1351,7 +1353,7 @@ export default function CS2Playbook() {
           </div>
 
           {/* View tabs: Playbook | Map | Study */}
-          <div style={{ display:"flex", gap:0, padding:"0 14px", marginTop:10 }}>
+          <div style={{ display:"flex", gap:0, padding:"0 14px", marginTop:10, borderBottom:`1px solid ${T.border}` }}>
             {[
               { id: "playbook", label: "Playbook" },
               { id: "map",      label: "Map" },
@@ -1371,12 +1373,10 @@ export default function CS2Playbook() {
                   }
                 }}
                   style={{
-                    flex:1, padding:"10px 8px", fontSize:12, fontWeight:800, cursor:"pointer",
-                    background: active ? T.bgPanel : T.bg,
-                    border: `1px solid ${active ? T.accent+"40" : T.borderLt}`,
-                    borderBottom: active ? `2px solid ${T.accent}` : `1px solid ${T.borderLt}`,
-                    borderRadius: "6px 6px 0 0",
-                    color: active ? T.accent : T.textDim, letterSpacing:1,
+                    flex:1, padding:"10px 8px", fontSize:13, fontWeight:900, cursor:"pointer",
+                    background:"transparent", border:"none",
+                    borderBottom: active ? `2px solid ${T.accent}` : "2px solid transparent",
+                    color: active ? T.accent : T.textDim, letterSpacing:1.5,
                   }}>
                   {tab.label}
                 </button>
@@ -1397,15 +1397,11 @@ export default function CS2Playbook() {
           {/* PLAYBOOK VIEW */}
           {view === "playbook" && (
           <div style={{ padding:"0 14px" }}>
-            <MustLearnSection onPractice={openPractice} />
-
-            <div style={{ marginTop:16 }}>
-              <SideToggle
-                side={side}
-                onSideChange={setSide}
-                resetFilters={() => { setAreaFilter("ALL"); setRoundFilter("ALL"); }}
-              />
-            </div>
+            <SideToggle
+              side={side}
+              onSideChange={setSide}
+              resetFilters={() => { setAreaFilter("ALL"); setRoundFilter("ALL"); }}
+            />
 
             {/* Round-type filter — applies to Combos and Utility Belts only, not All Lineups below */}
             <div style={{ display:"flex", gap:6, marginTop:8, flexWrap:"wrap" }}>
@@ -1427,6 +1423,8 @@ export default function CS2Playbook() {
                 );
               })}
             </div>
+
+            <MustLearnSection onPractice={openPractice} />
 
             {/* Combos */}
             {filteredCombos.length > 0 && (
@@ -1482,7 +1480,7 @@ export default function CS2Playbook() {
             <div style={{ marginTop:24 }}>
               <button onClick={() => setShowLineupRef(!showLineupRef)}
                 style={{ width:"100%", padding:"10px 14px", background:T.bgCard, border:`1px solid ${T.borderLt}`,
-                  borderRadius:T.radius, color:"#7788aa", fontSize:13, fontWeight:700, cursor:"pointer",
+                  borderRadius:T.radius, color:T.textSec, fontSize:13, fontWeight:700, cursor:"pointer",
                   display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <span>All {side}-Side Lineups ({filteredLineups.length})</span>
                 <span style={{ fontSize:10 }}>{showLineupRef ? "HIDE ▲" : "SHOW ▼"}</span>
@@ -1506,7 +1504,7 @@ export default function CS2Playbook() {
                       <button key={area} onClick={() => setAreaFilter(area)}
                         style={{
                           flex:1, padding:"6px 8px", fontSize:11, fontWeight:800, cursor:"pointer",
-                          background: areaFilter === area ? "#0d1a28" : T.bgCard,
+                          background: areaFilter === area ? T.bgActiveFilter : T.bgCard,
                           border: `1px solid ${areaFilter === area ? T.accent + "40" : T.borderLt}`,
                           borderRadius:T.radiusSm,
                           color: areaFilter === area ? T.accent : T.textDim,
@@ -1529,7 +1527,7 @@ export default function CS2Playbook() {
 
             {/* Throw type reference */}
             <div style={{ marginTop:20, background:T.bgPanel, border:`1px solid ${T.border}`, borderRadius:T.radius, padding:12 }}>
-              <div style={{ fontSize:10, fontWeight:900, color:T.textMute, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
+              <div style={{ fontSize:11, fontWeight:900, color:T.textMute, textTransform:"uppercase", letterSpacing:2, marginBottom:8 }}>
                 Throw Types
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
@@ -1537,7 +1535,7 @@ export default function CS2Playbook() {
                   <div key={k}
                     style={{ display:"flex", alignItems:"center", gap:4, background:T.bg, borderRadius:T.radiusSm, padding:"3px 7px", border:`1px solid ${t.color}18` }}>
                     <ThrowBadge type={k} />
-                    <span style={{ fontSize:10, color:"#667788" }}>{t.label}</span>
+                    <span style={{ fontSize:10, color:T.textDim }}>{t.label}</span>
                   </div>
                 ))}
               </div>

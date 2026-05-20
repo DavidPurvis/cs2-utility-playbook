@@ -55,7 +55,7 @@ export function TrainingView() {
       <div style={{ marginTop: 16 }}>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: 900,
             color: T.textDim,
             textTransform: "uppercase",
@@ -96,7 +96,7 @@ export function TrainingView() {
       <div style={{ marginTop: 24 }}>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: 900,
             color: T.textDim,
             textTransform: "uppercase",
