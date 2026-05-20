@@ -66,11 +66,11 @@ CI runs `npm run lint`, `npm test`, `npm run test:metrics`, and `npm run build` 
 npm run validate   # lint + full test suite + production build + dist checks
 ```
 
-**Deploy** — Pushes to `main` or `master` run [.github/workflows/deploy.yml](./.github/workflows/deploy.yml) and publish `dist/` to **GitHub Pages** at:
+**Deploy** — Merge a PR into `main` (or push to `main`/`master`) to run [.github/workflows/deploy.yml](./.github/workflows/deploy.yml) and publish `dist/` to **GitHub Pages**:
 
-`https://<your-github-user>.github.io/cs2-utility-playbook/`
+**https://davidpurvis.github.io/cs2-utility-playbook/**
 
-Enable Pages in the repo: **Settings → Pages → Source: GitHub Actions**.
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. If deploy fails at `configure-pages` with HTTP 404, Pages is not enabled yet.
 
 | Production feature | Detail |
 |--------------------|--------|
