@@ -208,6 +208,18 @@ Two audits were compared against the current tree. **Stale** findings (already f
 | 2026-05-20 | Initial `PROJECT_CONTEXT.md`: vision, R-001–R-011, engineering decisions, snapshot, maintenance rules |
 | 2026-05-20 | R-012 production: lazy maps, ESLint, deploy workflow, validate pipeline, manifest, print CSS, v1.0.0 |
 | 2026-05-20 | R-013 audit reconciliation: ScreenshotGallery extract, ytSearch dedup, data honesty fixes, config ignores |
+| 2026-05-20 | R-014 GitHub Pages: enable Pages (workflow source); fix deploy workflow permissions; live at davidpurvis.github.io/cs2-utility-playbook |
+
+---
+
+### R-014 — GitHub Pages deploy (2026-05-20)
+
+| Item | Detail |
+|------|--------|
+| **Symptom** | `deploy.yml` failed at `configure-pages` with HTTP 404 — Pages not enabled on repo |
+| **Fix** | Enable Pages via API/settings (source: GitHub Actions); remove invalid `administration: write` from workflow (broke workflow validation on push) |
+| **Live URL** | https://davidpurvis.github.io/cs2-utility-playbook/ |
+| **Deploy trigger** | Merge to `main` or `workflow_dispatch` |
 
 ---
 
