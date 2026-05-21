@@ -18,6 +18,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:scripts": "node --test scripts/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "new-lineup": "node scripts/new-lineup.mjs",
     "new-scenario": "node scripts/new-scenario.mjs",
     "validate": "npm run typecheck && npm run lint && npm test && npm run test:scripts && vite build"
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.6.1",

@@ -1,6 +1,8 @@
 # User Requirements Document — Dust 2 Playbook
 
-> **Status:** DRAFT v1. **Owner review required.** Every item below was extracted from your direct statements over the conversation. The point of this document is to give you a single artifact you can correct, amend, or reject so we both know we are building the same product.
+> **Status:** DRAFT v2 (2026-05-21). **Owner review required.** Every item below was extracted from your direct statements over the conversation. The point of this document is to give you a single artifact you can correct, amend, or reject so we both know we are building the same product.
+>
+> **Intended audience:** another LLM (Claude Code, or any future implementer) reading ONLY this file should be able to rebuild the playbook from scratch — without copying the existing source — and arrive at the same observable behavior. If a requirement can't be understood without reading the codebase, it's wrong and needs amending.
 >
 > **How to review:** for each requirement, the row contains the requirement statement, the literal quote it was extracted from, the conversation moment, my interpretation, and the current implementation status. The right-hand "Owner verdict" column is blank — write KEEP / AMEND / DROP / ADD next to each, or annotate inline.
 >
@@ -64,6 +66,11 @@ Owner verdict: ____________________
 | **FR-11** | The spawn picker zooms in by default so individual spawns (S1..S15) are distinguishable. | ✓ Implemented (`SpawnPicker.tsx` uses `spawnClusterBounds`) | "Have the spawns more zoomed in on so it's easier to distinguish which spawn is which" |
 | **FR-12** | Spawn picker is a visual reference only; not a filter. | ✓ Implemented (no proximity filter; sets `pickedSpawnId` only) | v6 reframe — see §11 change log entry C-4 |
 | **FR-13** | A list view of lineups must be available as an alternative to the map view. | ✗ Not implemented in v6 — the v5 utility list/map toggle was removed in Phase 2 and not re-added | "Include a way for utility can be look at in a list view instead of a map as an alternative" |
+| **FR-14** | Each spawn dot's label must be prefixed by its side (`t-1`, `ct-3`) — never ambiguous on voice. | ✓ Implemented (data + render) | "Let's label the spawns ct-1, ct-2, t-1, t-2, etc. denoting which spawn it is so there is no miscommunication" |
+| **FR-15** | Spawn dots and number labels render with a black outline (halo + text stroke) so they stay legible on the radar's green/grey backgrounds. | ✓ Implemented | "Lets add black borders to the spawn icons as well as the number so it doesn't get blended too much into the background" |
+| **FR-16** | Clicking on a spawn always selects THAT spawn — never an adjacent one. The visible dot is the click target; oversized hit zones that overlap neighbors are forbidden. | ✓ Implemented + locked by E2E test | "the clickable area for each spawn is off where you have to press off the spawn to actually select it" |
+| **FR-17** | When CT side is selected, a CT position guide appears below the spawn picker. Lists common roles (A anchor, B anchor, Mid, AWP, Rotator) with description + spawn hint + utility focus paragraph + clickable lineup chips. Loose guidance, not hyper-specific. | ✓ Implemented | "When I switch to ct side I want to know nades should I know based on the position I am playing: like b anchor, a anchor, holding mid, lurking, etc.. It should be easier to assign positions for ct. This does not need to be hyper specific but more as these would be helpful to know if you are playing here kind of thing." |
+| **FR-18** | The radar PNG background must always render. Missing radar must surface as a visible error placeholder, not silent blank. | ✓ Implemented + locked by E2E test | "The map in the background is no longer loading either." |
 
 ⚠ **FR-13 is the most likely true miss.** You explicitly asked for a list view; v6 currently surfaces lineups only through scenario steps and the 2×2 walkthrough modal. There is no flat-list browser of every lineup. Confirm whether this is still wanted.
 
@@ -82,6 +89,8 @@ Owner verdict: ____________________
 | **NFR-5** | Mobile-responsive; 2×2 walkthrough stays 2×2 even on phone (not collapsed to 1×4). | ◐ CSS in place; not eyeball-verified on a real 375px device | v6 plan derivation from "visual learners" framing |
 | **NFR-6** | Initial load <3 seconds on residential broadband. | ✓ Bundle is 13 KB gzip; well under target | v6 plan inference |
 | **NFR-7** | Screenshots co-located in repo (no CDN hot-links). | ✓ Implemented (30 webp files in `public/screenshots/`) | Stress-test derivation: "I can manually scrap and recreate lineup and I can pass the screenshots manually into config file" implies local storage |
+| **NFR-8** | **Testing must be exhaustive — visual + interaction + unit + script + data integrity, all enforced.** Every reported bug becomes a regression test. CI must catch the bug before a human sees it. | ◐ Implemented: 76 vitest + 11 node:test + 12 Playwright E2E (incl. visual snapshots, click hit-area, radar load) | "Drastically increase testing. I want the testing of this program to be so absolute, comprehensive, and exhaustive so that there can be no way that this website does not behave exactly the way you would want it to act." |
+| **NFR-9** | Visual regression must be possible — i.e. there is a mechanism to detect when a screenshot changes unintentionally. | ✓ Implemented via Playwright `toHaveScreenshot` w/ pixel-diff baselines under `tests/e2e/__screenshots__/`. | "We might need to develop a way of analyzing a screenshots of the website to ensure that it looks correct because I have tons of issues like that in the past." |
 
 Owner verdict: ____________________
 
@@ -186,7 +195,11 @@ Owner verdict on each: ____________________
 | **PR-5** | Question every fundamental. | ✓ ADRs document why each choice |
 | **PR-6** | "Go fully autistic" — direct, no hedging, no emotional softening. | ◐ This document is the attempt. |
 | **PR-7** | No mistakes. | ◐ Will be judged by you. |
-| **PR-8** | 10-agent analysis of the current state. | ⏳ In progress — findings synthesized in companion message |
+| **PR-8** | 10-agent analysis of the current state. | ✓ Done — see V6_AUDIT_FINDINGS.md |
+| **PR-9** | This document is portable — Claude Code or any LLM should be able to rebuild from URD alone, no implementation hints inside. | ◐ Intent acknowledged; portability verified by writing CLEAN_ROOM_BRIEF.md as a companion |
+| **PR-10** | An intermediary layer of design docs exists so the owner can verify alignment WITHOUT reading code. | ✓ Three-hat structure: this URD (BA hat) + SOLUTION_DESIGN.md (Architect hat) + DECISIONS_LEDGER.md (Annoying junior hat). |
+| **PR-11** | Every reported bug becomes a regression test. | ✓ Spawn hitbox (E2E) and radar load (E2E) tests added the same turn as the fix. |
+| **PR-12** | Constantly iterate on this URD — it is the source of truth. | ✓ This v2 was written immediately after the spawn fix landed. |
 
 Owner verdict on each: ____________________
 

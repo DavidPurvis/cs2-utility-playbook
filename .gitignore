@@ -4,3 +4,7 @@ dist/
 *.log
 .vite/
 .claude/
+
+# Playwright artifacts (baseline screenshots ARE committed; test-results and reports are not)
+test-results/
+playwright-report/
