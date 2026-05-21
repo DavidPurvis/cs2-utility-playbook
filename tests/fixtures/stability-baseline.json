@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "note": "Bump counts deliberately when adding map content. Failures mean regression or incomplete data.",
+  "totals": {
+    "mapsInRegistry": 8,
+    "premierMaps": 7,
+    "minLineupsAllMaps": 148,
+    "minLineupsPremier": 148,
+    "maxValidationErrors": 0,
+    "maxWarnings": 200
+  },
+  "stabilityFloors": {
+    "overallScoreMin": 75,
+    "dataIntegrityMin": 100,
+    "premierCompletenessMin": 100,
+    "mediaQualityMin": 0
+  },
+  "premier": {
+    "ancient": { "lineups": 22, "combos": 6, "belts": 2, "scenarios": 9, "positions": 15, "spawnSlots": 10 },
+    "dust2": { "lineups": 17, "combos": 5, "belts": 2, "scenarios": 10, "positions": 12, "spawnSlots": 10 },
+    "inferno": { "lineups": 17, "combos": 6, "belts": 2, "scenarios": 10, "positions": 11, "spawnSlots": 10 },
+    "mirage": { "lineups": 20, "combos": 6, "belts": 2, "scenarios": 10, "positions": 12, "spawnSlots": 10 },
+    "nuke": { "lineups": 15, "combos": 6, "belts": 2, "scenarios": 10, "positions": 10, "spawnSlots": 10 },
+    "anubis": { "lineups": 16, "combos": 6, "belts": 2, "scenarios": 10, "positions": 8, "spawnSlots": 10 },
+    "overpass": { "lineups": 19, "combos": 6, "belts": 2, "scenarios": 10, "positions": 13, "spawnSlots": 10 }
+  },
+  "bonus": {
+    "cache": { "lineups": 22, "combos": 6, "belts": 2, "scenarios": 10, "positions": 8, "spawnSlots": 10 }
+  },
+  "parity": {
+    "premierMinCombos": 5,
+    "premierMinBelts": 2,
+    "premierMinScenarios": 8,
+    "premierMinPositions": 8,
+    "premierMinSpawnSlots": 10,
+    "premierMinLineups": 12,
+    "mustLearnCount": 5
+  }
+}

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    open: false,
+    open: true,
   },
   build: {
     sourcemap: "hidden",
@@ -14,39 +14,31 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("/data/") && !id.includes("mapMeta") && !id.includes("loadMapModule")) {
+            const match = id.match(/data\/([^.]+)\.js/);
+            if (match) return `map-${match[1]}`;
+          }
           if (id.includes("node_modules")) return "vendor";
         },
       },
     },
   },
   test: {
-    globals: true,
+    globals: false,
     environment: "node",
-    environmentMatchGlobs: [
-      ["tests/**/*.test.tsx", "jsdom"],
-      ["tests/**/*.test.jsx", "jsdom"],
-    ],
-    setupFiles: ["tests/setup.ts"],
-    include: [
-      "tests/**/*.test.ts",
-      "tests/**/*.test.tsx",
-      "tests/**/*.test.js",
-      "tests/**/*.test.jsx",
-    ],
-    // Forks pool — child-process pool sidesteps tinypool worker_threads
-    // crash observed on Node 24.
+    environmentMatchGlobs: [["tests/**/*.test.jsx", "jsdom"]],
+    setupFiles: ["tests/setup.js"],
+    include: ["tests/**/*.test.js", "tests/**/*.test.jsx"],
+    // Use the child-process pool instead of worker_threads. Vitest 2.1.x ships
+    // tinypool 1.1.x, whose worker-thread path can crash with
+    // "RangeError: Maximum call stack size exceeded" during worker bootstrap
+    // on Node 24 (observed on Node v24.14.0 on macOS). Forks sidestep that
+    // path and run reliably on Node 18/20/22/24.
     pool: "forks",
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary"],
-      include: [
-        "App.tsx",
-        "main.tsx",
-        "lib/**/*.ts",
-        "lib/**/*.tsx",
-        "components/**/*.tsx",
-        "data/**/*.ts",
-      ],
+      include: ["App.jsx", "lib/**/*.js", "context/**/*.jsx", "components/**/*.jsx", "data/**/*.js", "tests/**/*.js"],
     },
   },
 });
