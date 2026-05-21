@@ -64,34 +64,6 @@ export const LINEUPS = {
   },
 
   // ─── T-SIDE A LONG ────────────────────────────────────────
-  long_cross_smoke: {
-    id: "long_cross_smoke",
-    name: "A Long Doors Cross Smoke",
-    util: "SMOKE",
-    throw: "JT",
-    side: "T",
-    area: "A",
-    mustLearn: true,
-    purpose:
-      "Covers the long doors crossing so Ts can push through without being picked by the CT AWP holding from pit or A site.",
-    stand: "Outside long doors on T side, pressed against the left wall near the corner before the double doors.",
-    aim: "Look up and to the right at the top of the doorframe. Aim at the left edge of the crossbar overhead.",
-    notes:
-      "Jump throw. This smoke must bloom before your team crosses the gap at long doors. Two players push long after it lands.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/dust-2/long-doors-smoke",
-    },
-    video: yt("long doors cross smoke"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Lineup.webp",
-        aim: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Lineup.webp",
-        result: "https://assets.cs2util.com/dust2/smoke/A-Cross-Smoke/A-Site-Cross-Smoke-From-LongCorner/A-Site-Cross-Smoke-From-LongCorner-Cover.webp",
-      },
-    radarPos: { x: 80, y: 47.8 },
-    radarTarget: { x: 82, y: 55 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   a_ct_smoke: {
     id: "a_ct_smoke",
@@ -235,61 +207,7 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  b_car_smoke: {
-    id: "b_car_smoke",
-    name: "B Site Car Smoke",
-    util: "SMOKE",
-    throw: "JT",
-    side: "T",
-    area: "B",
-    purpose:
-      "Blocks the B car/platform angle. Isolates the back-site player and makes planting safe behind the big box.",
-    stand: "Upper B tunnels, right side near the archway before exiting to site.",
-    aim: "Look toward B site at a slight upward angle. Place crosshair on the upper edge of the tunnel exit frame.",
-    notes:
-      "Jump throw. Pair with window smoke for a clean 2-smoke B execute.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/dust-2/b-car-smoke",
-    },
-    video: yt("b site car smoke tunnels"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/smoke/b-site/b-site-cutoff-smoke-from-doors1-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/smoke/b-site/b-site-cutoff-smoke-from-doors1-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/smoke/b-site/b-site-cutoff-smoke-from-doors1-cover.webp",
-      },
-    radarPos: { worldX: -1194.91, worldY: 2070.774 },
-    radarTarget: { x: 15, y: 19 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  b_site_molly: {
-    id: "b_site_molly",
-    name: "B Site Anti-Stack Molotov",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    purpose:
-      "Burns out CTs stacking behind the B site box/car. Forces them to give up position before your team enters.",
-    stand: "Upper B tunnels, center of the corridor near the exit.",
-    aim: "Aim high above the tunnel exit — arc the molotov so it lands behind the double stack boxes on B site.",
-    notes:
-      "Left-click full throw. High arc clears the tunnel ceiling. Throw before pushing — the fire forces CTs to reposition.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-dust2-lineups/",
-    },
-    video: yt("b site molly anti stack tunnels"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/molotov/b-site/b-site-back-plat-molotov-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/molotov/b-site/b-site-back-plat-molotov-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/molotov/b-site/b-site-back-plat-molotov-cover.webp",
-      },
-    radarPos: { x: 21, y: 56 },
-    radarTarget: { x: 25, y: 16 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   b_tunnel_flash: {
     id: "b_tunnel_flash",
@@ -319,33 +237,6 @@ export const LINEUPS = {
   },
 
   // ─── T-SIDE MID EXTRAS ────────────────────────────────────
-  mid_to_b_smoke: {
-    id: "mid_to_b_smoke",
-    name: "Mid to B Short Smoke",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "T",
-    area: "Mid",
-    purpose:
-      "Smokes B short/window area when pushing through mid doors toward B. Allows a mid-to-B split.",
-    stand: "In lower mid tunnels, past the xbox area, pressed against the right wall.",
-    aim: "Look toward mid doors at a slight upward angle. Left-click throw toward the B short area.",
-    notes:
-      "Left-click throw. Used for mid-to-B splits. Xbox smoke must already be down.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/dust-2/mid-to-b-smoke",
-    },
-    video: yt("mid to b short smoke"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/smoke/b-site/b-hole-smoke-from-ct-mid-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/smoke/b-site/b-hole-smoke-from-ct-mid-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/smoke/b-site/b-hole-smoke-from-ct-mid-cover.webp",
-      },
-    radarPos: { worldX: -337.031, worldY: 2423.97 },
-    radarTarget: { x: 7.227, y: 31.348 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT SIDE ──────────────────────────────────────────────
   ct_long_doors_smoke: {
@@ -434,88 +325,8 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_b_tuns_molly: {
-    id: "ct_b_tuns_molly",
-    name: "B Tunnels Molotov (Anti-Rush)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "B",
-    purpose:
-      "Burns the B tunnel exit behind your smoke. Smoke + molly combo buys ~25 seconds as a solo B anchor.",
-    stand: "B site, behind big box or on the elevated platform.",
-    aim: "Arc the molotov into the smoke at the tunnel exit — it should land just inside the archway.",
-    notes:
-      "Throw AFTER your smoke is down. Ts pushing through take fire damage and are visible through the smoke edge. Buys time for rotations.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-dust2-lineups/",
-    },
-    video: yt("b tunnels molly anti rush ct"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/molotov/b-site/fence%26close-molotov-from-tunnel-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/molotov/b-site/fence%26close-molotov-from-tunnel-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/molotov/b-site/fence%26close-molotov-from-tunnel-cover.webp",
-      },
-    radarPos: { x: 25, y: 16 },
-    radarTarget: { x: 22, y: 42 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  ct_a_retake_flash: {
-    id: "ct_a_retake_flash",
-    name: "A Long Retake Flash",
-    util: "FLASH",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    purpose:
-      "Flash over A site from CT spawn/short. Catches Ts in post-plant positions — they expect pushes from long or short, not a high flash from CT.",
-    stand: "CT spawn area, approaching A site from the ramp.",
-    aim: "Full throw flash high over the A site — arc it so it pops above the site boxes.",
-    notes: "Call 'flashing A' first. Throw flash, count 1, push together from both CT and short.",
-    source: {
-      name: "BLAST.tv",
-      url: "https://blast.tv/article/cs2-dust2-flashes",
-    },
-    video: yt("a retake flash ct"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/flash/a-long/a-door-retake-flash-from-outside-long-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/flash/a-long/a-door-retake-flash-from-outside-long-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/flash/a-long/a-door-retake-flash-from-outside-long-cover.webp",
-      },
-    radarPos: { worldX: 642.987, worldY: -186.946 },
-    radarTarget: { x: 82, y: 16 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  ct_long_molly: {
-    id: "ct_long_molly",
-    name: "Long Doors Molotov (Anti-Rush)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    purpose:
-      "Burns long doors behind your smoke. Forces Ts to wait or take damage pushing through.",
-    stand: "A site or long corner, with line of sight toward long doors.",
-    aim: "Arc the molotov into your long smoke — it should land just inside the doors on T side.",
-    notes:
-      "Throw AFTER your long smoke is down. Smoke + molly combo. Same principle as B tuns anti-rush.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-dust2-lineups/",
-    },
-    video: yt("long doors molly ct anti rush"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/dust2/molotov/a-site/a-car-molotov-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/dust2/molotov/a-site/a-car-molotov-lineup.webp",
-        result: "https://assets.cs2util.com/dust2/molotov/a-site/a-car-molotov-cover.webp",
-      },
-    radarPos: { worldX: 844.65, worldY: 793.035 },
-    radarTarget: { x: 80, y: 55 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -524,7 +335,6 @@ export const LINEUPS = {
 
 export const MUST_LEARN = [
   "xbox_smoke",
-  "long_cross_smoke",
   "a_ct_smoke",
   "b_window_smoke",
   "ct_long_doors_smoke",
@@ -535,79 +345,7 @@ export const MUST_LEARN = [
 // ═══════════════════════════════════════════════════════════════
 
 export const COMBOS = [
-  {
-    id: "a_long_take",
-    name: "A Long Take",
-    site: "A",
-    side: "T",
-    desc: "Cross smoke + CT smoke + pop flash from long. The standard 2-3 player A Long execute.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"A Long. Cross smoke, CT smoke, flash and go."',
-    lineups: [
-      { lineup: "long_cross_smoke", who: "First player at long doors" },
-      { lineup: "a_ct_smoke", who: "After taking long control, from A Long" },
-      { lineup: "a_long_flash", who: "Anyone with flash, inside long doors" },
-    ],
-    tip: "Push as a pair after the cross smoke blooms. One takes pit, one pushes site. CT smoke goes AFTER you control long.",
-  },
-  {
-    id: "b_rush",
-    name: "B Rush",
-    site: "B",
-    side: "T",
-    desc: "Window smoke + molly + flash. Fast B execute through upper tunnels.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"B rush. Window smoke, molly site, flash and go."',
-    lineups: [
-      { lineup: "b_window_smoke", who: "First player in upper tunnels" },
-      { lineup: "b_site_molly", who: "Second player, from upper tunnels" },
-      { lineup: "b_tunnel_flash", who: "Anyone with flash, behind entry player" },
-    ],
-    tip: "Molly forces the stack player to move. Window smoke blocks the AWP. Flash and push together — don't trickle one by one.",
-  },
-  {
-    id: "mid_split_b",
-    name: "Mid-to-B Split",
-    site: "B",
-    side: "T",
-    desc: "Xbox smoke + mid-to-B smoke. Pinch B from tunnels and mid doors simultaneously.",
-    roundTypes: ["FULL"],
-    callout: '"Mid split B. Xbox down, smoking short, tunnels go on our flash."',
-    lineups: [
-      { lineup: "xbox_smoke", who: "Closest spawn from T spawn" },
-      { lineup: "mid_to_b_smoke", who: "Mid player, after xbox is down" },
-      { lineup: "b_tunnel_flash", who: "Tunnels team, flash and push" },
-    ],
-    tip: "2 push from tunnels, 1-2 push through mid doors. The mid players create chaos while tunnels team gets the plant.",
-  },
-  {
-    id: "ct_b_hold",
-    name: "B Site Hold",
-    site: "B",
-    side: "CT",
-    desc: "Tunnels smoke + molly. Solo B anchor's bread and butter — buys ~25 seconds.",
-    roundTypes: ["FULL"],
-    callout: '"B smoked and mollied. Hold for rotate."',
-    lineups: [
-      { lineup: "ct_b_tuns_smoke", who: "B anchor" },
-      { lineup: "ct_b_tuns_molly", who: "B anchor, AFTER smoke is down" },
-    ],
-    tip: "Don't peek through your own smoke. Play behind box and listen. Call for help early — this buys time but not kills.",
-  },
-  {
-    id: "retake_a",
-    name: "A Site Retake",
-    site: "A",
-    side: "CT",
-    desc: "Flash from CT + push together. Coordinate short and CT spawn pushes.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"A retake. Flashing from CT. Push on 3."',
-    lineups: [
-      { lineup: "ct_a_retake_flash", who: "Rotator from CT spawn" },
-    ],
-    tip: "Push TOGETHER from CT and short simultaneously. Lone peeks lose retakes 80% of the time at our rank.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITY BELTS — one player carries the full execute
@@ -615,45 +353,7 @@ export const COMBOS = [
 // ═══════════════════════════════════════════════════════════════
 
 export const UTILITY_BELTS = [
-  {
-    id: "a_long_belt",
-    name: "A Long Utility Belt",
-    site: "A",
-    side: "T",
-    desc: "One player carries the full A Long execute: 2 smokes + 1 molly + 1 flash (exactly 4 grenades, the CS2 max). No teammate drops needed.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s A belt. Push on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 molly + 1 flash. That's exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "long_cross_smoke", step: 1, note: "From outside long doors. Jump throw. Covers the crossing." },
-      { lineup: "a_ct_smoke", step: 2, note: "After taking long. Jump throw from A Long." },
-      { lineup: "ct_molly_from_long", step: 3, note: "Molly CT spawn. Left click from A Long." },
-      { lineup: "a_long_flash", step: 4, note: "Pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else pushes with the belt carrier through long. First player swings on the flash. Trade on contact. One player watches cat/short for rotations.",
-  },
-  {
-    id: "b_tuns_belt",
-    name: "B Tunnels Utility Belt",
-    site: "B",
-    side: "T",
-    desc: "One player carries the full B execute from upper tunnels: 2 smokes + 1 molly + 1 flash (exactly 4 grenades).",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s B belt. Push on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 molly + 1 flash. That's exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "b_window_smoke", step: 1, note: "From upper tunnels. Jump throw. Blocks window AWP." },
-      { lineup: "b_car_smoke", step: 2, note: "From upper tunnels. Jump throw. Blocks car/platform." },
-      { lineup: "b_site_molly", step: 3, note: "Left click. Burns the stack position." },
-      { lineup: "b_tunnel_flash", step: 4, note: "Pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages in upper tunnels behind the belt carrier. Push on their flash. Plant behind big box. Post-plant positions: tunnels exit, window, back plat.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
@@ -778,15 +478,7 @@ export const SETUP_POSITIONS = [
     lineups: ["xbox_smoke"],
     tip: "Closest spawn throws this every round. THE most important T-side smoke on Dust II.",
   },
-  {
-    id: "outside_long_doors",
-    name: "Outside Long Doors",
-    side: "T",
-    area: "A",
-    pos: { x: 80, y: 47.8 },
-    lineups: ["long_cross_smoke"],
-    tip: "Cross smoke must land before anyone peeks long. Two players push long after the smoke blooms.",
-  },
+  
   {
     id: "a_long_position",
     name: "A Long (After Control)",
@@ -796,6 +488,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_ct_smoke", "ct_molly_from_long"],
     tip: "After taking long control — CT smoke and molly for the full A execute.",
   },
+  
   {
     id: "inside_long_doors",
     name: "Inside Long Doors",
@@ -805,6 +498,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_long_flash"],
     tip: "Pop flash from inside doors. Push immediately after throwing.",
   },
+  
   {
     id: "catwalk_top",
     name: "Catwalk / A Short",
@@ -814,25 +508,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_short_flash"],
     tip: "Pop flash over the staircase wall into A site. Devastating paired with a long push.",
   },
-  {
-    id: "upper_b_tunnels",
-    name: "Upper B Tunnels",
-    side: "T",
-    area: "B",
-    pos: { worldX: -1729.437, worldY: 1064.032 },
-    lineups: ["b_window_smoke", "b_car_smoke", "b_site_molly", "b_tunnel_flash"],
-    tip: "All B execute util comes from upper tunnels. The B equivalent of A Main Corner on Ancient.",
-  },
-  {
-    id: "lower_mid",
-    name: "Lower Mid",
-    side: "T",
-    area: "Mid",
-    pos: { worldX: -337.031, worldY: 2423.97 },
-    lineups: ["mid_to_b_smoke"],
-    tip: "Used for mid-to-B splits. Xbox smoke must already be down before pushing here.",
-  },
-  // ─── CT-SIDE ───────────────────────────────────────────────
+  
   {
     id: "ct_a_site",
     name: "A Site (Defender)",
@@ -842,15 +518,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_long_doors_smoke"],
     tip: "Foundation CT A hold. Smoke long doors early every round.",
   },
-  {
-    id: "ct_a_long_corner",
-    name: "A Long Corner",
-    side: "CT",
-    area: "A",
-    pos: { worldX: 844.65, worldY: 793.035 },
-    lineups: ["ct_long_molly"],
-    tip: "Molly behind your long smoke for full anti-rush denial.",
-  },
+  
   {
     id: "ct_spawn_mid",
     name: "CT Spawn (Mid)",
@@ -860,25 +528,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_mid_smoke"],
     tip: "Smoke mid doors from CT spawn. Good alternative to playing the AWP.",
   },
-  {
-    id: "ct_b_site",
-    name: "B Site (Defender)",
-    side: "CT",
-    area: "B",
-    pos: { worldX: -1765.525, worldY: 2752.159 },
-    lineups: ["ct_b_tuns_smoke", "ct_b_tuns_molly"],
-    tip: "Solo B anchor's lifeline. Smoke + molly buys ~25 seconds for rotations.",
-  },
-  {
-    id: "ct_spawn_a_retake",
-    name: "CT Spawn (A Retake)",
-    side: "CT",
-    area: "A",
-    pos: { worldX: 642.987, worldY: -186.946 },
-    lineups: ["ct_a_retake_flash"],
-    tip: "Flash over A site from CT — push together on the flash pop.",
-  },
-];
+  ];
 
 export const SPAWNS = {
   T: [

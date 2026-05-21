@@ -64,65 +64,8 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  mid_flash: {
-    id: "mid_flash",
-    name: "Mid Flash from T Spawn",
-    util: "FLASH",
-    throw: "LMB",
-    side: "T",
-    area: "Mid",
-    mustLearn: false,
-    purpose:
-      "Pops over the mid archway and blinds any CT peeking mid or holding from Bridge. Enables an aggressive mid push.",
-    stand: "T Spawn mid exit, slightly left of center against the wall.",
-    aim: "Full throw over the archway above mid — aim at the top edge of the stone arch.",
-    notes:
-      "Throw immediately after the Connector smoke. Push mid together the instant it pops.",
-    source: {
-      name: "cs2pulse",
-      url: "https://cs2pulse.com/flash-bangs/anubis/bridge-from-ruins/",
-    },
-    video: yt("mid flash t spawn"),
-    screenshots: {
-      stand:  "https://cs2pulse.com/wp-content/uploads/2024/07/image12-11.png",
-      aim:    "https://cs2pulse.com/wp-content/uploads/2024/07/image6-11.png",
-      result: "https://media.cs2nades.net/uploads/4b3111f1-1e62-4f19-9233-698f8fd604a0_Mid%20from%20T%20Spawn.jpg",
-    },
-    radarPos: { x: 48, y: 74 },
-    radarTarget: { x: 49, y: 60 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── T-SIDE A EXECUTE ────────────────────────────────────
-  a_main_ct_smoke: {
-    id: "a_main_ct_smoke",
-    name: "A Main CT Smoke",
-    util: "SMOKE",
-    throw: "JT",
-    side: "T",
-    area: "A",
-    mustLearn: true,
-    purpose:
-      "Blocks CT rotation from CT spawn/back site into A. Essential for any A execute — isolates defenders already on site.",
-    stand: "Stand in A Main corridor, against the left wall near the first pillar.",
-    aim: "Look up at the gap between the stone blocks on the upper wall. Align crosshair on the dark horizontal line.",
-    notes:
-      "Jump throw. Must land before you push out of A Main. Pairs with Heaven smoke.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/anubis/smoke/t-side",
-    },
-    video: yt("a main ct smoke"),
-    screenshots: {
-      stand:  "https://assets.cs2util.com/anubis/smoke/main/main-smoke-from-ct-spawn-lineup-mini.webp",
-      aim:    "https://assets.cs2util.com/anubis/smoke/main/main-smoke-from-ct-spawn-lineup.webp",
-      result: "https://assets.cs2util.com/anubis/smoke/main/main-smoke-from-ct-spawn-cover.webp",
-    },
-    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/smoke/main-smoke-from-ct-spawn" },
-    radarPos: { worldX: -890.441, worldY: 2157.356 },
-    radarTarget: { x: 21.191, y: 54.785 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   a_heaven_smoke: {
     id: "a_heaven_smoke",
@@ -214,35 +157,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  b_site_molly: {
-    id: "b_site_molly",
-    name: "B Site Default Plant Molotov",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: true,
-    purpose:
-      "Burns the default plant position on B site. Forces any CT hiding near the plant spot to reposition, making the plant safe.",
-    stand: "B Main entrance, against the left wall just before site opens.",
-    aim: "Arc the molotov toward the default plant box — aim above the doorframe and release at the peak.",
-    notes:
-      "Left-click full throw. Flush the plant spot before your planter commits. Essential for clean B takes.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-anubis-utility-guide/",
-    },
-    video: yt("b site default plant molly"),
-    screenshots: {
-      stand:  "https://assets.cs2util.com/anubis/molotov/b-site/back-site-molotov-from-palace-lineup-mini.webp",
-      aim:    "https://assets.cs2util.com/anubis/molotov/b-site/back-site-molotov-from-palace-lineup.webp",
-      result: "https://assets.cs2util.com/anubis/molotov/b-site/back-site-molotov-from-palace-cover.webp",
-    },
-    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/back-site-molotov-from-palace" },
-    radarPos: { worldX: -631.06, worldY: 1193.969 },
-    radarTarget: { x: 72, y: 35 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   b_main_pop_flash: {
     id: "b_main_pop_flash",
@@ -273,35 +187,6 @@ export const LINEUPS = {
   },
 
   // ─── T-SIDE HE ────────────────────────────────────────────
-  b_heaven_he: {
-    id: "b_heaven_he",
-    name: "B Heaven HE from B Main",
-    util: "HE",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Deals 50-80 damage to CTs playing Heaven on B site. Softens defenders before your team swings.",
-    stand: "B Main corridor, middle of the hallway.",
-    aim: "Arc the HE high toward the B Heaven balcony — aim above the exit doorframe.",
-    notes: "Even 40 damage turns the duel in your favor. Throw before your flash.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-anubis-utility-guide/",
-    },
-    video: yt("b heaven he b main"),
-    // NOTE: approximate images — no dedicated HE page exists; stand/aim from B Heaven flash, result from B Pillar. Swap if you find better.
-    screenshots: {
-      stand:  "https://cs2pulse.com/wp-content/uploads/2024/07/image4-11.png",
-      aim:    "https://cs2pulse.com/wp-content/uploads/2024/07/image10-11.png",
-      result: "https://media.cs2nades.net/uploads/97659f17-bdc0-4b9e-8934-88bc057933e2_B%20Pillar%20from%20Ruins.jpg",
-    },
-    screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/flash-bangs/anubis/b-site-from-heaven/" },
-    radarPos: { x: 69, y: 55 },
-    radarTarget: { x: 67, y: 32 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT SIDE ─────────────────────────────────────────────
   ct_mid_smoke: {
@@ -359,100 +244,13 @@ export const LINEUPS = {
       result: "https://media.cs2nades.net/uploads/1bbeb2e7-d9f0-432a-a52b-1a87a19fa42b_A%20Main%20from%20CT%20Spawn.jpg",
     },
     screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/a-main/" },
-    radarPos: { x: 25, y: 38 },
-    radarTarget: { x: 22, y: 50 },
+    radarPos: { worldX: -890.441, worldY: 2157.356 },
+    radarTarget: { x: 21.191, y: 54.785 },
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_b_main_molly: {
-    id: "ct_b_main_molly",
-    name: "B Main Molotov (Anti-Rush)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Molotov into B Main behind your smoke. As a solo B anchor, this is your lifeline — buys time for teammates to rotate.",
-    stand: "B site, behind pillar or on the elevated platform.",
-    aim: "Arc the molotov into B Main behind your smoke — aim through the smoke cloud.",
-    notes:
-      "Smoke + Molly buys ~25 seconds. Almost half the round. Essential for solo anchoring.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/anubis/molotov/ct-side",
-    },
-    video: yt("ct b main molly anti rush"),
-    screenshots: {
-      stand:  "https://assets.cs2util.com/anubis/molotov/doors/doors-molotov-from-b-long-lineup-mini.webp",
-      aim:    "https://assets.cs2util.com/anubis/molotov/doors/doors-molotov-from-b-long-lineup.webp",
-      result: "https://assets.cs2util.com/anubis/molotov/doors/doors-molotov-from-b-long-cover.webp",
-    },
-    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/doors-molotov-from-b-long" },
-    radarPos: { worldX: -1141.254, worldY: -1066.704 },
-    radarTarget: { x: 69, y: 50 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  ct_canal_smoke: {
-    id: "ct_canal_smoke",
-    name: "Canal Smoke",
-    util: "SMOKE",
-    throw: "JT",
-    side: "CT",
-    area: "Mid",
-    mustLearn: false,
-    purpose:
-      "Blocks T push through Canal toward A or mid. Pairs with mid smoke for full middle-of-map lockdown.",
-    stand: "CT spawn or near Bridge, facing Canal entrance.",
-    aim: "Look up at the stone ledge above Canal. Place crosshair on the dark seam between blocks.",
-    notes:
-      "Jump throw. Throw alongside the mid smoke to fully deny T map control through the center.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-anubis-utility-guide/",
-    },
-    video: yt("ct canal smoke"),
-    // NOTE: Canal/T-Stairs smoke — approximate images from adjacent lineup. Swap aim/result if you find a cleaner match.
-    screenshots: {
-      stand:  "https://cs2pulse.com/wp-content/uploads/2023/12/image17-7.png",
-      aim:    "https://cs2pulse.com/wp-content/uploads/2025/06/Anubis-T-Stairs-Smoke-from-CT-Spawn.jpg",
-      result: "https://media.cs2nades.net/uploads/109d5ad2-2176-4044-90fe-1ce3efc50b16_Canals%20from%20CT%20Spawn.jpg",
-    },
-    screenshotSource: { name: "cs2pulse", url: "https://cs2pulse.com/smokes/anubis/t-stairs-from-ct-spawn/" },
-    radarPos: { x: 49, y: 32 },
-    radarTarget: { x: 62, y: 45 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  ct_a_retake_flash: {
-    id: "ct_a_retake_flash",
-    name: "A Retake Flash from CT",
-    util: "FLASH",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Flash over A site walls from CT spawn. Catches Ts off guard in post-plant — they expect attacks from A Main, not from behind.",
-    stand: "CT spawn, approaching A site from the back.",
-    aim: "Full throw flash high over the A site walls — aim at the sky above the wall edge.",
-    notes: "Call 'flashing A' first. Throw flash, count 1, push together.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/anubis/flash/ct-side",
-    },
-    video: yt("ct a retake flash"),
-    screenshots: {
-      stand:  "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-lineup-mini.webp",
-      aim:    "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-lineup.webp",
-      result: "https://assets.cs2util.com/anubis/flash/a-site/a-site-flash-from-boat-cover.webp",
-    },
-    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/flash/a-site-flash-from-boat" },
-    radarPos: { worldX: 1149.969, worldY: 610.028 },
-    radarTarget: { x: 25, y: 38 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_b_retake_flash: {
     id: "ct_b_retake_flash",
@@ -483,35 +281,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_a_main_molly: {
-    id: "ct_a_main_molly",
-    name: "A Main Molotov (Anti-Rush)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Molotov into A Main behind your smoke. Punishes any T pushing through the smoke with fire damage.",
-    stand: "A site, behind cover facing A Main.",
-    aim: "Arc the molotov into A Main behind your smoke cloud.",
-    notes:
-      "Smoke + Molly combo. Anyone pushing through your smoke takes fire damage and is lit up.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/anubis/molotov/ct-side",
-    },
-    video: yt("ct a main molly anti rush"),
-    screenshots: {
-      stand:  "https://assets.cs2util.com/anubis/molotov/a-site/a-site-molotov-from-boat-lineup-mini.webp",
-      aim:    "https://assets.cs2util.com/anubis/molotov/a-site/a-site-molotov-from-boat-lineup.webp",
-      result: "https://assets.cs2util.com/anubis/molotov/a-site/a-site-molotov-from-boat-cover.webp",
-    },
-    screenshotSource: { name: "cs2util", url: "https://www.cs2util.com/anubis/molotov/a-site-molotov-from-boat" },
-    radarPos: { x: 67.5, y: 51 },
-    radarTarget: { x: 22, y: 50 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -520,8 +289,6 @@ export const LINEUPS = {
 
 export const MUST_LEARN = [
   "mid_connector_smoke",
-  "a_main_ct_smoke",
-  "b_site_molly",
   "ct_mid_smoke",
   "a_main_pop_flash",
 ];
@@ -531,77 +298,6 @@ export const MUST_LEARN = [
 // ═══════════════════════════════════════════════════════════════
 
 export const COMBOS = [
-  {
-    id: "mid_control",
-    name: "Mid Control",
-    site: "Mid",
-    side: "T",
-    desc: "Connector smoke + mid flash. Isolates mid and enables a fast push to Bridge or Canal.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"Mid control. Connector smoke, flash, push mid."',
-    lineups: [
-      { lineup: "mid_connector_smoke", who: "Closest to T spawn" },
-      { lineup: "mid_flash", who: "Second player, throws after smoke blooms" },
-    ],
-    tip: "Push mid as a DUO after the flash pops. Don't peek Bridge without clearing angles.",
-  },
-  {
-    id: "a_execute",
-    name: "A Execute",
-    site: "A",
-    side: "T",
-    desc: "CT smoke + Heaven smoke + pop flash. Full A site isolation for a clean plant.",
-    roundTypes: ["FULL"],
-    callout: '"A Execute. CT smoke, Heaven smoke, flash and go."',
-    lineups: [
-      { lineup: "a_main_ct_smoke", who: "Smoke carrier in A Main" },
-      { lineup: "a_heaven_smoke", who: "Same player or second smoke carrier" },
-      { lineup: "a_main_pop_flash", who: "Flasher, behind entry" },
-    ],
-    tip: "Both smokes first, then flash. Entry swings on the flash pop. Trade on contact — don't ego-peek.",
-  },
-  {
-    id: "b_execute",
-    name: "B Execute",
-    site: "B",
-    side: "T",
-    desc: "Pillar/Heaven smoke + default molly + pop flash. Cleanest B take for amateur teams.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"B Execute. Smoke pillar, molly default, flash and go."',
-    lineups: [
-      { lineup: "b_main_smoke", who: "Smoke carrier in B Main" },
-      { lineup: "b_site_molly", who: "Molly carrier, throws after smoke" },
-      { lineup: "b_main_pop_flash", who: "Flasher, behind the pack" },
-    ],
-    tip: "Molly flushes the plant spot, smoke blocks rotations. Push together on flash.",
-  },
-  {
-    id: "ct_mid_lockdown",
-    name: "CT Mid Lockdown",
-    site: "Mid",
-    side: "CT",
-    desc: "Mid smoke + Canal smoke from CT. Fully denies T map control through the center of Anubis.",
-    roundTypes: ["FULL"],
-    callout: '"Mid lockdown. Smoke mid and canal. Hold Bridge."',
-    lineups: [
-      { lineup: "ct_mid_smoke", who: "Player closest to CT spawn back" },
-      { lineup: "ct_canal_smoke", who: "Second player or same player with two smokes" },
-    ],
-    tip: "Don't peek past your smokes. Let the util do the work and hold Bridge/Connector passively.",
-  },
-  {
-    id: "retake_a",
-    name: "A Site Retake",
-    site: "A",
-    side: "CT",
-    desc: "Flash from CT + push together. Catch Ts in post-plant positions.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"A Retake. Flashing from CT. Push on count 3."',
-    lineups: [
-      { lineup: "ct_a_retake_flash", who: "Rotator from CT spawn" },
-    ],
-    tip: "Push TOGETHER. Lone peeks lose retakes 80% of the time at amateur ranks.",
-  },
   {
     id: "retake_b",
     name: "B Site Retake",
@@ -623,44 +319,7 @@ export const COMBOS = [
 // ═══════════════════════════════════════════════════════════════
 
 export const UTILITY_BELTS = [
-  {
-    id: "a_belt",
-    name: "A Site Utility Belt",
-    site: "A",
-    side: "T",
-    desc: "One player carries the full A execute: 2 smokes + 1 molly + 1 flash (exactly 4 grenades). Isolates site and enables a clean plant.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s A belt. We push on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 flash + teammate drops a molly. That fills the 4 grenade carry cap.",
-    sequence: [
-      { lineup: "a_main_ct_smoke", step: 1, note: "From A Main. Jump throw. Blocks CT rotation." },
-      { lineup: "a_heaven_smoke", step: 2, note: "Same position. Jump throw. Blocks Heaven AWP." },
-      { lineup: "a_main_pop_flash", step: 3, note: "Right-click pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages behind the belt carrier in A Main. Push on the flash. One player watches Canal/Mid flank.",
-  },
-  {
-    id: "b_belt",
-    name: "B Site Utility Belt",
-    site: "B",
-    side: "T",
-    desc: "One player carries the full B execute: 1 smoke + 1 molly + 1 HE + 1 flash (exactly 4 grenades). Clears and isolates B site.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s B belt. Push on their flash."',
-    preRound:
-      "Belt carrier buys 1 smoke + 1 molly + 1 HE + 1 flash. Exactly 4 grenades — the CS2 carry cap.",
-    sequence: [
-      { lineup: "b_main_smoke", step: 1, note: "From B Main. Jump throw. Blocks Pillar/Heaven." },
-      { lineup: "b_site_molly", step: 2, note: "Left-click. Burns default plant spot." },
-      { lineup: "b_heaven_he", step: 3, note: "HE toward Heaven. Softens any CT there." },
-      { lineup: "b_main_pop_flash", step: 4, note: "Pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages in B Main behind the belt carrier. Push on the flash. Post-plant from Pillar/Heaven/B Main.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
@@ -776,70 +435,6 @@ export const SCENARIOS = [
 
 export const SETUP_POSITIONS = [
   // ─── T-SIDE ────────────────────────────────────────────────
-  {
-    id: "t_spawn_mid",
-    name: "T Spawn (Mid)",
-    side: "T",
-    area: "Mid",
-    pos: { worldX: 80.03, worldY: -1759.972 },
-    lineups: ["mid_connector_smoke", "mid_flash"],
-    tip: "Closest spawn throws Connector smoke every round. THE most important T-side smoke on Anubis.",
-  },
-  {
-    id: "a_main_corridor",
-    name: "A Main Corridor",
-    side: "T",
-    area: "A",
-    pos: { worldX: -890.441, worldY: 2157.356 },
-    lineups: ["a_main_ct_smoke", "a_heaven_smoke", "a_main_pop_flash"],
-    tip: "Both A smokes and the pop flash come from here. The single most important T-side spot for A executes.",
-  },
-  {
-    id: "b_main_corridor",
-    name: "B Main Corridor",
-    side: "T",
-    area: "B",
-    pos: { worldX: -1245.904, worldY: -336.876 },
-    lineups: ["b_main_smoke", "b_site_molly", "b_main_pop_flash", "b_heaven_he"],
-    tip: "All B execute utility comes from B Main. Smoke, molly, HE, then flash and go.",
-  },
-  // ─── CT-SIDE ───────────────────────────────────────────────
-  {
-    id: "ct_spawn_back",
-    name: "CT Spawn",
-    side: "CT",
-    area: "Mid",
-    pos: { worldX: -368.953, worldY: 2360.851 },
-    lineups: ["ct_mid_smoke", "ct_canal_smoke"],
-    tip: "Foundation CT mid/canal control. Throw both smokes every round for full center lockdown.",
-  },
-  {
-    id: "a_site_ct",
-    name: "A Site (Defender)",
-    side: "CT",
-    area: "A",
-    pos: { x: 25, y: 38 },
-    lineups: ["ct_a_main_smoke", "ct_a_main_molly"],
-    tip: "Smoke + molly A Main for ~25 seconds of denial. Your lifeline as a solo anchor.",
-  },
-  {
-    id: "b_site_ct",
-    name: "B Site (Defender)",
-    side: "CT",
-    area: "B",
-    pos: { worldX: -1141.254, worldY: -1066.704 },
-    lineups: ["ct_b_main_molly"],
-    tip: "Molly B Main behind your smoke. Buys massive time for rotates.",
-  },
-  {
-    id: "ct_near_a",
-    name: "CT Spawn (Near A)",
-    side: "CT",
-    area: "A",
-    pos: { worldX: 1149.969, worldY: 610.028 },
-    lineups: ["ct_a_retake_flash"],
-    tip: "Flash over A site walls from CT — catches Ts off guard in post-plant.",
-  },
   {
     id: "ct_connector",
     name: "CT Connector / Near B",

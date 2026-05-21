@@ -92,34 +92,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  b_site_molly: {
-    id: "b_site_molly",
-    name: "B Site / Dark Molotov",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Burns out CTs hiding in Dark / behind the first pillar on B site. Forces them to rotate to Coffins or New Box.",
-    stand: "Top of Banana, right side against the wall.",
-    aim: "Arc the molotov over the wall toward the dark corner behind the first pillar.",
-    notes:
-      "Left-click throw. Clears the sneaky close angle that kills T entries. Throw after smokes land.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/de_inferno/molotov/t",
-    },
-    video: yt("b site dark corner molotov banana"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/inferno/molotov/bSite/dark-molotov-from-church-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/inferno/molotov/bSite/dark-molotov-from-church-lineup.webp",
-      result: "https://assets.cs2util.com/inferno/molotov/bSite/dark-molotov-from-church-cover.webp",
-    },
-    radarPos: { worldX: 1213.232, worldY: 3201.777 },
-    radarTarget: { x: 45, y: 20 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   banana_close_molly: {
     id: "banana_close_molly",
@@ -150,34 +122,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  banana_flash: {
-    id: "banana_flash",
-    name: "Banana Pop Flash",
-    util: "FLASH",
-    throw: "RMB",
-    side: "T",
-    area: "Banana",
-    mustLearn: false,
-    purpose:
-      "Pop flash over the Banana wall. Blinds CTs holding angles in mid-Banana without blinding your team pushing up behind.",
-    stand: "Bottom of Banana, right side behind the wooden fence.",
-    aim: "Face the left wall of Banana and aim just above the roofline. Right-click underhand throw.",
-    notes:
-      "Right-click — pops almost instantly over the wall. Push immediately after throwing.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/de_inferno/flashbang/t",
-    },
-    video: yt("banana pop flash right click"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/inferno/flash/banana/banana-pop-flash-from-sandbags-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/inferno/flash/banana/banana-pop-flash-from-sandbags-lineup.webp",
-      result: "https://assets.cs2util.com/inferno/flash/banana/banana-pop-flash-from-sandbags-cover.webp",
-    },
-    radarPos: { worldX: 748.049, worldY: 1880.028 },
-    radarTarget: { x: 35, y: 40 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── T-SIDE A SITE ───────────────────────────────────────
   a_pit_smoke: {
@@ -385,63 +329,7 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_banana_molly: {
-    id: "ct_banana_molly",
-    name: "Top Banana Molotov (Anti-Rush)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "Banana",
-    mustLearn: false,
-    purpose:
-      "Burns the top of Banana behind your smoke. Ts pushing through the smoke take fire damage, buying ~25 seconds total.",
-    stand: "B site platform, near the fountain.",
-    aim: "Arc the molotov over the smoke toward the top of Banana, aiming high to clear the buildings.",
-    notes:
-      "Smoke + molly combo. Throw the molly AFTER the smoke lands. This is your lifeline as a solo B anchor.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-inferno-utility-guide/",
-    },
-    video: yt("ct top banana molotov anti rush"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/inferno/molotov/bSite/coffins-molotov-from-half-wall-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/inferno/molotov/bSite/coffins-molotov-from-half-wall-lineup.webp",
-      result: "https://assets.cs2util.com/inferno/molotov/bSite/coffins-molotov-from-half-wall-cover.webp",
-    },
-    radarPos: { worldX: 457.271, worldY: 1833.31 },
-    radarTarget: { x: 35, y: 38 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  ct_arch_flash: {
-    id: "ct_arch_flash",
-    name: "Arch Flash (A Retake)",
-    util: "FLASH",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Flash from Arch side onto A site. Catches Ts off guard during retakes — they expect pushes from Apartments side, not CT/Arch.",
-    stand: "Inside Arch passage, right side, approaching the exit to A site.",
-    aim: "Full throw flash high over the Arch walls toward A site. Left-click throw.",
-    notes:
-      "Call 'flashing A from Arch' first. Push together after the pop. Throw flash, count 1, swing.",
-    source: {
-      name: "NadeKing",
-      url: "https://www.nadeking.com/utility/de_inferno/flashbang/ct",
-    },
-    video: yt("ct arch retake flash a site"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/inferno/flash/mid/a-site-flash-from-mid-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/inferno/flash/mid/a-site-flash-from-mid-lineup.webp",
-      result: "https://assets.cs2util.com/inferno/flash/mid/a-site-flash-from-mid-cover.webp",
-    },
-    radarPos: { worldX: 371.968, worldY: 682.536 },
-    radarTarget: { x: 78, y: 65 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_pit_molly: {
     id: "ct_pit_molly",
@@ -472,34 +360,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_apps_smoke: {
-    id: "ct_apps_smoke",
-    name: "Apartments Smoke from Site",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Blocks Ts from pushing out of Apartments onto A site. Standard defensive smoke for the A anchor.",
-    stand: "A site, behind the default box or near the hay bales.",
-    aim: "Throw toward the Apartments exit doorway. Simple left-click throw.",
-    notes:
-      "Smoke the doorway, then molly behind the smoke to buy time for rotations. The solo A anchor's bread and butter.",
-    source: {
-      name: "BLAST.tv",
-      url: "https://blast.tv/article/cs2-inferno-smokes",
-    },
-    video: yt("ct apartments smoke from a site"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/inferno/smoke/aSite/cart-smoke-from-ct-apts-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/inferno/smoke/aSite/cart-smoke-from-ct-apts-lineup.webp",
-      result: "https://assets.cs2util.com/inferno/smoke/aSite/cart-smoke-from-ct-apts-cover.webp",
-    },
-    radarPos: { worldX: 1481.615, worldY: -274.532 },
-    radarTarget: { x: 60, y: 60 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_b_retake_flash: {
     id: "ct_b_retake_flash",
@@ -549,36 +409,6 @@ export const MUST_LEARN = [
 
 export const COMBOS = [
   {
-    id: "banana_control",
-    name: "Banana Control",
-    site: "Banana",
-    side: "T",
-    desc: "Molly the close angle + smoke CT + pop flash. Takes full Banana control for a B execute or to hold Banana passively.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"Banana control. Molly close, CT smoke, flash and push."',
-    lineups: [
-      { lineup: "banana_close_molly", who: "First player, bottom Banana" },
-      { lineup: "banana_ct_smoke",    who: "Second player, behind cart" },
-      { lineup: "banana_flash",       who: "Anyone with flash, right side" },
-    ],
-    tip: "Molly first to flush the aggro CT, then smoke CT off, then flash and take control. Hold top Banana — don't commit to site until you're ready.",
-  },
-  {
-    id: "b_exec",
-    name: "B Site Execute",
-    site: "B",
-    side: "T",
-    desc: "Full B site take: CT smoke + Coffins smoke + site molly. Three util pieces that isolate every common defensive angle.",
-    roundTypes: ["FULL"],
-    callout: '"B execute. CT smoke, Coffins smoke, site molly. Go go go."',
-    lineups: [
-      { lineup: "banana_ct_smoke",      who: "First player from bottom Banana" },
-      { lineup: "banana_coffins_smoke",  who: "Second player from top Banana" },
-      { lineup: "b_site_molly",          who: "Third player — throw after smokes land" },
-    ],
-    tip: "Wait for both smokes to bloom before pushing. Plant safe for Banana (behind the fountain).",
-  },
-  {
     id: "a_apps_exec",
     name: "A Site Execute (Apartments)",
     site: "A",
@@ -593,34 +423,7 @@ export const COMBOS = [
     ],
     tip: "Smokes first, then flash. Entry player pushes on the flash. Plant default for Apartments post-plant positions.",
   },
-  {
-    id: "b_lockdown_ct",
-    name: "B Banana Lockdown",
-    site: "B",
-    side: "CT",
-    desc: "Banana smoke + top Banana molly. Denies Banana for ~25 seconds. The solo B anchor's bread and butter.",
-    roundTypes: ["FULL"],
-    callout: '"B lockdown. Banana smoke, molly behind it. Hold site."',
-    lineups: [
-      { lineup: "ct_banana_smoke", who: "B anchor from fountain" },
-      { lineup: "ct_banana_molly", who: "Same player, AFTER smoke lands" },
-    ],
-    tip: "Don't peek Banana until your molly is burning. Let the util do the work. Call for rotation if they push through both.",
-  },
-  {
-    id: "a_retake_ct",
-    name: "A Site Retake",
-    site: "A",
-    side: "CT",
-    desc: "Pit molly + Arch flash. Denies Pit post-plant, then flash from an unexpected angle. Two players.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"A retake. Mollying Pit, flashing from Arch. Push on 3."',
-    lineups: [
-      { lineup: "ct_pit_molly",  who: "First — from Library / back site" },
-      { lineup: "ct_arch_flash", who: "Second — from Arch passage" },
-    ],
-    tip: "Push TOGETHER. Lone peeks lose retakes 80% of the time at our rank. Molly Pit first, then flash and go.",
-  },
+  
   {
     id: "b_retake_ct",
     name: "B Site Retake",
@@ -661,26 +464,7 @@ export const UTILITY_BELTS = [
     teamRole:
       "Everyone else stages inside Apartments behind the belt carrier. Push on their flash. Watch Arch and Pit after plant.",
   },
-  {
-    id: "b_belt",
-    name: "B Site Utility Belt",
-    site: "B",
-    side: "T",
-    desc: "One player carries the full B execute from Banana. Teammates drop a smoke pre-round so the carrier can throw 2 smokes + 1 molly + 1 flash.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s B belt. Drop a smoke for them. Push on their flash."',
-    preRound:
-      "Pre-round: 1 teammate drops a smoke at T spawn. Belt carrier picks it up for 2 smokes + 1 molly + 1 flash total (4 grenades).",
-    sequence: [
-      { lineup: "banana_ct_smoke",     step: 1, note: "From bottom Banana. Jump throw." },
-      { lineup: "banana_coffins_smoke", step: 2, note: "From top Banana. Jump throw." },
-      { lineup: "b_site_molly",         step: 3, note: "Dark corner molly. Left-click." },
-      { lineup: "banana_flash",         step: 4, note: "Pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages in Banana behind the belt carrier. Push on their flash. Post-plant in Dark, New Box, or Banana.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
@@ -805,24 +589,7 @@ export const SETUP_POSITIONS = [
     lineups: ["banana_ct_smoke", "banana_close_molly"],
     tip: "The starting point for all B site utility. Closest spawn throws the CT smoke every round.",
   },
-  {
-    id: "banana_right",
-    name: "Banana Right Side",
-    side: "T",
-    area: "Banana",
-    pos: { worldX: 748.049, worldY: 1880.028 },
-    lineups: ["banana_flash"],
-    tip: "Pop flash over the wall — push immediately after throwing.",
-  },
-  {
-    id: "top_banana",
-    name: "Top Banana",
-    side: "T",
-    area: "B",
-    pos: { worldX: 423.739, worldY: 1761.97 },
-    lineups: ["banana_coffins_smoke", "b_site_molly"],
-    tip: "Coffins smoke + site molly from the same position. Throw after taking Banana control.",
-  },
+  
   {
     id: "t_ramp",
     name: "T Ramp",
@@ -832,6 +599,7 @@ export const SETUP_POSITIONS = [
     lineups: ["mid_smoke"],
     tip: "Mid/Short smoke for fakes or safe rotations. Not needed every round.",
   },
+  
   {
     id: "apps_stairs",
     name: "Apartments Stairs",
@@ -841,6 +609,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_pit_smoke", "a_library_smoke"],
     tip: "Both A site smokes come from the same area. Throw Pit smoke first, then Library.",
   },
+  
   {
     id: "apps_balcony",
     name: "Apartments Balcony",
@@ -850,25 +619,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_arch_smoke", "apps_flash", "a_site_molly"],
     tip: "Flash + molly from the Apartments exit. Arch smoke also thrown from here.",
   },
-  // ─── CT-SIDE ───────────────────────────────────────────────
-  {
-    id: "b_site_fountain",
-    name: "B Site Fountain",
-    side: "CT",
-    area: "B",
-    pos: { worldX: 2538.758, worldY: 2468.252 },
-    lineups: ["ct_banana_smoke", "ct_banana_molly"],
-    tip: "Foundation CT B defense. Smoke + molly denies Banana for ~25 seconds.",
-  },
-  {
-    id: "arch_passage",
-    name: "Arch Passage",
-    side: "CT",
-    area: "A",
-    pos: { worldX: 371.968, worldY: 682.536 },
-    lineups: ["ct_arch_flash"],
-    tip: "Flash from Arch onto A site during retakes. Unexpected angle catches Ts off guard.",
-  },
+  
   {
     id: "library_back_site",
     name: "Library / Back Site",
@@ -878,15 +629,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_pit_molly"],
     tip: "Molly Pit during retakes. Denies the strongest T post-plant position.",
   },
-  {
-    id: "a_site_ct",
-    name: "A Site (Defender)",
-    side: "CT",
-    area: "A",
-    pos: { worldX: 1481.615, worldY: -274.532 },
-    lineups: ["ct_apps_smoke"],
-    tip: "Smoke Apartments exit + molly behind it. Solo A anchor lifeline.",
-  },
+  
   {
     id: "ct_spawn_b_rotate",
     name: "CT Spawn (B Rotation)",

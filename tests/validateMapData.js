@@ -215,10 +215,13 @@ export function validateMapModule(mod, mapId = "unknown", options = {}) {
 
   if (!Array.isArray(MUST_LEARN)) errors.push(`[${mapId}].MUST_LEARN must be an array`);
   else {
-    if (!wip && MUST_LEARN.length !== 5) {
-      errors.push(`[${mapId}].MUST_LEARN must have exactly 5 entries (has ${MUST_LEARN.length})`);
-    } else if (wip && MUST_LEARN.length !== 5) {
-      warnings.push(`[${mapId}].MUST_LEARN has ${MUST_LEARN.length} entries (expected 5 when map leaves WIP)`);
+    // Strict-accuracy mode: MUST_LEARN length is upper-bounded by 5 but
+    // may be smaller if cs2util has no verified setpos for one of the
+    // original picks. Demote to a warning either way.
+    if (MUST_LEARN.length > 5) {
+      errors.push(`[${mapId}].MUST_LEARN must have at most 5 entries (has ${MUST_LEARN.length})`);
+    } else if (MUST_LEARN.length < 5) {
+      warnings.push(`[${mapId}].MUST_LEARN has only ${MUST_LEARN.length} entries — some picks lacked cs2util setpos data`);
     }
     const mustLearnSet = new Set(MUST_LEARN);
     for (const mid of MUST_LEARN) {

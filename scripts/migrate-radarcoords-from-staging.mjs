@@ -130,6 +130,14 @@ async function migrateMap(mapId, staging, slugHelper) {
       log.push(`  · ${id}: no staging match (slug=${slug ?? "?"})`);
       continue;
     }
+    // Side consistency check: a T-side lineup that happens to share a
+    // screenshot URL with a CT-side cs2util entry would otherwise pick
+    // up the CT throw position. Skip those — the screenshot is wrong.
+    if (lineup.side && entry.team && lineup.side !== entry.team) {
+      skipped++;
+      log.push(`  · ${id}: side mismatch (lineup=${lineup.side}, cs2util=${entry.team}, slug=${slug})`);
+      continue;
+    }
     const repl = buildReplacement(entry);
     if (repl.radarPos) {
       const r = replaceLineupField(source, id, "radarPos", repl.radarPos);
@@ -178,8 +186,14 @@ async function syncSetupPositions(mapId) {
 
   let synced = 0;
   for (const setup of setups) {
-    const firstLid = setup.lineups?.[0];
-    const lineup = firstLid ? lineups[firstLid] : null;
+    // Pick the first lineup that matches the setup's side. This avoids
+    // syncing a T-side setup to a CT-side lineup's throw position when
+    // both are (incorrectly) bundled into the same setup.
+    const matchingLineupId = setup.lineups?.find((id) => {
+      const l = lineups[id];
+      return l && (!setup.side || l.side === setup.side);
+    });
+    const lineup = matchingLineupId ? lineups[matchingLineupId] : null;
     if (!lineup?.radarPos) continue;
     const rp = lineup.radarPos;
     const literal =
@@ -202,6 +216,65 @@ async function syncSetupPositions(mapId) {
   console.log(`${mapId}: synced ${synced} SETUP_POSITIONS to lineup throw positions ${dryRun ? "(dry-run)" : ""}`);
 }
 
+/**
+ * For lineups that share a SETUP_POSITION with a setpos-verified
+ * lineup, copy that lineup's verified radarPos onto them. Players
+ * stand in the same spot for every lineup in a setup, so the throw
+ * coordinate must be the same.
+ *
+ * This propagates ground truth from must-learn lineups to nearby
+ * "buddy" lineups (e.g., from `b_window_smoke` to `b_car_smoke`,
+ * `b_site_molly`, `b_tunnel_flash` — all thrown from Upper Tunnels).
+ */
+async function propagateRadarPosWithinSetup(mapId) {
+  const path = join(repoRoot, "data", `${mapId}.js`);
+  const original = await readFile(path, "utf8");
+  let source = original;
+
+  const mod = await import(join(repoRoot, "data", `${mapId}.js`) + `?cb=${Date.now()}`);
+  const lineups = mod.LINEUPS || {};
+  const setups = mod.SETUP_POSITIONS || [];
+
+  let propagated = 0;
+  for (const setup of setups) {
+    const ids = setup.lineups || [];
+    if (ids.length < 2) continue;
+    // Find the first lineup matching the setup's side with verified world coords.
+    const verifiedSourceId = ids.find((id) => {
+      const l = lineups[id];
+      return (
+        l?.radarPos &&
+        "worldX" in l.radarPos &&
+        (!setup.side || l.side === setup.side)
+      );
+    });
+    if (!verifiedSourceId) continue;
+    const verifiedPos = lineups[verifiedSourceId].radarPos;
+    const literal = `{ worldX: ${fmtNumber(verifiedPos.worldX)}, worldY: ${fmtNumber(verifiedPos.worldY)} }`;
+
+    for (const otherId of ids) {
+      if (otherId === verifiedSourceId) continue;
+      const other = lineups[otherId];
+      if (!other) continue;
+      // Skip if the other lineup already has world coords (its own setpos).
+      if (other.radarPos && "worldX" in other.radarPos) continue;
+      // Skip if buddies have a different side — they're throws from
+      // different places, even though they share a setup entry.
+      if (setup.side && other.side !== setup.side) continue;
+      const r = replaceLineupField(source, otherId, "radarPos", literal);
+      if (r.changed) {
+        source = r.source;
+        propagated++;
+      }
+    }
+  }
+
+  if (source !== original && !dryRun) await writeFile(path, source, "utf8");
+  console.log(
+    `${mapId}: propagated ${propagated} radarPos from buddy lineups within shared setup positions ${dryRun ? "(dry-run)" : ""}`
+  );
+}
+
 async function main() {
   const staging = await loadStaging();
   const slugHelper = await loadSlugHelper();
@@ -211,6 +284,10 @@ async function main() {
   console.log("\nSyncing SETUP_POSITIONS with lineup radarPos...");
   for (const map of MAPS) {
     await syncSetupPositions(map);
+  }
+  console.log("\nPropagating verified radarPos across buddy lineups in same setup...");
+  for (const map of MAPS) {
+    await propagateRadarPosWithinSetup(map);
   }
 }
 
