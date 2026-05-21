@@ -71,10 +71,11 @@ const LANDMARK_POINTS = {
     { worldX: 1226, worldY: 2499, description: "A Site", expectedX: 82.16, expectedY: 16.42, tolerance: 2.0 },
     { worldX: -1355, worldY: 2523, description: "B Site", expectedX: 24.88, expectedY: 15.89, tolerance: 2.0 },
   ],
+  // Mirage landmarks from demoinfocs-golang overview spawn/bomb icons (de_mirage.txt).
   mirage: [
-    { worldX: -1483, worldY: -2693, description: "T Spawn", expectedX: 34.12, expectedY: 86.05, tolerance: 2.0 },
-    { worldX: -204, worldY: -1192, description: "A Site", expectedX: 59.1, expectedY: 56.74, tolerance: 2.0 },
-    { worldX: -2196, worldY: 405, description: "B Site", expectedX: 20.2, expectedY: 25.55, tolerance: 2.0 },
+    { worldX: 1224.4, worldY: -130.2, description: "T Spawn", expectedX: 87, expectedY: 36, tolerance: 1.0 },
+    { worldX: -465.2, worldY: -2178.2, description: "A Site bomb", expectedX: 54, expectedY: 76, tolerance: 1.0 },
+    { worldX: -2052.4, worldY: 279.4, description: "B Site bomb", expectedX: 23, expectedY: 28, tolerance: 1.0 },
   ],
 };
 

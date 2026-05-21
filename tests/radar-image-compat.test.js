@@ -2,6 +2,32 @@ import { describe, expect, it } from "vitest";
 import { MAP_IDS } from "../data/mapMeta.js";
 import MAPS from "../data/maps-registry.js";
 import { RADAR_METADATA, VALVE_RADAR_SOURCE_RESOLUTION } from "../data/radarMetadata.js";
+import demoinfocsSnapshot from "./fixtures/demoinfocsRadarMetadata.json";
+
+const FETCH_TIMEOUT_MS = 30_000;
+const EXPECTED_RADAR_DIMENSIONS = [1024, 2048];
+
+function readPngDimensions(buffer) {
+  if (buffer.length < 24) throw new Error("PNG buffer too short");
+  const signature = buffer.subarray(0, 8).toString("hex");
+  if (signature !== "89504e470d0a1a0a") throw new Error("Not a PNG file");
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20),
+  };
+}
+
+async function fetchRadarBuffer(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return Buffer.from(await res.arrayBuffer());
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 describe("radar metadata compatibility", () => {
   it("provides metadata for every supported map id", () => {
@@ -25,4 +51,23 @@ describe("radar metadata compatibility", () => {
       expect(RADAR_METADATA[mapId], `${mapId} has metadata entry`).toBeDefined();
     }
   });
+
+  it("matches demoinfocs overview metadata where available", () => {
+    for (const [mapId, expected] of Object.entries(demoinfocsSnapshot.maps)) {
+      const actual = RADAR_METADATA[mapId];
+      expect(actual.pos_x).toBe(expected.pos_x);
+      expect(actual.pos_y).toBe(expected.pos_y);
+      expect(actual.scale).toBe(expected.scale);
+    }
+  });
+
+  for (const mapId of MAP_IDS) {
+    it(`downloads ${mapId} MurkyYT radar as a square PNG`, async () => {
+      const mod = MAPS[mapId].module;
+      const buffer = await fetchRadarBuffer(mod.RADAR_URL);
+      const { width, height } = readPngDimensions(buffer);
+      expect(width, "width").toBe(height);
+      expect(EXPECTED_RADAR_DIMENSIONS, `${mapId} radar dimension`).toContain(width);
+    }, FETCH_TIMEOUT_MS + 5000);
+  }
 });

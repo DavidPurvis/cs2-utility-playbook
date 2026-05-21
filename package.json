@@ -20,6 +20,9 @@
     "test:ui": "vitest run tests/**/*.test.jsx",
     "test:regression": "vitest run tests/regression-baseline.test.js tests/stability-metrics.test.js tests/premier-map-parity.test.js tests/App.regression.test.jsx",
     "test:metrics": "node scripts/stability-report.mjs",
+    "update:lineups": "node scripts/update-lineups.mjs",
+    "migrate:must-learn-coords": "node scripts/migrate-must-learn-coords.mjs",
+    "generate:verified-lineup-fixture": "node scripts/generate-verified-lineup-fixture.mjs",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run"
   },

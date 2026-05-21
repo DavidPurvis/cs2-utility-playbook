@@ -93,6 +93,32 @@ describe("App UI", () => {
     expect(screen.getByPlaceholderText(/Belt carrier/i)).toBeInTheDocument();
   });
 
+  it("hides and restores lineups through roster admin panel", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await waitForMapLoaded();
+
+    expect(screen.getAllByText(/Red Room \/ Top Mid Smoke/i).length).toBeGreaterThan(0);
+
+    await user.click(screen.getAllByTitle(/Team roster/i)[0]);
+    const hiddenIdInput = screen.getByLabelText(/Hidden lineup ID/i);
+    await user.type(hiddenIdInput, "red_room");
+    await user.click(screen.getByRole("button", { name: /Hide lineup/i }));
+
+    await waitFor(() => {
+      expect(screen.queryAllByText(/Red Room \/ Top Mid Smoke/i).length).toBe(0);
+    });
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      "cs2_hidden_lineup_overrides",
+      expect.stringContaining("red_room")
+    );
+
+    await user.click(screen.getByRole("button", { name: /Show red_room/i }));
+    await waitFor(() => {
+      expect(screen.getAllByText(/Red Room \/ Top Mid Smoke/i).length).toBeGreaterThan(0);
+    });
+  });
+
   it("opens Study view when Study tab is clicked", async () => {
     const user = userEvent.setup();
     render(<App />);

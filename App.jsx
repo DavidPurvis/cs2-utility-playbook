@@ -1,5 +1,11 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { BONUS_MAP_IDS, getMapLabel, getMapPool, MAP_LIST, PREMIER_MAP_IDS } from "./data/mapMeta.js";
+import {
+  deriveFilteredMapData,
+  getCombinedHiddenLineupIds,
+  getConfiguredHiddenLineupIds,
+  sanitizeHiddenLineupOverridesByMap,
+} from "./data/lineupFilters.js";
 import { loadMapModule } from "./data/loadMapModule.js";
 import { getRadarMetadata } from "./data/radarMetadata.js";
 import { readJsonStorage, readStorage, writeJsonStorage, writeStorage } from "./lib/storage.js";
@@ -12,6 +18,7 @@ import { TrainingView } from "./components/TrainingView.jsx";
 import { ScreenshotGallery } from "./components/ScreenshotGallery.jsx";
 
 const SELECTABLE_MAP_IDS = [...PREMIER_MAP_IDS, ...BONUS_MAP_IDS];
+const HIDDEN_LINEUP_OVERRIDES_KEY = "cs2_hidden_lineup_overrides";
 
 // ── BADGES ───────────────────────────────────────────────────────
 
@@ -623,6 +630,10 @@ function PracticeModal({ context, onClose }) {
   const [stepIdx, setStepIdx] = useState(0);
   const [lineupIdx, setLineupIdx] = useState(context.currentIdx ?? 0);
   const [imgFailed, setImgFailed] = useState(false);
+  const validIds = useMemo(() => {
+    const ids = Array.isArray(context.ids) ? context.ids : [];
+    return ids.filter((lineupId) => Boolean(LINEUPS[lineupId]));
+  }, [context.ids, LINEUPS]);
 
   useEffect(() => { setStepIdx(0); setImgFailed(false); }, [lineupIdx]);
   useEffect(() => { setImgFailed(false); }, [stepIdx]);
@@ -631,8 +642,15 @@ function PracticeModal({ context, onClose }) {
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [onClose]);
+  useEffect(() => {
+    if (lineupIdx < validIds.length) return;
+    setLineupIdx(validIds.length > 0 ? validIds.length - 1 : 0);
+  }, [lineupIdx, validIds.length]);
+  useEffect(() => {
+    if (validIds.length === 0) onClose();
+  }, [validIds.length, onClose]);
 
-  const id = context.ids[lineupIdx];
+  const id = validIds[lineupIdx];
   const L = LINEUPS[id];
   if (!L) return null;
 
@@ -643,7 +661,7 @@ function PracticeModal({ context, onClose }) {
   ];
   const cur = steps[stepIdx];
   const lastStep = stepIdx === steps.length - 1;
-  const lastLineup = lineupIdx === context.ids.length - 1;
+  const lastLineup = lineupIdx === validIds.length - 1;
   const showNextLineup = context.type !== "single" && lastStep && !lastLineup;
   const ctxLabel = context.type === "combo" ? "COMBO" : context.type === "belt" ? "BELT" : "PRACTICE";
 
@@ -661,7 +679,7 @@ function PracticeModal({ context, onClose }) {
           display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
           <div style={{ minWidth: 0, flex: 1 }}>
             <SectionLabel color={T.accent}>
-              {ctxLabel} {context.type !== "single" && `· ${lineupIdx + 1} of ${context.ids.length}`}
+              {ctxLabel} {context.type !== "single" && `· ${lineupIdx + 1} of ${validIds.length}`}
             </SectionLabel>
             <div style={{ fontSize: 17, fontWeight: 700, color: T.textPri, marginTop: 4, letterSpacing: -0.2 }}>{L.name}</div>
             {context.type !== "single" && context.title && (
@@ -675,7 +693,7 @@ function PracticeModal({ context, onClose }) {
         <div style={{ padding: 20 }}>
           {context.type !== "single" && (
             <div style={{ display: "flex", gap: 4, marginBottom: 16 }}>
-              {context.ids.map((_, i) => (
+              {validIds.map((_, i) => (
                 <div key={i} style={{
                   flex: 1, height: 4,
                   background: i <= lineupIdx ? T.accent : T.border,
@@ -1583,14 +1601,56 @@ function StudyView({ side, names, onPractice }) {
 
 // ── ROSTER MODAL ────────────────────────────────────────────────
 
-function RosterModal({ open, onClose, names, onChange }) {
+function RosterModal({
+  open,
+  onClose,
+  names,
+  onChange,
+  mapId,
+  mapLabel,
+  knownLineupIds,
+  configHiddenLineupIds,
+  hiddenLineupOverrideIds,
+  onAddHiddenLineupId,
+  onRemoveHiddenLineupId,
+}) {
+  const [lineupIdInput, setLineupIdInput] = useState("");
+  const [adminMsg, setAdminMsg] = useState("");
+  const lineupIdLookup = useMemo(() => new Set(knownLineupIds), [knownLineupIds]);
+
+  const handleAddHiddenLineupId = useCallback(() => {
+    const lineupId = lineupIdInput.trim();
+    if (!lineupId) return;
+    if (!lineupIdLookup.has(lineupId)) {
+      setAdminMsg(`Unknown lineup ID for ${mapLabel}: "${lineupId}"`);
+      return;
+    }
+    if (configHiddenLineupIds.includes(lineupId) || hiddenLineupOverrideIds.includes(lineupId)) {
+      setAdminMsg(`"${lineupId}" is already hidden.`);
+      return;
+    }
+    onAddHiddenLineupId(lineupId);
+    setLineupIdInput("");
+    setAdminMsg(`Hidden "${lineupId}" for ${mapLabel}.`);
+  }, [
+    lineupIdInput,
+    lineupIdLookup,
+    mapLabel,
+    configHiddenLineupIds,
+    hiddenLineupOverrideIds,
+    onAddHiddenLineupId,
+  ]);
+
   if (!open) return null;
+
+  const datalistId = `lineup-ids-${mapId}`;
+
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000c",
       zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
       <div onClick={(e) => e.stopPropagation()} style={{
         background: T.bgPanel, border: `1px solid ${T.borderAlt}`, borderRadius: 12,
-        maxWidth: 460, width: "100%" }}>
+        maxWidth: 560, width: "100%" }}>
         <div style={{ padding: "14px 16px", borderBottom: `1px solid ${T.border}`,
           display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
@@ -1619,6 +1679,113 @@ function RosterModal({ open, onClose, names, onChange }) {
                 }} />
             </div>
           ))}
+
+          <div style={{ marginTop: 8, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: T.gold, letterSpacing: 2, textTransform: "uppercase" }}>
+              Lineup Visibility (Admin)
+            </div>
+            <div style={{ fontSize: 11.5, color: T.textSec, marginTop: 4, lineHeight: 1.5 }}>
+              Hide lineup IDs on <b style={{ color: T.textPri }}>{mapLabel}</b>. Overrides save in localStorage and only affect this browser.
+            </div>
+
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <input
+                type="text"
+                list={knownLineupIds.length > 0 ? datalistId : undefined}
+                aria-label="Hidden lineup ID"
+                placeholder={knownLineupIds[0] ? `e.g. ${knownLineupIds[0]}` : "lineup_id"}
+                value={lineupIdInput}
+                onChange={(e) => setLineupIdInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddHiddenLineupId();
+                  }
+                }}
+                style={{
+                  flex: 1, boxSizing: "border-box",
+                  background: T.bg, border: `1px solid ${T.borderLt}`, borderRadius: T.radiusSm,
+                  color: T.textPri, fontSize: 12.5, padding: "9px 12px",
+                  fontFamily: T.fontMono, outline: "none",
+                }}
+              />
+              <button
+                type="button"
+                className="pa-btn-hov"
+                onClick={handleAddHiddenLineupId}
+                style={{
+                  background: T.accent + "18", border: `1px solid ${T.accent}50`,
+                  borderRadius: T.radiusSm, color: T.accent, fontSize: 11, fontWeight: 800,
+                  padding: "0 12px", cursor: "pointer", whiteSpace: "nowrap",
+                }}
+              >
+                Hide lineup
+              </button>
+            </div>
+            {knownLineupIds.length > 0 && (
+              <datalist id={datalistId}>
+                {knownLineupIds.map((lineupId) => (
+                  <option key={lineupId} value={lineupId} />
+                ))}
+              </datalist>
+            )}
+
+            {adminMsg && (
+              <div style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>
+                {adminMsg}
+              </div>
+            )}
+
+            <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+              {[...configHiddenLineupIds, ...hiddenLineupOverrideIds].length === 0 && (
+                <div style={{ fontSize: 11.5, color: T.textDim }}>
+                  No hidden lineup IDs for this map.
+                </div>
+              )}
+
+              {configHiddenLineupIds.map((lineupId) => (
+                <div key={`cfg-${lineupId}`} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                  background: T.bg, border: `1px solid ${T.borderLt}`, borderRadius: 6, padding: "8px 10px",
+                }}>
+                  <span style={{ fontSize: 12, color: T.textPri, fontFamily: T.fontMono }}>{lineupId}</span>
+                  <span style={{
+                    fontSize: 9, fontWeight: 800, letterSpacing: 0.8,
+                    textTransform: "uppercase", color: T.gold,
+                    background: `${T.gold}18`, border: `1px solid ${T.gold}40`,
+                    borderRadius: 3, padding: "2px 6px",
+                  }}>
+                    config
+                  </span>
+                </div>
+              ))}
+
+              {hiddenLineupOverrideIds.map((lineupId) => (
+                <div key={`ovr-${lineupId}`} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                  background: T.bg, border: `1px solid ${T.borderLt}`, borderRadius: 6, padding: "8px 10px",
+                }}>
+                  <span style={{ fontSize: 12, color: T.textPri, fontFamily: T.fontMono }}>{lineupId}</span>
+                  <button
+                    type="button"
+                    className="pa-btn-hov"
+                    aria-label={`Show ${lineupId}`}
+                    onClick={() => {
+                      onRemoveHiddenLineupId(lineupId);
+                      setAdminMsg(`Showing "${lineupId}" again on ${mapLabel}.`);
+                    }}
+                    style={{
+                      background: "transparent", border: `1px solid ${T.borderLt}`,
+                      borderRadius: 4, color: T.textSec, fontSize: 10.5, fontWeight: 700,
+                      padding: "4px 8px", cursor: "pointer",
+                    }}
+                  >
+                    Show again
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1809,7 +1976,7 @@ export default function CS2Playbook() {
     const saved = readStorage("cs2_current_map", "ancient");
     return SELECTABLE_MAP_IDS.includes(saved) ? saved : "ancient";
   });
-  const [mapData, setMapData] = useState(null);
+  const [rawMapData, setRawMapData] = useState(null);
   const [mapLoadError, setMapLoadError] = useState(null);
   const [mapsOpen, setMapsOpen] = useState(false);
   const [rosterOpen, setRosterOpen] = useState(false);
@@ -1820,26 +1987,46 @@ export default function CS2Playbook() {
     return ["", "", "", "", ""];
   });
   const [practice, setPractice] = useState(null);
+  const [hiddenLineupOverridesByMap, setHiddenLineupOverridesByMap] = useState(() => {
+    const stored = readJsonStorage(HIDDEN_LINEUP_OVERRIDES_KEY, {});
+    return sanitizeHiddenLineupOverridesByMap(stored);
+  });
   const toast = useToast();
 
   const mapLabel = getMapLabel(currentMap);
   const carrierName = names.find(n => n && n.trim()) || null;
   const showRosterNudge = !rosterDismissed && !names.some(n => n && n.trim());
+  const configHiddenLineupIds = useMemo(
+    () => getConfiguredHiddenLineupIds(currentMap),
+    [currentMap]
+  );
+  const hiddenLineupOverrideIds = useMemo(
+    () => hiddenLineupOverridesByMap[currentMap] || [],
+    [hiddenLineupOverridesByMap, currentMap]
+  );
+  const hiddenLineupIds = useMemo(
+    () => getCombinedHiddenLineupIds(currentMap, hiddenLineupOverridesByMap),
+    [currentMap, hiddenLineupOverridesByMap]
+  );
+  const mapData = useMemo(
+    () => deriveFilteredMapData(rawMapData, hiddenLineupIds),
+    [rawMapData, hiddenLineupIds]
+  );
 
   // Load map data
   useEffect(() => {
     let cancelled = false;
-    setMapData(null);
+    setRawMapData(null);
     setMapLoadError(null);
     (async () => {
       try {
         const mod = await loadMapModule(currentMap);
-        if (!cancelled) { setMapData(mod); setMapLoadError(null); }
+        if (!cancelled) { setRawMapData(mod); setMapLoadError(null); }
       } catch {
         if (cancelled) return;
         try {
           const mod = await loadMapModule("ancient");
-          if (!cancelled) { setMapData(mod); setMapLoadError("fallback"); }
+          if (!cancelled) { setRawMapData(mod); setMapLoadError("fallback"); }
         } catch {
           if (!cancelled) setMapLoadError("fatal");
         }
@@ -1867,23 +2054,55 @@ export default function CS2Playbook() {
     const handle = setTimeout(() => writeJsonStorage("cs2_player_names", names), 300);
     return () => clearTimeout(handle);
   }, [names]);
+  useEffect(() => {
+    writeJsonStorage(HIDDEN_LINEUP_OVERRIDES_KEY, hiddenLineupOverridesByMap);
+  }, [hiddenLineupOverridesByMap]);
+
+  const addHiddenLineupOverride = useCallback((mapId, lineupIdRaw) => {
+    const lineupId = typeof lineupIdRaw === "string" ? lineupIdRaw.trim() : "";
+    if (!mapId || !lineupId) return;
+    setHiddenLineupOverridesByMap((prev) => {
+      const current = Array.isArray(prev[mapId]) ? prev[mapId] : [];
+      if (current.includes(lineupId)) return prev;
+      return { ...prev, [mapId]: [...current, lineupId] };
+    });
+  }, []);
+
+  const removeHiddenLineupOverride = useCallback((mapId, lineupIdRaw) => {
+    const lineupId = typeof lineupIdRaw === "string" ? lineupIdRaw.trim() : "";
+    if (!mapId || !lineupId) return;
+    setHiddenLineupOverridesByMap((prev) => {
+      const current = Array.isArray(prev[mapId]) ? prev[mapId] : [];
+      const nextIds = current.filter((id) => id !== lineupId);
+      if (nextIds.length === current.length) return prev;
+      const next = { ...prev };
+      if (nextIds.length > 0) next[mapId] = nextIds;
+      else delete next[mapId];
+      return next;
+    });
+  }, []);
 
   const handlePractice = useCallback((id) => {
+    if (!mapData?.LINEUPS?.[id]) return;
     setPractice({ type: "single", ids: [id], currentIdx: 0, title: null });
-  }, []);
+  }, [mapData]);
 
   const handleStepCombo = useCallback((comboId) => {
     if (!mapData) return;
     const c = mapData.COMBOS.find(x => x.id === comboId);
     if (!c) return;
-    setPractice({ type: "combo", ids: c.lineups.map(l => l.lineup), currentIdx: 0, title: c.name });
+    const ids = c.lineups.map((l) => l.lineup).filter((id) => Boolean(mapData.LINEUPS[id]));
+    if (ids.length === 0) return;
+    setPractice({ type: "combo", ids, currentIdx: 0, title: c.name });
   }, [mapData]);
 
   const handleStepBelt = useCallback((beltId) => {
     if (!mapData) return;
     const b = mapData.UTILITY_BELTS.find(x => x.id === beltId);
     if (!b) return;
-    setPractice({ type: "belt", ids: b.sequence.map(s => s.lineup), currentIdx: 0, title: b.name });
+    const ids = b.sequence.map((s) => s.lineup).filter((id) => Boolean(mapData.LINEUPS[id]));
+    if (ids.length === 0) return;
+    setPractice({ type: "belt", ids, currentIdx: 0, title: b.name });
   }, [mapData]);
 
   const pickMap = useCallback((id) => {
@@ -1913,7 +2132,7 @@ export default function CS2Playbook() {
     return () => window.removeEventListener("keydown", h);
   }, [practice, rosterOpen, mapsOpen]);
 
-  const mapLoading = mapData === null && mapLoadError !== "fatal";
+  const mapLoading = rawMapData === null && mapLoadError !== "fatal";
   const mapLoadFatal = mapLoadError === "fatal";
 
   return (
@@ -1980,7 +2199,16 @@ export default function CS2Playbook() {
       <MapSheet open={mapsOpen} onClose={() => setMapsOpen(false)}
         current={currentMap} onPick={pickMap} />
       <RosterModal open={rosterOpen} onClose={() => setRosterOpen(false)}
-        names={names} onChange={setNames} />
+        names={names}
+        onChange={setNames}
+        mapId={currentMap}
+        mapLabel={mapLabel}
+        knownLineupIds={Object.keys(rawMapData?.LINEUPS || {})}
+        configHiddenLineupIds={configHiddenLineupIds}
+        hiddenLineupOverrideIds={hiddenLineupOverrideIds}
+        onAddHiddenLineupId={(lineupId) => addHiddenLineupOverride(currentMap, lineupId)}
+        onRemoveHiddenLineupId={(lineupId) => removeHiddenLineupOverride(currentMap, lineupId)}
+      />
       {practice && mapData && (
         <PracticeModal context={practice} onClose={() => setPractice(null)} />
       )}

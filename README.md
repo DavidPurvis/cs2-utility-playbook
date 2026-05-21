@@ -49,6 +49,38 @@ npm run bench            # Vitest benchmarks for full-map validation throughput
 
 Benchmarks print iterations per second locally; use them to spot regressions if validation logic grows heavier.
 
+## Manual lineup source update
+
+To refresh external-source staging data manually (cs2util primary, csnades backup):
+
+```bash
+npm run update:lineups
+npm run update:lineups -- --map mirage
+npm run update:lineups -- --all-maps
+npm run update:lineups -- --no-csnades-backup
+```
+
+This command writes:
+
+- `data/imports/raw/cs2util.json`
+- `data/imports/raw/csnades.json` (when backup fill is enabled)
+- `data/imports/staging/lineups-import.json`
+- `data/imports/staging/lineups-import-report.json`
+
+Primary source is [cs2util.com](https://www.cs2util.com) (sitemap + list/detail pages). [csnades.gg](https://csnades.gg) is used only for gap-fill or enrichment (e.g. missing cs2util records, landing coordinates). Tracker.gg is not part of the default pipeline.
+
+It does **not** overwrite production map modules automatically; review staging output first.
+
+After refreshing staging, migrate must-learn throw coords from cs2util `setpos` into map modules:
+
+```bash
+node scripts/migrate-must-learn-coords.mjs
+node scripts/generate-verified-lineup-fixture.mjs
+npm test
+```
+
+Must-learn slugs are mapped in `data/mustLearnCs2utilSlugs.js`. Ground-truth tests live in `tests/lineup-ground-truth.test.js` (demoinfocs landmarks + cs2util setpos verification).
+
 To build for production:
 
 ```bash
@@ -185,6 +217,20 @@ Each exercise has a **LAUNCH** button. `steam://` URLs open the app directly in 
 
 Click the gear icon in the header, type names. They save automatically.
 
+### Hiding Lineups (Config + Admin Panel)
+
+You can hide lineups in two ways:
+
+1. **Config file (source-controlled):** edit `data/lineupFilters.js`.
+   - Add IDs to `GLOBAL_HIDDEN_LINEUP_IDS` to hide them on every map.
+   - Add IDs to `MAP_HIDDEN_LINEUP_IDS.<mapId>` to hide only on one map.
+2. **In-app admin panel (local-only):**
+   - Open **Roster**.
+   - In **Lineup Visibility (Admin)**, add/remove lineup IDs for the current map.
+   - Overrides persist in localStorage (`cs2_hidden_lineup_overrides`) and apply only in your browser.
+
+Hidden IDs are removed from must-learn, all-lineups, map dots/lines, combos, belts, setup positions, and spawn references.
+
 ### Adding New Lineups
 
 Edit `data/<mapname>.js`. Each lineup follows this structure:
@@ -283,6 +329,7 @@ cs2_utility/
   App.jsx                     — All React UI components
   data/
     mapMeta.js                — Selector metadata (no lineup payloads)
+    lineupFilters.js          — Config + helper for hidden lineup IDs
     radarMetadata.js          — Valve radar metadata (pos_x, pos_y, scale, 1024 source resolution)
     loadMapModule.js          — Lazy map loaders (production bundles)
     maps-registry.js          — Eager registry for tests/validation
