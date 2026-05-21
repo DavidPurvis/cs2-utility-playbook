@@ -140,10 +140,30 @@ export interface Scenario {
   notes?: string;
 }
 
+/**
+ * One CT-side position the user might play (A anchor, B anchor, mid
+ * control, etc.) with a loose recommendation of what utility helps in
+ * that role. Intentionally NOT hyper-specific — "these would be helpful
+ * to know if you're playing here" rather than "do exactly these steps."
+ *
+ * `recommendedLineupIds` references existing Lineup ids; the validator
+ * rejects dangling refs at boot.
+ * `utilityFocus` is free-text guidance ("smoke long, molly default").
+ */
+export interface CtPosition {
+  id: string;
+  label: string;            // display name e.g. "A Anchor"
+  description: string;      // 1-2 sentence role summary
+  spawnHint?: string;       // optional: where to spawn / walk to
+  recommendedLineupIds: string[]; // Lineup id references — may be empty
+  utilityFocus: string;     // freeform: what to carry / when to throw
+}
+
 /** Bundle of all editable data for Dust 2. Loaded once at boot. */
 export interface DustData {
   config: MapConfig;
   spawns: Spawn[];
   lineups: Lineup[];
   scenarios: Scenario[];
+  ctPositions: CtPosition[];
 }
