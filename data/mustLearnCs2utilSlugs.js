@@ -9,6 +9,8 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     b_cave_smoke: "1dea1570-a450-4ae0-9a9e-ee5c6fd22641",
     ct_elbow_smoke: "elbow-smoke-from-ct-spawn-a",
     a_main_pop_flash: "a-site-flash-from-a-main",
+    // Hand-matched fuzzy slug variants.
+    ct_a_main_molly: "ct-lane-molotov-from-long",
   },
   dust2: {
     xbox_smoke: "xbox-smoke-from-nomal-t-spawn",
@@ -16,6 +18,8 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     a_ct_smoke: "ct-spawn-smoke-from-a-site-pit",
     b_window_smoke: "window-smoke-from-upper-tunnels2",
     ct_long_doors_smoke: "ct-long-cut-off-smoke",
+    // URL-encoded "%26" → "&" → plain "fence-close" in staging.
+    ct_b_tuns_molly: "fence-close-molotov-from-tunnel",
   },
   inferno: {
     banana_ct_smoke: "ct-boost-smoke-from-banana",
@@ -37,6 +41,7 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     a_main_pop_flash: "a-site-flash-from-hut",
     ct_outside_smoke: "outside-smoke-from-ct-red-box",
     ct_ramp_smoke: "decon-smoke-from-trophy-room",
+    hut_smoke: "main-smoke-from-roof-1",
   },
   anubis: {
     mid_connector_smoke: "e-box-smoke-2-from-t-spawn",
@@ -44,6 +49,7 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     b_site_molly: "back-site-molotov-from-palace",
     ct_mid_smoke: "top-mid-smoke-from-ct-spawn",
     a_main_pop_flash: "a-site-flash-from-boat",
+    ct_a_main_smoke: "main-smoke-from-ct-spawn",
   },
   overpass: {
     bathrooms_b_heaven_smoke: "heaven-smoke-from-water",
@@ -52,8 +58,11 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     ct_monster_smoke: "monster-smoke-from-b-site",
     ct_connector_smoke: "ct-smoke-from-alley",
   },
-  // Cache must-learn lineups are community-sourced; no cs2util slugs.
-  cache: {},
+  // Cache has limited cs2util coverage; only a few are sourceable.
+  cache: {
+    t_back_a_site_smoke: "back-a-site-smoke-from-A-long",
+    ct_a_main_smoke_truck: "a-main-smoke-from-truck",
+  },
 };
 
 export function extractCs2utilSlugFromLineup(lineup) {
