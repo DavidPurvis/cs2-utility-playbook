@@ -12,8 +12,13 @@ import type { MapConfig } from "../types/map";
 export interface MapRendererProps {
   config: MapConfig;
   children?: (size: { width: number; height: number }) => ReactNode;
-  /** Called when the user clicks anywhere on the radar — only fired when admin is active and listening. */
-  onMapClick?: (pixel: { x: number; y: number }) => void;
+  /**
+   * Called when the user clicks anywhere on the radar — only fired when
+   * `clickable` is true. The coordinate is in percent space (0..100)
+   * matching the SVG viewBox so it can be fed straight into
+   * `percentToWorld` or stored as `landingAt.percent`.
+   */
+  onMapClick?: (percent: { x: number; y: number }) => void;
   /** Click overlay enabled (admin "click-to-place" mode). */
   clickable?: boolean;
 }
@@ -70,8 +75,10 @@ export function MapRenderer({ config, children, onMapClick, clickable = false }:
     if (!clickable || !onMapClick) return;
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (rect.width === 0 || rect.height === 0) return;
+    // viewBox is 0..100 so pixel-fraction-of-rect == percent in SVG space.
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
     onMapClick({ x, y });
   };
 

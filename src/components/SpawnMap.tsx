@@ -8,9 +8,12 @@ import type { MapConfig, Side, Spawn } from "../types/map";
 export interface SpawnMapProps {
   config: MapConfig;
   spawns: Spawn[];
+  /** Forwarded to MapRenderer so admin click-to-place works from this tab. */
+  clickable?: boolean;
+  onMapClick?: (percent: { x: number; y: number }) => void;
 }
 
-export function SpawnMap({ config, spawns }: SpawnMapProps) {
+export function SpawnMap({ config, spawns, clickable, onMapClick }: SpawnMapProps) {
   const [side, setSide] = useState<Side>("T");
   const filtered = useMemo(() => spawns.filter((s) => s.side === side), [spawns, side]);
   const color = side === "T" ? T.tSide : T.ctSide;
@@ -52,7 +55,7 @@ export function SpawnMap({ config, spawns }: SpawnMapProps) {
         </div>
       </div>
 
-      <MapRenderer config={config}>
+      <MapRenderer config={config} clickable={clickable} onMapClick={onMapClick}>
         {() =>
           filtered.map((spawn) => {
             const pct = worldToPercent(spawn.world.x, spawn.world.y, config);
