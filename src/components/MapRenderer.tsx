@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useLayoutEffect,
   useReducer,
   useRef,
@@ -9,18 +10,35 @@ import {
 import { T } from "../theme";
 import type { MapConfig } from "../types/map";
 
+export interface ViewBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+const FULL_VIEWBOX: ViewBox = { x: 0, y: 0, width: 100, height: 100 };
+
 export interface MapRendererProps {
   config: MapConfig;
   children?: (size: { width: number; height: number }) => ReactNode;
   /**
    * Called when the user clicks anywhere on the radar — only fired when
    * `clickable` is true. The coordinate is in percent space (0..100)
-   * matching the SVG viewBox so it can be fed straight into
+   * matching the underlying SVG so it can be fed straight into
    * `percentToWorld` or stored as `landingAt.percent`.
    */
   onMapClick?: (percent: { x: number; y: number }) => void;
   /** Click overlay enabled (admin "click-to-place" mode). */
   clickable?: boolean;
+  /**
+   * Sub-region of the percent-space coordinate system to render.
+   * Defaults to the full radar (0,0,100,100). Changes animate over
+   * ~400ms via requestAnimationFrame.
+   */
+  viewBox?: ViewBox;
+  /** Optional overlay rendered above the SVG content (e.g. close button). */
+  overlay?: ReactNode;
 }
 
 type ImgState = { loaded: boolean; errored: boolean };
@@ -30,16 +48,31 @@ function imgReducer(_state: ImgState, action: "reset" | "loaded" | "errored"): I
   return { loaded: false, errored: true };
 }
 
+// Smooth cubic ease-in-out — feels natural for camera-style moves.
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+const ANIM_MS = 400;
+
 /**
  * Square SVG radar with the map image and a slot for positioned
- * children (spawns, utility markers, scenario arcs). The viewBox is
- * fixed at the source resolution so children using world-coord
- * conversion always get consistent percentages.
+ * children (spawns, utility markers, scenario arcs). The internal
+ * coordinate system is the same 0..100 percent space used by
+ * `worldToPercent` regardless of any zoom; the viewBox prop controls
+ * which sub-region of that space is visible.
  *
  * Children render function receives the current rendered size in
- * pixels so it can call worldToPixel(...).
+ * pixels so it can call `worldToPixel(...)`.
  */
-export function MapRenderer({ config, children, onMapClick, clickable = false }: MapRendererProps) {
+export function MapRenderer({
+  config,
+  children,
+  onMapClick,
+  clickable = false,
+  viewBox: targetViewBox = FULL_VIEWBOX,
+  overlay,
+}: MapRendererProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -55,6 +88,54 @@ export function MapRenderer({ config, children, onMapClick, clickable = false }:
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Animate the viewBox toward the target prop. We render the
+  // intermediate value as a `viewBox` string each frame.
+  const [vb, setVb] = useState<ViewBox>(targetViewBox);
+  const animRef = useRef<{ from: ViewBox; to: ViewBox; start: number; raf: number } | null>(null);
+
+  useEffect(() => {
+    const current = animRef.current
+      ? animRef.current.to // mid-animation — capture latest target as the new "from"
+      : vb;
+    const from: ViewBox = animRef.current ? sampleViewBox(animRef.current) : current;
+    const to = targetViewBox;
+    if (
+      from.x === to.x &&
+      from.y === to.y &&
+      from.width === to.width &&
+      from.height === to.height
+    ) {
+      return;
+    }
+    if (animRef.current) cancelAnimationFrame(animRef.current.raf);
+
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / ANIM_MS);
+      const e = easeInOutCubic(t);
+      setVb({
+        x: lerp(from.x, to.x, e),
+        y: lerp(from.y, to.y, e),
+        width: lerp(from.width, to.width, e),
+        height: lerp(from.height, to.height, e),
+      });
+      if (t < 1) {
+        if (animRef.current) animRef.current.raf = requestAnimationFrame(tick);
+      } else {
+        animRef.current = null;
+      }
+    };
+    const raf = requestAnimationFrame(tick);
+    animRef.current = { from, to, start, raf };
+    return () => {
+      if (animRef.current) {
+        cancelAnimationFrame(animRef.current.raf);
+        animRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetViewBox.x, targetViewBox.y, targetViewBox.width, targetViewBox.height]);
 
   // Image-load tracking using reducer + the image href as a key, so a
   // src change resets state without us calling setState in an effect.
@@ -76,9 +157,11 @@ export function MapRenderer({ config, children, onMapClick, clickable = false }:
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    // viewBox is 0..100 so pixel-fraction-of-rect == percent in SVG space.
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    // Map the rect-relative click into the active viewBox's percent space.
+    const fx = (e.clientX - rect.left) / rect.width;
+    const fy = (e.clientY - rect.top) / rect.height;
+    const x = vb.x + fx * vb.width;
+    const y = vb.y + fy * vb.height;
     onMapClick({ x, y });
   };
 
@@ -96,7 +179,7 @@ export function MapRenderer({ config, children, onMapClick, clickable = false }:
       }}
     >
       <svg
-        viewBox="0 0 100 100"
+        viewBox={`${vb.x} ${vb.y} ${vb.width} ${vb.height}`}
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={`${config.displayName} radar`}
@@ -141,6 +224,33 @@ export function MapRenderer({ config, children, onMapClick, clickable = false }:
         )}
         {size.width > 0 && children && children(size)}
       </svg>
+      {overlay && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+          }}
+        >
+          {overlay}
+        </div>
+      )}
     </div>
   );
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+// Re-sample the current animation point so we can pick up mid-flight.
+function sampleViewBox(anim: { from: ViewBox; to: ViewBox; start: number }): ViewBox {
+  const t = Math.min(1, Math.max(0, (performance.now() - anim.start) / ANIM_MS));
+  const e = easeInOutCubic(t);
+  return {
+    x: lerp(anim.from.x, anim.to.x, e),
+    y: lerp(anim.from.y, anim.to.y, e),
+    width: lerp(anim.from.width, anim.to.width, e),
+    height: lerp(anim.from.height, anim.to.height, e),
+  };
 }

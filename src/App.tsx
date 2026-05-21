@@ -4,6 +4,7 @@ import { Tabs, type TabDef } from "./components/Tabs";
 import { SpawnMap } from "./components/SpawnMap";
 import { ScenarioList } from "./components/ScenarioList";
 import { ScenarioDetail } from "./components/ScenarioDetail";
+import { UtilitiesTab } from "./components/UtilitiesTab";
 import { useMapData } from "./hooks/useMapData";
 import { AdminProvider, useAdminMode } from "./hooks/useAdminMode";
 import { EditableDataProvider, useEditableData } from "./hooks/useEditableData";
@@ -80,7 +81,7 @@ function ClickToPlaceBanner() {
 
 function AppInner() {
   const { isAdmin } = useAdminMode();
-  const { config, spawns } = useEditableData();
+  const { config, spawns, utilities } = useEditableData();
 
   // Admin click-to-place wiring: the editor toggles clickPlace on, the
   // user clicks the radar, and we hand the percent coords straight to
@@ -102,6 +103,11 @@ function AppInner() {
       content: <ScenariosTab />,
     },
     {
+      id: "utilities",
+      label: "Utilities",
+      content: <UtilitiesTab />,
+    },
+    {
       id: "spawns",
       label: "Spawn Positions",
       content: (
@@ -110,6 +116,7 @@ function AppInner() {
           <SpawnMap
             config={config}
             spawns={spawns}
+            utilities={utilities}
             clickable={clickable}
             onMapClick={handleMapClick}
           />
