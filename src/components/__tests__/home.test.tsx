@@ -68,9 +68,12 @@ describe("Home view", () => {
     // T-side toggle is selected by default; T-side has 15 spawns
     const tSpawns = dustData.spawns.filter((s) => s.side === "T");
     expect(tSpawns).toHaveLength(15);
-    // Every T-spawn label (S1..S15) appears in the picker's SVG
+    // The picker renders the numeric portion of each spawn label (the
+    // "S" prefix is dropped at render time so dots can pack tight on
+    // mobile). Every spawn is therefore present as "1".."15".
     for (const s of tSpawns) {
-      expect(screen.getAllByText(s.label).length).toBeGreaterThan(0);
+      const number = s.label.replace(/^S/, "");
+      expect(screen.getAllByText(number).length).toBeGreaterThan(0);
     }
   });
 });
