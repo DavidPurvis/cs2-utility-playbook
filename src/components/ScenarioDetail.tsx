@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import { T } from "../theme";
 import { ScenarioMap, findMissingActions } from "./ScenarioMap";
 import { UtilityIcon } from "./shared/UtilityIcon";
+import { useViewport } from "../hooks/useViewport";
 import type { MapConfig, Scenario, Utility } from "../types/map";
 
 export interface ScenarioDetailProps {
@@ -35,6 +36,7 @@ interface TimelineRow {
 
 export function ScenarioDetail({ config, scenario, utilities, onBack }: ScenarioDetailProps) {
   const [highlight, setHighlight] = useState<string | null>(null);
+  const { isMobile } = useViewport();
 
   const utilIndex = useMemo(() => {
     const m = new Map<string, Utility>();
@@ -135,7 +137,7 @@ export function ScenarioDetail({ config, scenario, utilities, onBack }: Scenario
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 1fr) minmax(280px, 360px)",
+          gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1fr) minmax(280px, 360px)",
           gap: 12,
           alignItems: "start",
         }}

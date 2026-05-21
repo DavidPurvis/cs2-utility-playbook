@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useAdminMode } from "../../hooks/useAdminMode";
+import { useViewport } from "../../hooks/useViewport";
 import { T } from "../../theme";
 
 type PanelTab = "utilities" | "scenarios" | "calibration" | "data";
@@ -29,6 +30,7 @@ export interface AdminPanelProps {
  */
 export function AdminPanel({ slots }: AdminPanelProps) {
   const { isAdmin, logout } = useAdminMode();
+  const { isMobile } = useViewport();
   const [tab, setTab] = useState<PanelTab>("utilities");
   const [collapsed, setCollapsed] = useState(false);
 
@@ -42,24 +44,46 @@ export function AdminPanel({ slots }: AdminPanelProps) {
 
   return (
     <aside
-      style={{
-        position: "fixed",
-        top: 80,
-        right: 16,
-        width: collapsed ? 56 : 360,
-        maxWidth: "calc(100vw - 32px)",
-        maxHeight: "calc(100vh - 96px)",
-        background: T.bgPanel,
-        border: `1px solid ${T.accent}55`,
-        borderRadius: T.radius,
-        boxShadow: "0 12px 28px rgba(0,0,0,0.45)",
-        color: T.textPri,
-        fontFamily: T.fontUI,
-        display: "flex",
-        flexDirection: "column",
-        zIndex: 40,
-        overflow: "hidden",
-      }}
+      style={
+        isMobile && !collapsed
+          ? {
+              position: "fixed",
+              left: 8,
+              right: 8,
+              bottom: 8,
+              top: "auto",
+              maxHeight: "70vh",
+              background: T.bgPanel,
+              border: `1px solid ${T.accent}55`,
+              borderRadius: T.radius,
+              boxShadow: "0 -12px 28px rgba(0,0,0,0.55)",
+              color: T.textPri,
+              fontFamily: T.fontUI,
+              display: "flex",
+              flexDirection: "column",
+              zIndex: 40,
+              overflow: "hidden",
+            }
+          : {
+              position: "fixed",
+              top: isMobile ? "auto" : 80,
+              right: isMobile ? 8 : 16,
+              bottom: isMobile ? 8 : undefined,
+              width: collapsed ? 56 : 360,
+              maxWidth: "calc(100vw - 32px)",
+              maxHeight: isMobile ? undefined : "calc(100vh - 96px)",
+              background: T.bgPanel,
+              border: `1px solid ${T.accent}55`,
+              borderRadius: T.radius,
+              boxShadow: "0 12px 28px rgba(0,0,0,0.45)",
+              color: T.textPri,
+              fontFamily: T.fontUI,
+              display: "flex",
+              flexDirection: "column",
+              zIndex: 40,
+              overflow: "hidden",
+            }
+      }
     >
       <header
         style={{
