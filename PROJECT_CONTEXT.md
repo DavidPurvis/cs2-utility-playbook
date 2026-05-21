@@ -69,6 +69,7 @@ Status: `Open` | `In progress` | `Done` | `Deferred` | `Won't do`
 | R-003 | 2026-05 | **Living project context** — track asks, decisions, vision; update each new request | **Done** | This file exists; README points here; maintenance rules documented | |
 | R-012 | 2026-05-20 | **Production ready** — deploy, lint gate, lazy maps, PWA shell, validate pipeline | **Done** | `npm run validate` green; GitHub Pages deploy workflow; v1.0.0; ESLint in CI | See README Production section |
 | R-013 | 2026-05-20 | **Reconcile dual code audits** — apply valid findings, skip stale ones | **Done** | See audit reconciliation below; 141 tests; `npm run validate` green | |
+| R-015 | 2026-05-20 | **Fix map overlay coordinate scaling** with canonical CS2 conversion + hybrid point schema | **Done** | World-to-percent formula implemented; map metadata added; lineup + landmark conversion tests added; render pipeline uses shared resolver | `data/radarMetadata.js`, `lib/mapCoordinates.js`, `tests/map-coordinates.test.js`, `tests/lineup-positions.test.js` |
 | R-004 | — | **Curated YouTube URLs** for Premier lineups (replace search fallbacks) | **Open** | Validator warnings for `youtube.com/results` trend toward zero on Premier maps | ~148 warnings today; use `data/youtube.js` `yt()` pattern |
 | R-005 | — | **Screenshot URLs** filled for lineups (stand/aim/result) | **Open** | Empty-screenshot warnings reduced; Practice mode shows images | Cache map especially incomplete |
 | R-006 | — | **Manual in-game accuracy review** per Premier map | **Open** | Documented review notes or source upgrades where lineups drift | Cross-check Refrag / cs2util / match replay |
@@ -102,7 +103,7 @@ Decisions are **intentional** unless marked *Tentative*. Revisit when requiremen
 |----------|-----------|-------------------------|
 | **`tests/validateMapData.js`** as single validator | Same rules for tests, benchmarks, and metrics | Per-map ad hoc tests only |
 | **Premier rules**: `MUST_LEARN.length === 5`, bidirectional `mustLearn`, required `SPAWNS` + `RADAR_URL` | Consistent “core 5” product promise | Variable must-learn count per map |
-| **Radar coords 0–100%**, reject 0–1 normalized scale | Prevents silent top-left radar bugs | Accept floats and scale in UI |
+| **Hybrid radar coords**: support `{x,y}` and `{worldX,worldY}` | Backward compatible with existing data while enabling canonical CS2 world projection | Percent-only forever |
 | **Belt `step.carrier`** for grenade cap + smoke limits | Matches CS2 loadout reality | Global sequence cap only |
 | **Warnings vs errors** | Search URLs / empty screenshots warn; structural issues error | Treat all warnings as CI failures (too noisy today) |
 | **`data/youtube.js`** — `ytSearch()` + `isYoutubeSearchUrl()` | Shared helper; migration path to curated URLs | Inline URLs only |
@@ -151,9 +152,9 @@ Decisions are **intentional** unless marked *Tentative*. Revisit when requiremen
 | Maps in registry | 8 (7 Premier + Cache bonus) |
 | Total lineups | 148 |
 | Validation errors | 0 |
-| Validation warnings | 148 (mostly YouTube search + empty screenshots) |
-| Tests | 133+ passing (see `npm test`) |
-| Stability overall score | ~87/100 (`npm run test:metrics`) |
+| Validation warnings | 152 (mostly YouTube search + empty screenshots) |
+| Tests | 221 passing (see `npm test`) |
+| Stability overall score | ~86/100 (`npm run test:metrics`) |
 | Release version | 1.0.0 |
 | Deploy | GitHub Actions → Pages (`deploy.yml`) |
 | `App.jsx` size | Still large (~1.5k+ lines); further split deferred |

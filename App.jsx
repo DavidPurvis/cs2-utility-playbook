@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { BONUS_MAP_IDS, getMapLabel, getMapPool, MAP_LIST, PREMIER_MAP_IDS } from "./data/mapMeta.js";
 import { loadMapModule } from "./data/loadMapModule.js";
+import { getRadarMetadata } from "./data/radarMetadata.js";
 import { readJsonStorage, readStorage, writeJsonStorage, writeStorage } from "./lib/storage.js";
+import { resolveHybridPoint } from "./lib/mapCoordinates.js";
 import { MapDataContext, useMapData } from "./context/MapDataContext.jsx";
 import { T, THROW, UTIL, ROUND_TYPES } from "./lib/theme.js";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
@@ -897,13 +899,15 @@ function dominantUtil(pos, LINEUPS) {
   return best;
 }
 
-function InteractiveMap({ side, onPractice }) {
+function InteractiveMap({ mapId, side, onPractice }) {
   const mapData = useMapData();
   const { LINEUPS, SETUP_POSITIONS, RADAR_URL, MAP_NAME } = mapData;
   const [selectedPos, setSelectedPos] = useState(null);
   const [hoveredLineup, setHoveredLineup] = useState(null);
   const [selectedSpawn, setSelectedSpawn] = useState(null);
   const [mapMode, setMapMode] = useState("positions");
+  const mapMeta = useMemo(() => getRadarMetadata(mapId), [mapId]);
+  const resolvePoint = useCallback((point) => resolveHybridPoint(point, mapMeta), [mapMeta]);
 
   const svgKeyHandler = useCallback((onClick) => (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); }
@@ -911,8 +915,25 @@ function InteractiveMap({ side, onPractice }) {
 
   useEffect(() => { setSelectedPos(null); setSelectedSpawn(null); }, [MAP_NAME]);
 
-  const spawns = useMemo(() => mapData.SPAWNS?.[side] || [], [side, mapData.SPAWNS]);
-  const positions = useMemo(() => SETUP_POSITIONS.filter((p) => p.side === side), [side, SETUP_POSITIONS]);
+  const spawns = useMemo(
+    () => (mapData.SPAWNS?.[side] || [])
+      .map((sp) => {
+        const plotPos = resolvePoint(sp.pos);
+        return plotPos ? { ...sp, plotPos } : null;
+      })
+      .filter(Boolean),
+    [side, mapData.SPAWNS, resolvePoint]
+  );
+  const positions = useMemo(
+    () => SETUP_POSITIONS
+      .filter((p) => p.side === side)
+      .map((p) => {
+        const plotPos = resolvePoint(p.pos);
+        return plotPos ? { ...p, plotPos } : null;
+      })
+      .filter(Boolean),
+    [side, SETUP_POSITIONS, resolvePoint]
+  );
   const selected = positions.find((p) => p.id === selectedPos) || null;
   const activeSpawn = spawns.find((s) => s.id === selectedSpawn) || null;
 
@@ -1000,16 +1021,18 @@ function InteractiveMap({ side, onPractice }) {
           {mapMode === "spawns" && spawns.map((sp) => {
             const isActive = selectedSpawn === sp.id;
             const hasLineups = sp.lineups.length > 0;
+            const spawnX = sp.plotPos.x;
+            const spawnY = sp.plotPos.y;
             return (
               <g key={`spawn-${sp.id}`}>
                 {isActive && (
-                  <circle cx={sp.pos.x} cy={sp.pos.y} r={4}
+                  <circle cx={spawnX} cy={spawnY} r={4}
                     fill="none" stroke={T.accent} strokeWidth={0.4} opacity={0.6}>
                     <animate attributeName="r" from="3" to="6" dur="1.5s" repeatCount="indefinite" />
                     <animate attributeName="opacity" from="0.8" to="0" dur="1.5s" repeatCount="indefinite" />
                   </circle>
                 )}
-                <circle cx={sp.pos.x} cy={sp.pos.y}
+                <circle cx={spawnX} cy={spawnY}
                   r={isActive ? 2.8 : 2}
                   fill={isActive ? T.accent : hasLineups ? T.gold : T.textDim}
                   opacity={isActive ? 0.95 : hasLineups ? 0.8 : 0.4}
@@ -1020,7 +1043,7 @@ function InteractiveMap({ side, onPractice }) {
                   onKeyDown={svgKeyHandler(() => { setSelectedSpawn(isActive ? null : sp.id); setHoveredLineup(null); })}
                 />
                 {!isActive && hasLineups && (
-                  <text x={sp.pos.x} y={sp.pos.y + 0.6}
+                  <text x={spawnX} y={spawnY + 0.6}
                     textAnchor="middle" fill="#000" fontSize="1.8" fontWeight="900"
                     style={{ pointerEvents:"none" }}>
                     {sp.lineups.length}
@@ -1031,17 +1054,18 @@ function InteractiveMap({ side, onPractice }) {
           })}
 
           {mapMode === "spawns" && activeSpawn && spawnLineups.map((L) => {
-            if (!L.radarTarget) return null;
+            const targetPos = resolvePoint(L.radarTarget);
+            if (!targetPos) return null;
             const isHovered = hoveredLineup === L.id;
             const color = UTIL[L.util]?.color || "#888";
             return (
               <g key={`spawnline-${L.id}`}>
-                <line x1={activeSpawn.pos.x} y1={activeSpawn.pos.y}
-                  x2={L.radarTarget.x} y2={L.radarTarget.y}
+                <line x1={activeSpawn.plotPos.x} y1={activeSpawn.plotPos.y}
+                  x2={targetPos.x} y2={targetPos.y}
                   stroke={color} strokeWidth={isHovered ? 0.6 : 0.35}
                   strokeDasharray={isHovered ? "none" : "1.2,0.8"}
                   opacity={isHovered ? 0.9 : 0.5} />
-                <circle cx={L.radarTarget.x} cy={L.radarTarget.y}
+                <circle cx={targetPos.x} cy={targetPos.y}
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
@@ -1054,7 +1078,7 @@ function InteractiveMap({ side, onPractice }) {
                   onFocus={() => setHoveredLineup(L.id)}
                   onBlur={() => setHoveredLineup(null)} />
                 {isHovered && (
-                  <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
+                  <text x={targetPos.x} y={targetPos.y - 3}
                     textAnchor="middle" fill="#fff" fontSize="2.2" fontWeight="700"
                     style={{ pointerEvents:"none" }}>
                     {L.name}
@@ -1065,25 +1089,27 @@ function InteractiveMap({ side, onPractice }) {
           })}
 
           {mapMode === "positions" && selected && selectedLineups.map((L) => {
-            if (!L.radarTarget) return null;
+            const targetPos = resolvePoint(L.radarTarget);
+            if (!targetPos) return null;
             const isHovered = hoveredLineup === L.id;
             const color = UTIL[L.util]?.color || "#888";
-            const throwX = L.radarPos ? L.radarPos.x : selected.pos.x;
-            const throwY = L.radarPos ? L.radarPos.y : selected.pos.y;
+            const throwPos = resolvePoint(L.radarPos);
+            const lineStart = throwPos || selected.plotPos;
+            if (!lineStart) return null;
             return (
               <g key={`line-${L.id}`}>
-                {L.radarPos && isHovered && (
-                  <circle cx={throwX} cy={throwY} r={1.4}
+                {throwPos && isHovered && (
+                  <circle cx={throwPos.x} cy={throwPos.y} r={1.4}
                     fill="#ffffff" opacity={0.85}
                     stroke={color} strokeWidth={0.35}
                     style={{ pointerEvents:"none" }} />
                 )}
-                <line x1={throwX} y1={throwY}
-                  x2={L.radarTarget.x} y2={L.radarTarget.y}
+                <line x1={lineStart.x} y1={lineStart.y}
+                  x2={targetPos.x} y2={targetPos.y}
                   stroke={color} strokeWidth={isHovered ? 0.6 : 0.35}
                   strokeDasharray={isHovered ? "none" : "1.2,0.8"}
                   opacity={isHovered ? 0.9 : 0.5} />
-                <circle cx={L.radarTarget.x} cy={L.radarTarget.y}
+                <circle cx={targetPos.x} cy={targetPos.y}
                   r={isHovered ? 2.5 : 1.8}
                   fill={color} opacity={isHovered ? 1 : 0.7}
                   stroke="#000" strokeWidth={0.3}
@@ -1096,7 +1122,7 @@ function InteractiveMap({ side, onPractice }) {
                   onFocus={() => setHoveredLineup(L.id)}
                   onBlur={() => setHoveredLineup(null)} />
                 {isHovered && (
-                  <text x={L.radarTarget.x} y={L.radarTarget.y - 3}
+                  <text x={targetPos.x} y={targetPos.y - 3}
                     textAnchor="middle" fill="#fff" fontSize="2.2" fontWeight="700"
                     style={{ pointerEvents:"none" }}>
                     {L.name}
@@ -1111,22 +1137,24 @@ function InteractiveMap({ side, onPractice }) {
             const util = dominantByPosId[pos.id];
             const color = util ? (UTIL[util]?.color || T.textDim) : T.textDim;
             const hasMustLearn = pos.lineups.some((id) => LINEUPS[id]?.mustLearn);
+            const posX = pos.plotPos.x;
+            const posY = pos.plotPos.y;
             if (isSelected) {
               return (
                 <g key={pos.id}>
-                  <circle cx={pos.pos.x} cy={pos.pos.y} r={4}
+                  <circle cx={posX} cy={posY} r={4}
                     fill="none" stroke={T.accent} strokeWidth={0.4} opacity={0.6}>
                     <animate attributeName="r" from="3" to="5" dur="1.5s" repeatCount="indefinite" />
                     <animate attributeName="opacity" from="0.8" to="0" dur="1.5s" repeatCount="indefinite" />
                   </circle>
-                  <circle cx={pos.pos.x} cy={pos.pos.y} r={2.8}
+                  <circle cx={posX} cy={posY} r={2.8}
                     fill={T.accent} opacity={0.9}
                     stroke="#000" strokeWidth={0.4}
                     role="button" tabIndex={0} aria-label={`Deselect ${pos.name}`}
                     style={{ cursor:"pointer", pointerEvents:"all", outline:"none" }}
                     onClick={() => setSelectedPos(null)}
                     onKeyDown={svgKeyHandler(() => setSelectedPos(null))} />
-                  <text x={pos.pos.x} y={pos.pos.y + 0.7}
+                  <text x={posX} y={posY + 0.7}
                     textAnchor="middle" fill="#000" fontSize="2.2" fontWeight="900"
                     style={{ pointerEvents:"none" }}>
                     {pos.lineups.length}
@@ -1140,12 +1168,12 @@ function InteractiveMap({ side, onPractice }) {
                 onClick={() => { setSelectedPos(pos.id); setHoveredLineup(null); }}
                 onKeyDown={svgKeyHandler(() => { setSelectedPos(pos.id); setHoveredLineup(null); })}>
                 {hasMustLearn && (
-                  <circle cx={pos.pos.x} cy={pos.pos.y} r={3.8}
+                  <circle cx={posX} cy={posY} r={3.8}
                     fill="none" stroke={T.gold} strokeWidth={0.4} opacity={0.6} />
                 )}
-                <circle cx={pos.pos.x} cy={pos.pos.y} r={2.4}
+                <circle cx={posX} cy={posY} r={2.4}
                   fill={color} opacity={0.85} stroke="#000" strokeWidth={0.3} />
-                <text x={pos.pos.x} y={pos.pos.y + 0.7}
+                <text x={posX} y={posY + 0.7}
                   textAnchor="middle" fill="#000" fontSize="2" fontWeight="900"
                   style={{ pointerEvents:"none" }}>
                   {pos.lineups.length}
@@ -1292,7 +1320,7 @@ function InteractiveMap({ side, onPractice }) {
 
 // ── MAP BLOCK — inline in Playbook ──────────────────────────────
 
-function MapBlock({ side, onPractice }) {
+function MapBlock({ mapId, side, onPractice }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -1328,7 +1356,7 @@ function MapBlock({ side, onPractice }) {
       </div>
       {!collapsed && (
         <div style={{ padding: 18 }}>
-          <InteractiveMap side={side} onPractice={onPractice} />
+          <InteractiveMap mapId={mapId} side={side} onPractice={onPractice} />
         </div>
       )}
     </div>
@@ -1373,7 +1401,7 @@ function EmptyState({ filter, kind, onResetFilter }) {
 
 // ── PLAYBOOK VIEW (responsive 2-column) ──────────────────────────
 
-function PlaybookView({ side, filter, onFilter, onPractice, onStepCombo, onStepBelt, carrierName }) {
+function PlaybookView({ mapId, side, filter, onFilter, onPractice, onStepCombo, onStepBelt, carrierName }) {
   const { LINEUPS, MUST_LEARN, COMBOS, UTILITY_BELTS, SCENARIOS } = useMapData();
 
   const sideCombos    = useMemo(() => COMBOS.filter(c => c.side === side), [COMBOS, side]);
@@ -1391,7 +1419,7 @@ function PlaybookView({ side, filter, onFilter, onPractice, onStepCombo, onStepB
           <MustLearnHero side={side} onPractice={onPractice} />
         </div>
 
-        <MapBlock side={side} onPractice={onPractice} />
+        <MapBlock mapId={mapId} side={side} onPractice={onPractice} />
 
         <Accordion title="All Lineups" glyph="▣" accent={T.accent}
           subtitle="Searchable reference — every grenade on this side"
@@ -1929,6 +1957,7 @@ export default function CS2Playbook() {
                 </div>
               )}
               <PlaybookView
+                mapId={currentMap}
                 side={side} filter={filter} onFilter={setFilter}
                 onPractice={handlePractice}
                 onStepCombo={handleStepCombo}
