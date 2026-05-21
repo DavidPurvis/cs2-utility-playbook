@@ -318,8 +318,7 @@ export const COMBOS = [
 //  Teammates drop their smoke(s) pre-round so the carrier has everything.
 // ═══════════════════════════════════════════════════════════════
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)

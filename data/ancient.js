@@ -326,15 +326,14 @@ export const COMBOS = [
     ],
     tip: "Don't peek mid until your molly is burning. Let the util do the work.",
   },
-  ];
+];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITY BELTS — one player carries the full execute
 //  Teammates drop their smoke(s) pre-round so the carrier has everything.
 // ═══════════════════════════════════════════════════════════════
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)

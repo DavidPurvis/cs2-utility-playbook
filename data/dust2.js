@@ -344,16 +344,14 @@ export const MUST_LEARN = [
 //  COMBOS — 2-3 player named bundles
 // ═══════════════════════════════════════════════════════════════
 
-export const COMBOS = [
-  ];
+export const COMBOS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITY BELTS — one player carries the full execute
 //  Teammates drop their smoke(s) pre-round so the carrier has everything.
 // ═══════════════════════════════════════════════════════════════
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)

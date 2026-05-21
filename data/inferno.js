@@ -423,8 +423,7 @@ export const COMBOS = [
     ],
     tip: "Smokes first, then flash. Entry player pushes on the flash. Plant default for Apartments post-plant positions.",
   },
-  
-  {
+    {
     id: "b_retake_ct",
     name: "B Site Retake",
     site: "B",
@@ -464,7 +463,7 @@ export const UTILITY_BELTS = [
     teamRole:
       "Everyone else stages inside Apartments behind the belt carrier. Push on their flash. Watch Arch and Pit after plant.",
   },
-  ];
+];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
