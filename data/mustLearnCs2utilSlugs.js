@@ -11,6 +11,11 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     a_main_pop_flash: "a-site-flash-from-a-main",
     // Hand-matched fuzzy slug variants.
     ct_a_main_molly: "ct-lane-molotov-from-long",
+    // Description says "Corner of Connector (T Lower area)", which
+    // matches cs2util's `b-site-molotov-from-t-lower`. The lineup's
+    // screenshot URL incorrectly points to `b-cubby-molotov-from-ruins`
+    // (which is a Ruins throw — completely different spot).
+    b_pillar_molly: "b-site-molotov-from-t-lower",
   },
   dust2: {
     xbox_smoke: "xbox-smoke-from-nomal-t-spawn",

@@ -126,7 +126,7 @@ export const LINEUPS = {
     // User correction: smoke landed slightly too long (overshot) and
     // too far left. Was target (33.1, 18.3). Pull in & right slightly.
     radarPos: { worldX: -735.964, worldY: -2135.969 },
-    radarTarget: { x: 37, y: 23 },
+    radarTarget: { x: 33.105, y: 18.262 },
     austincs: { video: "", timestamp: "", note: "" },
   },
 
@@ -412,10 +412,11 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/ancient/molotov/b-site/b-cubby-molotov-from-ruins-lineup.webp",
       result: "https://assets.cs2util.com/ancient/molotov/b-site/b-cubby-molotov-from-ruins-cover.webp",
     },
-    // User correction: throw was too far down on Y by ~1/3. Was
-    // worldX 1255.967, worldY -1479.969 → percent (82, 71). Lift y by
-    // ~1/3 of its current value; keep x near the same B-side approach.
-    radarPos: { x: 82, y: 48 },
+    // Exact cs2util setpos for `b-site-molotov-from-t-lower` —
+    // matches the lineup's "Corner of Connector (T Lower area)"
+    // description. Replaces the earlier wrong slug match
+    // (`b-cubby-molotov-from-ruins`) which was thrown from Ruins.
+    radarPos: { worldX: 619.863, worldY: -859.972 },
     radarTarget: { x: 67, y: 31 },
     austincs: { video: "", timestamp: "", note: "" },
   },
