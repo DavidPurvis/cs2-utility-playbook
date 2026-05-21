@@ -16,6 +16,11 @@ export const MUST_LEARN_CS2UTIL_SLUGS = {
     // screenshot URL incorrectly points to `b-cubby-molotov-from-ruins`
     // (which is a Ruins throw — completely different spot).
     b_pillar_molly: "b-site-molotov-from-t-lower",
+    // B Short / B Long thrown from Ruins (the T-side lane to B).
+    b_short_smoke: "b-short-smoke-from-ruins",
+    // The B Long variant thrown from T Spawn (matches buddy setup spot
+    // at T Spawn area, not Ruins).
+    b_long_smoke: "b-long-smoke-from-t-spawn",
   },
   dust2: {
     xbox_smoke: "xbox-smoke-from-nomal-t-spawn",
