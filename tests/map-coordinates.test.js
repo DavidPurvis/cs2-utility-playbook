@@ -58,23 +58,40 @@ const CONTROL_POINTS = {
   ],
 };
 
-// Landmark points from known callouts (visually verifiable on common Valve-style radar usage).
+// Landmark points from known callouts, verified against community spawn data
+// (Steam guide #3337501004) and csutil.com setpos commands.
 const LANDMARK_POINTS = {
   inferno: [
-    { worldX: -1591, worldY: 583, description: "T Spawn", expectedX: 9.89, expectedY: 65.51, tolerance: 2.0 },
+    { worldX: -1662, worldY: 289, description: "T Spawn", expectedX: 8.47, expectedY: 71.37, tolerance: 2.0 },
     { worldX: 2089, worldY: 295, description: "A Site default", expectedX: 83.23, expectedY: 71.25, tolerance: 2.0 },
     { worldX: 146, worldY: 2876, description: "B Site default", expectedX: 44.5, expectedY: 19.81, tolerance: 2.0 },
     { worldX: 282, worldY: 1018, description: "Mid Banana", expectedX: 47.21, expectedY: 56.84, tolerance: 2.0 },
   ],
   dust2: [
-    { worldX: -648, worldY: -1157, description: "T Spawn", expectedX: 40.57, expectedY: 97.57, tolerance: 2.0 },
+    { worldX: -657, worldY: -756, description: "T Spawn", expectedX: 40.37, expectedY: 88.67, tolerance: 2.0 },
     { worldX: 1226, worldY: 2499, description: "A Site", expectedX: 82.16, expectedY: 16.42, tolerance: 2.0 },
     { worldX: -1355, worldY: 2523, description: "B Site", expectedX: 24.88, expectedY: 15.89, tolerance: 2.0 },
   ],
   mirage: [
-    { worldX: -1483, worldY: -2693, description: "T Spawn", expectedX: 34.12, expectedY: 86.05, tolerance: 2.0 },
+    { worldX: 1136, worldY: -160, description: "T Spawn", expectedX: 85.27, expectedY: 36.58, tolerance: 2.0 },
     { worldX: -204, worldY: -1192, description: "A Site", expectedX: 59.1, expectedY: 56.74, tolerance: 2.0 },
     { worldX: -2196, worldY: 405, description: "B Site", expectedX: 20.2, expectedY: 25.55, tolerance: 2.0 },
+  ],
+  overpass: [
+    { worldX: -1448, worldY: -3076, description: "T Spawn", expectedX: 63.53, expectedY: 91.21, tolerance: 2.0 },
+    { worldX: -2199, worldY: 740, description: "CT Spawn", expectedX: 49.43, expectedY: 19.55, tolerance: 2.0 },
+  ],
+  nuke: [
+    { worldX: -1874, worldY: -1076, description: "T Spawn", expectedX: 22.03, expectedY: 55.29, tolerance: 2.0 },
+    { worldX: 2504, worldY: -344, description: "CT Spawn", expectedX: 83.11, expectedY: 45.08, tolerance: 2.0 },
+  ],
+  anubis: [
+    { worldX: -234, worldY: -1503, description: "T Spawn", expectedX: 47.93, expectedY: 90.38, tolerance: 2.0 },
+    { worldX: -476, worldY: 2216, description: "CT Spawn", expectedX: 43.40, expectedY: 20.80, tolerance: 2.0 },
+  ],
+  ancient: [
+    { worldX: -520, worldY: -2224, description: "T Spawn", expectedX: 47.52, expectedY: 85.70, tolerance: 2.0 },
+    { worldX: -192, worldY: 1696, description: "CT Spawn", expectedX: 53.93, expectedY: 9.14, tolerance: 2.0 },
   ],
 };
 
