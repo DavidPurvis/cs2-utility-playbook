@@ -72,8 +72,7 @@ for (const mapId of MAPS) {
   for (const [id, lineup] of Object.entries(lineups)) {
     const slug = resolveMustLearnCs2utilSlug(mapId, id, lineup);
     const entry = slug ? stagingBySlug.get(slug) : null;
-    // Only act on confirmed matches (slug exists AND side matches).
-    if (!entry || !entry.throwFrom?.world) {
+    if (!entry) {
       unverified.push(id);
       continue;
     }
@@ -81,8 +80,19 @@ for (const mapId of MAPS) {
       unverified.push(`${id} (side-mismatch ${lineup.side}/${entry.team})`);
       continue;
     }
-    const w = entry.throwFrom.world;
-    const posLiteral = `{ worldX: ${fmt(w.worldX)}, worldY: ${fmt(w.worldY)} }`;
+    // Prefer exact world (setpos) coords; fall back to cs2util's 2D-map
+    // percent if no world is recorded for that slug.
+    let posLiteral = null;
+    if (entry.throwFrom?.world) {
+      const w = entry.throwFrom.world;
+      posLiteral = `{ worldX: ${fmt(w.worldX)}, worldY: ${fmt(w.worldY)} }`;
+    } else if (entry.throwFrom?.percent) {
+      const p = entry.throwFrom.percent;
+      posLiteral = `{ x: ${fmt(p.x)}, y: ${fmt(p.y)} }`;
+    } else {
+      unverified.push(`${id} (no coords in cs2util)`);
+      continue;
+    }
     const newSrc = replaceField(source, id, "radarPos", posLiteral);
     if (newSrc) {
       source = newSrc;
