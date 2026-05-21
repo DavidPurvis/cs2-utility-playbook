@@ -11,6 +11,7 @@ import { AdminGate } from "./components/admin/AdminGate";
 import { AdminPanel } from "./components/admin/AdminPanel";
 import { UtilityEditor, type UtilityEditorHandle } from "./components/admin/UtilityEditor";
 import { ScenarioEditor } from "./components/admin/ScenarioEditor";
+import { DataExporter } from "./components/admin/DataExporter";
 
 function ScenariosTab() {
   const { config, utilities, scenarios } = useEditableData();
@@ -199,6 +200,7 @@ function AppInner() {
             <UtilityEditor ref={editorRef} onSetClickToPlace={setClickPlace} />
           ),
           scenarios: <ScenarioEditor />,
+          data: <DataExporter />,
         }}
       />
     </div>
