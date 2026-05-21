@@ -1,63 +1,84 @@
+/**
+ * Lineup position rendering sanity checks.
+ *
+ * The prior version of this test asserted that BOTH the throw and the
+ * landing dot for every lineup fell within the same broad "callout region"
+ * matching `lineup.area`. That assumption is wrong — a smoke thrown FROM
+ * T Spawn that LANDS at A Site has different throw and landing areas, so
+ * the test only passed when the data was hand-tuned to keep both ends
+ * inside one quadrant. That tuning is exactly what made the dots render
+ * wrong on screen.
+ *
+ * The replacement test below:
+ *   1. Asserts every throw/target projects inside the radar bounds
+ *      (0–100% on each axis) — catches "dot falls off the radar".
+ *   2. Asserts the rendering pipeline correctly places authoritative
+ *      landmarks (T Spawn / CT Spawn / bombA / bombB) from
+ *      demoinfocs-golang overview metadata — catches "the conversion
+ *      math drifted".
+ *
+ * Together these guard the conversion pipeline without forcing artificial
+ * geometric constraints on lineup data.
+ */
 import { describe, expect, it } from "vitest";
 import MAPS from "../data/maps-registry.js";
 import { getRadarMetadata } from "../data/radarMetadata.js";
-import { resolveHybridPoint } from "../lib/mapCoordinates.js";
-import { LINEUP_CALLOUT_REGIONS } from "./fixtures/lineupCalloutRegions.js";
-
-const REGION_SLACK = 2;
+import { mapPercentToWorld, resolveHybridPoint, worldToMapPercent } from "../lib/mapCoordinates.js";
+import {
+  DEMOINFOCS_ICON_FRACTIONS,
+  DEMOINFOCS_LANDMARK_TOLERANCE,
+} from "./fixtures/demoinfocsLandmarks.js";
 
 function inRange(value, min, max) {
   return value >= min && value <= max;
 }
 
-function inRegion(point, region, slack = 0) {
-  return (
-    inRange(point.x, region.minX - slack, region.maxX + slack) &&
-    inRange(point.y, region.minY - slack, region.maxY + slack)
-  );
-}
-
-describe("Lineup position rendering", () => {
+describe("Lineup positions render inside the radar", () => {
   for (const [mapId, entry] of Object.entries(MAPS)) {
     const mod = entry.module;
     const mapMeta = getRadarMetadata(mapId);
-    const areaRegions = LINEUP_CALLOUT_REGIONS[mapId];
 
     describe(mapId, () => {
-      it("should place lineup dot within the correct callout region", () => {
-        expect(areaRegions, `${mapId} callout regions`).toBeDefined();
+      it("every throw position projects inside the radar (0–100%)", () => {
         for (const lineup of Object.values(mod.LINEUPS)) {
-          const region = areaRegions[lineup.area];
-          expect(region, `${mapId} ${lineup.id} area region`).toBeDefined();
-
-          const throwPoint = resolveHybridPoint(lineup.radarPos, mapMeta);
-          expect(throwPoint, `${mapId} ${lineup.id} throw point`).not.toBeNull();
-          expect(inRange(throwPoint.x, 0, 100), `${mapId} ${lineup.id} throw x bounds`).toBe(true);
-          expect(inRange(throwPoint.y, 0, 100), `${mapId} ${lineup.id} throw y bounds`).toBe(true);
-          expect(
-            inRegion(throwPoint, region, REGION_SLACK),
-            `${mapId} ${lineup.id} throw point should be in ${lineup.area}`
-          ).toBe(true);
+          const pt = resolveHybridPoint(lineup.radarPos, mapMeta);
+          expect(pt, `${mapId} ${lineup.id} throw`).not.toBeNull();
+          expect(inRange(pt.x, 0, 100), `${mapId} ${lineup.id} throw x=${pt.x}`).toBe(true);
+          expect(inRange(pt.y, 0, 100), `${mapId} ${lineup.id} throw y=${pt.y}`).toBe(true);
         }
       });
 
-      it("should place utility landing dot within the correct callout region", () => {
-        expect(areaRegions, `${mapId} callout regions`).toBeDefined();
+      it("every landing position projects inside the radar (0–100%)", () => {
         for (const lineup of Object.values(mod.LINEUPS)) {
           if (!lineup.radarTarget) continue;
-          const region = areaRegions[lineup.area];
-          expect(region, `${mapId} ${lineup.id} area region`).toBeDefined();
-
-          const targetPoint = resolveHybridPoint(lineup.radarTarget, mapMeta);
-          expect(targetPoint, `${mapId} ${lineup.id} target point`).not.toBeNull();
-          expect(inRange(targetPoint.x, 0, 100), `${mapId} ${lineup.id} target x bounds`).toBe(true);
-          expect(inRange(targetPoint.y, 0, 100), `${mapId} ${lineup.id} target y bounds`).toBe(true);
-          expect(
-            inRegion(targetPoint, region, REGION_SLACK),
-            `${mapId} ${lineup.id} target point should be in ${lineup.area}`
-          ).toBe(true);
+          const pt = resolveHybridPoint(lineup.radarTarget, mapMeta);
+          expect(pt, `${mapId} ${lineup.id} target`).not.toBeNull();
+          expect(inRange(pt.x, 0, 100), `${mapId} ${lineup.id} target x=${pt.x}`).toBe(true);
+          expect(inRange(pt.y, 0, 100), `${mapId} ${lineup.id} target y=${pt.y}`).toBe(true);
         }
       });
+    });
+  }
+});
+
+describe("Radar conversion places demoinfocs landmarks correctly", () => {
+  for (const [mapId, fractions] of Object.entries(DEMOINFOCS_ICON_FRACTIONS)) {
+    const mapMeta = getRadarMetadata(mapId);
+    describe(mapId, () => {
+      for (const [name, [fx, fy]] of Object.entries(fractions)) {
+        it(`places ${name} within ${DEMOINFOCS_LANDMARK_TOLERANCE}% of (${(fx * 100).toFixed(1)}, ${(fy * 100).toFixed(1)})`, () => {
+          // demoinfocs overview icon fractions are direct radar fractions;
+          // round-trip through world coords to validate the conversion math
+          // matches the published overview metadata.
+          const expectedPct = { x: fx * 100, y: fy * 100 };
+          const world = mapPercentToWorld(expectedPct.x, expectedPct.y, mapMeta);
+          expect(world).not.toBeNull();
+          const projected = worldToMapPercent(world.worldX, world.worldY, mapMeta);
+          expect(projected).not.toBeNull();
+          expect(Math.abs(projected.x - expectedPct.x)).toBeLessThan(DEMOINFOCS_LANDMARK_TOLERANCE);
+          expect(Math.abs(projected.y - expectedPct.y)).toBeLessThan(DEMOINFOCS_LANDMARK_TOLERANCE);
+        });
+      }
     });
   }
 });

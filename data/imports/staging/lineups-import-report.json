@@ -1,0 +1,1566 @@
+{
+  "generatedAt": "2026-05-21T05:17:10.660Z",
+  "mode": "cs2util_primary",
+  "description": "Primary lineup import from cs2util.com with optional csnades.gg backup fill.",
+  "options": {
+    "mapIds": [
+      "ancient",
+      "dust2",
+      "inferno",
+      "mirage",
+      "nuke",
+      "anubis",
+      "overpass",
+      "cache"
+    ],
+    "useCsnadesBackup": true,
+    "fetchDetails": true
+  },
+  "sourceCounts": {
+    "cs2util": 660,
+    "csnades": 358,
+    "sitemapDetailPages": 628
+  },
+  "importCounts": {
+    "total": 660,
+    "primary": 483,
+    "enriched": 177,
+    "backupOnly": 0,
+    "backupFilledFromCsnades": 177
+  },
+  "byMapCounts": {
+    "ancient": {
+      "cs2util": 103,
+      "csnades": 60,
+      "sitemapDetailPages": 107,
+      "imported": 103,
+      "backupFilled": 30,
+      "primaryOnly": 73
+    },
+    "dust2": {
+      "cs2util": 129,
+      "csnades": 49,
+      "sitemapDetailPages": 137,
+      "imported": 129,
+      "backupFilled": 24,
+      "primaryOnly": 105
+    },
+    "inferno": {
+      "cs2util": 81,
+      "csnades": 48,
+      "sitemapDetailPages": 80,
+      "imported": 81,
+      "backupFilled": 30,
+      "primaryOnly": 51
+    },
+    "mirage": {
+      "cs2util": 120,
+      "csnades": 69,
+      "sitemapDetailPages": 121,
+      "imported": 120,
+      "backupFilled": 39,
+      "primaryOnly": 81
+    },
+    "nuke": {
+      "cs2util": 68,
+      "csnades": 37,
+      "sitemapDetailPages": 71,
+      "imported": 68,
+      "backupFilled": 13,
+      "primaryOnly": 55
+    },
+    "anubis": {
+      "cs2util": 89,
+      "csnades": 49,
+      "sitemapDetailPages": 90,
+      "imported": 89,
+      "backupFilled": 21,
+      "primaryOnly": 68
+    },
+    "overpass": {
+      "cs2util": 48,
+      "csnades": 34,
+      "sitemapDetailPages": 0,
+      "imported": 48,
+      "backupFilled": 15,
+      "primaryOnly": 33
+    },
+    "cache": {
+      "cs2util": 22,
+      "csnades": 12,
+      "sitemapDetailPages": 22,
+      "imported": 22,
+      "backupFilled": 5,
+      "primaryOnly": 17
+    }
+  },
+  "failures": [
+    {
+      "mapId": "ancient",
+      "slug": "lamp-room-self-pop-flash",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "pid-flash-from-cubby",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "cubby-flash-from-house",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "donut-flash-from-donut",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-site-flash-from-ruins",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-site-pillar-flash-from-doors",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "lamp-room-self-pop-flash",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-site-pillar-flash-from-doors",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "donut-flash-from-donut",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "pid-flash-from-cubby",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-site-flash-from-ruins",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "AWPer-cut-off-smoke-for-b-site-from-outside-tunnels",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat2",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-boost",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat1",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat3",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-site-back-plat-molotov",
+      "reason": "normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat2",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "AWPer-cut-off-smoke-for-b-site-from-outside-tunnels",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-site-back-plat-molotov",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-site-molotov-from-b-window",
+      "reason": "detail_parse_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-boost",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat1",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-a-plat3",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "47a342bd-e308-4663-afc3-ac2f652607bb",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "c8082da6-73a6-40f9-b1d8-e057811de69b",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "f9a048c8-abc6-41c4-b9c5-21741f2f4ed6",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "fddab991-7b03-42d8-84fb-27237735f57e",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "arch-smoke-from-bottom-mid",
+      "reason": "detail_fetch_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "07e14f4e-e175-43c2-b345-319b674d79d0",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "74ccfbd6-c0af-4194-b6d8-dd8b9138741e",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "d1e32e9c-2ab8-491d-9ede-4ce86adbecfb",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "77e3c27f-f15d-44ba-9868-870ddca197fb",
+      "reason": "detail_parse_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "garage-smoke-from-t-spawn-a",
+      "reason": "detail_parse_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "heaven-popflash-for-retake",
+      "reason": "detail_parse_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "main-door-instant-flash-from-silo",
+      "reason": "detail_parse_failed",
+      "source": "cs2util"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "a1810914-3bc9-4037-b46b-5edabd255027",
+      "reason": "detail_normalize_failed",
+      "source": "cs2util"
+    }
+  ],
+  "backupFills": [
+    {
+      "mapId": "ancient",
+      "slug": "b-long-smoke-from-ruins-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5992,
+      "csnadesSlug": "b-alley-from-ruins"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "lamp-room-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "cubby-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "pit-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "cat-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "a-main-smoke-from-ct-spawn-1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "a-main-from-ct-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "elbow-smoke-from-ct-spawn-c",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "elbow-from-ct-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "ramp-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9175,
+      "csnadesSlug": "b-ramp-from-ct-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "doors-smoke-from-ct-spawn-a",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8133,
+      "csnadesSlug": "b-doors-from-ct-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "doors-smoke-from-ct-spawn-b",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6892,
+      "csnadesSlug": "b-doors-from-ct-spawn-1"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "doors-smoke-from-ct-spawn-e",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6368,
+      "csnadesSlug": "b-doors-from-ct-spawn-2"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "doors-smoke-from-ct-spawn-c",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6368,
+      "csnadesSlug": "b-doors-from-ct-spawn-3"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-long-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5742,
+      "csnadesSlug": "b-doors-from-ct-spawn-4"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "doors-smoke-from-ct-spawn-d",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6368,
+      "csnadesSlug": "b-doors-from-ct-spawn-5"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "ct-lane-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6867,
+      "csnadesSlug": "ct-alley-from-ruins"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "ct-lane-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.81,
+      "csnadesSlug": "ct-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "elbow-smoke-from-ct-spawn-a",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5625,
+      "csnadesSlug": "elbow-from-a-site"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "a-main-smoke-from-ct-temple",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6333,
+      "csnadesSlug": "a-main-from-ct-d"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "alley-smoke-from-ruins-1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8,
+      "csnadesSlug": "back-alley-from-ruins"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "alley-smoke-from-ruins-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.78,
+      "csnadesSlug": "back-alley-from-ruins-corner"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "window-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "jaguar-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "house-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "donut-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "a-main-smoke-from-ct-lane",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6333,
+      "csnadesSlug": "a-main-from-ct-spawn-a"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "alley-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "top-mid-from-t-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "a-main-smoke-from-ct-spawn-3",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8754,
+      "csnadesSlug": "a-main-from-ct-spawn-b"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "alley-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9175,
+      "csnadesSlug": "ct-alley-from-ruins-b"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "b-long-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "cave-from-ruins-b"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "a-main-smoke-from-ct-spawn-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6135,
+      "csnadesSlug": "a-stairs-from-ct-spawn"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "mid-flash-from-t-spawn-b",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6368,
+      "csnadesSlug": "top-mid-from-t-spawn-2"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "mid-flash-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6413,
+      "csnadesSlug": "top-mid-from-t-spawn-1"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "04fef0de-bd54-488b-a3bb-c3fdb09b43bb",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5563,
+      "csnadesSlug": "top-mid-from-t-spawn-3"
+    },
+    {
+      "mapId": "ancient",
+      "slug": "334c6b87-6e4d-40d1-893b-8d16557630d9",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8175,
+      "csnadesSlug": "top-mid-from-t-spawn-4"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "xbox-smoke-from-nomal-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8925,
+      "csnadesSlug": "xbox-from-t-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "xbox-smoke-from-long",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8825,
+      "csnadesSlug": "xbox-from-outside-long"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "xbox-smoke-from-mid-barrels",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.62,
+      "csnadesSlug": "xbox-from-top-mid"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "middoors-smoke-from-t-spawn1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8461,
+      "csnadesSlug": "mid-doors-from-t-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "suicide-smoke-from-ct-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "suicide-from-ct-mid"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "ct-mid-cross-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9075,
+      "csnadesSlug": "ct-mid-from-ct-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "mid-xbox-smoke-from-ct-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6867,
+      "csnadesSlug": "bottom-mid-from-ct-mid"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-tunnels-smoke-from-b-plat",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.595,
+      "csnadesSlug": "deep-tunnels-from-b-plat"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "ct-spawn-smoke-from-a-site-pit-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5692,
+      "csnadesSlug": "ct-mid-from-outside-long"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-window-smoke-from-outside-tunnels",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.85,
+      "csnadesSlug": "b-window-from-outside-b-tunnels"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "window-smoke-from-top-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "ct-spawn-from-top-mid"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "ct-waterfall-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "window-from-t-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-doors-smoke-from-outside-tunnels-cover",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8333,
+      "csnadesSlug": "b-doors-from-outside-b-tunnels"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "mid-doors-smoke-from-lower-tunnels",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "xbox-from-lower-tunnels"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "ct-spawn-smoke-from-xbox",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "ct-spawn-from-xbox"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-smoke-from-t-spwan1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5849,
+      "csnadesSlug": "long-corner-from-t-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-doors-waterfall-smoke-from-t-plat",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5618,
+      "csnadesSlug": "b-doors-from-t-spawn"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-doors-smoke-from-upper-tunnels",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.97,
+      "csnadesSlug": "b-doors-from-upper-tunnels-a"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-doors-inside-smoke-from-upper-tunnels",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9142,
+      "csnadesSlug": "b-doors-from-upper-tunnels-b"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "b-hole-smoke-from-ct-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7,
+      "csnadesSlug": "b-tunnels-from-ct-mid"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "mid-door-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7943,
+      "csnadesSlug": "mid-doors-from-t-spawn-railing"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "a-long-anti-push-pop-flash-from-long-doors",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5917,
+      "csnadesSlug": "a-cross-from-long-doors"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "default-ramp-molotov-from-short",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "short-from-short"
+    },
+    {
+      "mapId": "dust2",
+      "slug": "79a5c6db-fa8a-474f-bcd6-27a673cd584e",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8175,
+      "csnadesSlug": "short-from-stairs"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "half-wall-smoke-from-coffins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "half-wall-from-coffins"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "moto-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8825,
+      "csnadesSlug": "moto-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "bottom-mid-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "bottom-mid-from-ct-spawn-1"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "pit-smoke-from-alt-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "pit-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "arch-smoke-from-bottom-mid ",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "arch-from-bottom-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "fountain-smoke-from-banana",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "ct-from-banana"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "pit-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "pit-from-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "b-cutoff-smoke-from-moto",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6475,
+      "csnadesSlug": "b-entrance-from-moto"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "b-cutoff-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5629,
+      "csnadesSlug": "b-entrance-from-ct"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "faze-mid-smoke-from-ct-spawn6",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5849,
+      "csnadesSlug": "top-mid-from-ct-spawn"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "half-wall-smoke-from-church",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "half-wall-from-church"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "mid-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8492,
+      "csnadesSlug": "top-mid-from-t-spawn"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "half-wall-smoke-from-ct",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "half-wall-from-ct-spawn"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "pit-smoke-from-boiler",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "moto-from-boiler"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "arch-smoke-from-mid2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.72,
+      "csnadesSlug": "arches-from-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "quad-smoke-from-alt-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "arches-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "ct-smoke-from-car",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "ct-from-car"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "coffins-smoke-from-half-wall",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.97,
+      "csnadesSlug": "coffins-from-half-wall-a"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "banana-isolation-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "ct-from-t-spawn"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "cart-smoke-from-alt-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "arch-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "ct-boost-smoke-from-banana",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "ct-boost-from-banana"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "library-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.975,
+      "csnadesSlug": "library-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "a-long-smoke-from-alt-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "boiler-from-alt-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "library-block-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8675,
+      "csnadesSlug": "library-from-bottom-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "arch-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8308,
+      "csnadesSlug": "arches-from-alt-mid-b"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "b-entrance-flash-from-coffins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6867,
+      "csnadesSlug": "b-entrace-from-coffins"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "top-mid-flash-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6667,
+      "csnadesSlug": "mid-arches-from-mid"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "boilier-molotov-from-alt-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "pit-from-alt-mid-2"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "quad-molotov-from-car",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "deep-ct-from-car"
+    },
+    {
+      "mapId": "inferno",
+      "slug": "3f225166-523b-424e-8f1c-913e400c9f4d",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8175,
+      "csnadesSlug": "bottom-mid-from-ct-spawn-2"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "window-smoke-from-t-spawn-trash-can",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8468,
+      "csnadesSlug": "window-from-t-spawn-c"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "apartments-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "palace-from-ct-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-window-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.97,
+      "csnadesSlug": "window-from-t-spawn-d"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-window-smoke-from-t-spawn4",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8325,
+      "csnadesSlug": "window-from-t-spawn-e"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "later-window-smoke-from-spawn-a",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5579,
+      "csnadesSlug": "window-from-t-spawn-7"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-window-smoke-from-t-spawn2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7657,
+      "csnadesSlug": "mid-window-from-t-spawn-b"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-window-smoke-from-t-spawn3",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7657,
+      "csnadesSlug": "mid-window-from-t-spawn-a"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-window-smoke-from-t-spawn5",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5625,
+      "csnadesSlug": "window-from-t-spawn-1"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "palace-from-outside-market",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9075,
+      "csnadesSlug": "palace-from-outside-market"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "palace-smoke-from-b-short",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "catwalk-from-b-short"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "van-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "apts-from-ct-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "jungle-connector-smoke-from-a-ramp",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9075,
+      "csnadesSlug": "jungle-from-a-ramp"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "jungle-smoke-from-side-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.62,
+      "csnadesSlug": "jungle-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "window-smoke-from-underpass",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9175,
+      "csnadesSlug": "mid-window-from-underpass"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "inside-connector-smoke-from-underpass",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6375,
+      "csnadesSlug": "jungle-and-connector-from-underpass"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-b-short-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5833,
+      "csnadesSlug": "connector-from-t-spawn-b"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b-short-smoke-from-side-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5638,
+      "csnadesSlug": "b-short-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "ct-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8675,
+      "csnadesSlug": "connector-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b-short-smoke-from-t-spawn-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5643,
+      "csnadesSlug": "window-from-t-spawn-2"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "stairs-smoke-from-t-spawn2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "deep-stairs-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "ct-smoke-from-a-ramp",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "stairs-from-a-ramp"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "stairs-smoke-from-t-spawn1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "stairs-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "ramp-smoke-from-ct-spawn2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8825,
+      "csnadesSlug": "a-ramp-from-ct-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "fast-connector-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "jungle-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b-door-smoke-from-side-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5546,
+      "csnadesSlug": "market-door-from-back-alley-b"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "stairs-smoke-from-a-ramp1",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8325,
+      "csnadesSlug": "stairs-from-a-ramp-b"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "apartments-smoke-from-market",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "apts-from-market"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "connector-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "catwalk-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "stairs-smoke-from-back-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "stairs-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "jungle-connector-smoke-from-back-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.85,
+      "csnadesSlug": "jungle-and-connector-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b-apartments-flash-from-market-window",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7,
+      "csnadesSlug": "b-apts-from-market-window"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "ramp-flash-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "top-mid-from-t-spawn"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "air-pop-flash-for-b-rush-from-back-alley",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5639,
+      "csnadesSlug": "b-site-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "mid-window-molotov-from-top-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "catwalk-from-top-mid"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "triple-molotov-from-tetris",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "jungle-from-tetris"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b8eda073-0b80-48ff-b6f2-fc8591001438",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8175,
+      "csnadesSlug": "right-arch-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "ab0fe562-d126-4265-8b89-4a244cb02c13",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8325,
+      "csnadesSlug": "bench-from-back-alley"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "b3e9b2f6-edff-4dcb-bf1b-860bf1c98755",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9,
+      "csnadesSlug": "market-window-from-default-b"
+    },
+    {
+      "mapId": "mirage",
+      "slug": "9a1ac4eb-ab5c-480f-aaab-53c0df342a22",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9,
+      "csnadesSlug": "ticket-booth-from-tetris"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "heaven-smoke-from-silo",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.925,
+      "csnadesSlug": "heaven-from-silo"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "garage-smoke-from-t-spawn-b",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.85,
+      "csnadesSlug": "front-garage-from-t-spawn-b"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "close-red-smoke-from-outside",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5849,
+      "csnadesSlug": "secret-close-from-outside-t-spawn"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "far-diagonal-smoke-for-secret-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6914,
+      "csnadesSlug": "secret-far-from-t-spawn"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "lockers-smoke-from-t-red",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6,
+      "csnadesSlug": "lockers-from-t-spawn-b"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "garage-smoke-from-t-spawn-c",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8133,
+      "csnadesSlug": "front-garage-from-t-spawn"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "garage-smoke-from-t-spawn-d",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7083,
+      "csnadesSlug": "garage-from-outside-t-spawn"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "heaven-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "secret-close-from-t-spawn"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "squeaky -smoke-from-heaven",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "squeaky-from-heaven"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "ct-blue-box-smoke-from-silo",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5557,
+      "csnadesSlug": "ct-red-from-under-silo"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "far-diagonal-smoke-for-secret-from-t-spawn-2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.7431,
+      "csnadesSlug": "secret-far-from-t-spawn-b"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "a-site-flash-from-troof",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6619,
+      "csnadesSlug": "a-main-from-t-roof"
+    },
+    {
+      "mapId": "nuke",
+      "slug": "t-red-molotov-from-ct-box",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.66,
+      "csnadesSlug": "t-red-from-ct-red"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "ebox-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "ebox-from-t-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "top-mid-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8658,
+      "csnadesSlug": "top-mid-from-t-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "top-mid-smoke-from-ct-spawn3",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8075,
+      "csnadesSlug": "top-mid-from-t-spawn-b"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "b-site-one-way-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "b-site-from-ruins"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "window-smoke-from-t-spawn13",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "window-from-t-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "b-site-smoke-from-ruins-4",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8925,
+      "csnadesSlug": "b-site-from-ruins-b"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "upper-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "bridge-from-ct-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "water-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "canals-from-ct-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "main-smoke-2-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5849,
+      "csnadesSlug": "a-main-from-ct-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "top-mid-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9175,
+      "csnadesSlug": "mid-from-t-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "b-site-smoke-from-ruins-3",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8658,
+      "csnadesSlug": "b-site-from-ruins-c"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "top-mid-smoke-from-ct-spawn2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.73,
+      "csnadesSlug": "mid-from-t-spawn-b"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "ninja-one-way-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "temple-from-ruins"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "top-mid-smoke-from-ct-spawn6",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5571,
+      "csnadesSlug": "top-mid-from-t-spawn-1"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "palace-smoke-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "heaven-from-water"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "e-box-one-way-smoke-from-ruins",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.94,
+      "csnadesSlug": "ebox-from-ruins"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "ebox-smoke-from-t-spawn2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.935,
+      "csnadesSlug": "ebox-from-t-spawn-b"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "main-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9175,
+      "csnadesSlug": "b-main-from-ct-spawn"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "b-site-smoke-from-ruins2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.935,
+      "csnadesSlug": "b-site-from-ruins-d"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "heaven-smoke-from-upper",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8825,
+      "csnadesSlug": "heaven-from-t-upper"
+    },
+    {
+      "mapId": "anubis",
+      "slug": "b-long-flash-from-street",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.6375,
+      "csnadesSlug": "mid-b-door-from-street"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "bank-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "bank-from-mid"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "fast-short-tunnel-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.5667,
+      "csnadesSlug": "water-tunnel-from-ct-spawn"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "heaven-smoke-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "heaven-from-water"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "bins-smoke-from-a-short",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.57,
+      "csnadesSlug": "bank-from-a-short"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "truck-smoke-from-mid",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "fountain-from-mid"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "bank-smoke-from-long2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.9025,
+      "csnadesSlug": "bank-from-long"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "bridge-smoke-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "bridge-from-water"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "outside-conn-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "bathroom-from-t-spawn"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "barrels-smoke-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "barrels-from-water"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "mid-toilets-smoke-from-t-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "bridge-from-t-spawn"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "bank-smoke-from-mid2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8125,
+      "csnadesSlug": "bank-from-mid-b"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "heaven-smoke-from-water2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.8125,
+      "csnadesSlug": "heaven-from-water-b"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "fast-monster-smoke-from-ct-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "monster-from-ct-spawn"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "pillar-flash-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "pit-from-water"
+    },
+    {
+      "mapId": "overpass",
+      "slug": "barrels-molotov-from-water",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "walkway-from-water"
+    },
+    {
+      "mapId": "cache",
+      "slug": "garage-smoke-from-CT-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.55,
+      "csnadesSlug": "a-main-from-ct-spawn"
+    },
+    {
+      "mapId": "cache",
+      "slug": "connector-smoke-from-T-spawn",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "connector-from-t-spawn"
+    },
+    {
+      "mapId": "cache",
+      "slug": "ct-smoke-from-sun-room2",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 0.985,
+      "csnadesSlug": "ct-from-sun-room"
+    },
+    {
+      "mapId": "cache",
+      "slug": "a-main-smoke-from-truck",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "a-main-from-truck"
+    },
+    {
+      "mapId": "cache",
+      "slug": "b-main-smoke-from-b-halls",
+      "reason": "landing_coords_enrichment",
+      "matchScore": 1,
+      "csnadesSlug": "b-main-from-b-halls"
+    }
+  ],
+  "warnings": [
+    "[cs2util] detail https://www.cs2util.com/inferno/smoke/arch-smoke-from-bottom-mid failed: 404 Not Found",
+    "[cs2util] detail https://www.cs2util.com/nuke/smoke/squeaky -smoke-from-heaven failed: 404 Not Found"
+  ]
+}
