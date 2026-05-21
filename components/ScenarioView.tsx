@@ -154,10 +154,10 @@ export function ScenarioView({
           style={{
             padding: 22,
             display: "grid",
-            gridTemplateColumns: scenario.playerCount === 3 ? "repeat(3, minmax(0, 1fr))" : "repeat(2, minmax(0, 1fr))",
             gap: 14,
           }}
           className="scenario-roles"
+          data-players={scenario.playerCount}
         >
           {scenario.roles.map((role) => {
             const style = PLAYER_STYLE[role.player];

@@ -8,6 +8,7 @@ import { DUST2_SCENARIOS_BY_ID } from "./data/dust2-scenarios";
 import { DUST2_ZONES_BY_ID } from "./data/dust2-zones";
 import type { Lineup, PlayerSlot } from "./data/types";
 import { T } from "./lib/theme";
+import { copyJsonToClipboard, exportScenario } from "./lib/jsonExport";
 
 function pointInPolygon(
   p: { x: number; y: number },
@@ -29,6 +30,7 @@ export default function App() {
   const [selectedZoneId, setSelectedZoneId] = useState<string | null>(null);
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
   const [activePlayer, setActivePlayer] = useState<PlayerSlot | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const selectedZone = selectedZoneId ? DUST2_ZONES_BY_ID[selectedZoneId] ?? null : null;
   const activeScenario = activeScenarioId ? DUST2_SCENARIOS_BY_ID[activeScenarioId] ?? null : null;
@@ -113,7 +115,40 @@ export default function App() {
             setActiveScenarioId(null);
             setActivePlayer(null);
           }}
+          onExport={async () => {
+            const data = exportScenario(activeScenario.id);
+            if (!data) return;
+            const json = JSON.stringify(data, null, 2);
+            const ok = await copyJsonToClipboard(json);
+            setToast(ok ? "Scenario JSON copied to clipboard" : "Clipboard unavailable — JSON logged to console");
+            if (!ok) console.log(json);
+            setTimeout(() => setToast(null), 2200);
+          }}
         />
+      )}
+
+      {toast && (
+        <div
+          role="status"
+          style={{
+            position: "fixed",
+            left: "50%",
+            bottom: 28,
+            transform: "translateX(-50%)",
+            background: T.bgPanel,
+            border: `1px solid ${T.accent}55`,
+            color: T.accent,
+            padding: "10px 16px",
+            borderRadius: T.radiusSm,
+            fontSize: 12,
+            fontWeight: 600,
+            fontFamily: T.fontUI,
+            zIndex: 100,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+          }}
+        >
+          {toast}
+        </div>
       )}
 
       <footer
