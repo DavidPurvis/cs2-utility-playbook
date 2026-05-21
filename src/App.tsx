@@ -2,6 +2,9 @@ import { T } from "./theme";
 import { Tabs, type TabDef } from "./components/Tabs";
 import { SpawnMap } from "./components/SpawnMap";
 import { useMapData } from "./hooks/useMapData";
+import { AdminProvider, useAdminMode } from "./hooks/useAdminMode";
+import { AdminGate } from "./components/admin/AdminGate";
+import { AdminPanel } from "./components/admin/AdminPanel";
 
 function ScenariosTabPlaceholder() {
   return (
@@ -24,7 +27,31 @@ function ScenariosTabPlaceholder() {
   );
 }
 
-export default function App() {
+function AdminFooterLink() {
+  const { isAdmin, openPrompt } = useAdminMode();
+  return (
+    <button
+      type="button"
+      onClick={openPrompt}
+      title={isAdmin ? "Already in admin mode" : "Enter admin mode"}
+      style={{
+        background: "transparent",
+        border: "none",
+        color: isAdmin ? T.accent : T.textDim,
+        cursor: "pointer",
+        fontSize: 11,
+        fontFamily: T.fontMono,
+        letterSpacing: 0.3,
+        textDecoration: "underline",
+        padding: 0,
+      }}
+    >
+      {isAdmin ? "admin · on" : "admin"}
+    </button>
+  );
+}
+
+function AppInner() {
   const { bundle, errors } = useMapData();
 
   const tabs: TabDef[] = [
@@ -130,10 +157,27 @@ export default function App() {
           fontFamily: T.fontMono,
           letterSpacing: 0.3,
           textAlign: "center",
+          display: "flex",
+          gap: 16,
+          alignItems: "center",
+          justifyContent: "center",
+          flexWrap: "wrap",
         }}
       >
-        Dust 2 Playbook · CMS edition · all coordinates verified against in-game setpos
+        <span>Dust 2 Playbook · CMS edition · all coordinates verified against in-game setpos</span>
+        <span style={{ color: T.borderAlt }}>·</span>
+        <AdminFooterLink />
       </footer>
+      <AdminGate />
+      <AdminPanel slots={{}} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AdminProvider>
+      <AppInner />
+    </AdminProvider>
   );
 }
