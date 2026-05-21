@@ -64,6 +64,9 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
+  // mid_donut_smoke: throw stays in Mid approach; target shifted per
+  // user feedback — Δy reduced to ~1/3 and Δx flipped to ~1/2 magnitude
+  // so the smoke lands inside Donut rather than drifting toward A.
   mid_donut_smoke: {
     id: "mid_donut_smoke",
     name: "Mid Donut Smoke",
@@ -88,8 +91,12 @@ export const LINEUPS = {
       aim:    "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-Donut-Smoke-Lineup-edited.jpg/public",
       result: "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-Donut-Smoke.jpg/public",
     },
+    // User correction: shift target so the smoke lands inside Donut
+    // rather than drifting toward A. From baseline (28, 38):
+    //   Δy reduced to 1/3 → target_y = 55 - 17/3 ≈ 49
+    //   Δx halved and reversed → target_x = 36 + 8/2 = 40
     radarPos:    { x: 36, y: 55 },
-    radarTarget: { x: 28, y: 38 },
+    radarTarget: { x: 40, y: 49 },
     austincs: { video: "", timestamp: "", note: "" },
   },
 
@@ -116,8 +123,10 @@ export const LINEUPS = {
       aim:    "https://cdn.sanity.io/images/6znhzi10/production/d01ea73a05cab774aa6e93f9d6775bded9151665-1920x1080.jpg",
       result: "https://assets.cs2util.com/ancient/smoke/a-site/ct-lane-smoke-from-t-spawn-cover.webp",
     },
+    // User correction: smoke landed slightly too long (overshot) and
+    // too far left. Was target (33.1, 18.3). Pull in & right slightly.
     radarPos: { worldX: -735.964, worldY: -2135.969 },
-    radarTarget: { x: 33.105, y: 18.262 },
+    radarTarget: { x: 37, y: 23 },
     austincs: { video: "", timestamp: "", note: "" },
   },
 
@@ -170,8 +179,11 @@ export const LINEUPS = {
       aim:    "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-A-Donut-Lineup-edited.jpg/public",
       result: "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-A-Donut-Smoke.jpg/public",
     },
+    // User correction: smoke landed too short (didn't reach Donut from
+    // A approach) and too far right. Was target (28, 38). Push further
+    // along the same trajectory (up-and-left).
     radarPos: { worldX: -735.964, worldY: -2135.969 },
-    radarTarget: { x: 28, y: 38 },
+    radarTarget: { x: 22, y: 30 },
     austincs: { video: "", timestamp: "", note: "" },
   },
 
@@ -299,8 +311,10 @@ export const LINEUPS = {
       aim:    "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-B-Lurk-Smoke-Lineup-edited.jpg/public",
       result: "https://refrag.gg/cdn-cgi/imagedelivery/5wML_ikJr-qv52ESeLE6CQ/wordpress.refrag.gg/2025/02/Ancient-B-Lurk-Smoke.jpg/public",
     },
-    radarPos:    { x: 32, y: 63 },
-    // Lands B Lane choke (CT vision cut) — near cave, slightly deeper into lane than cave smoke
+    // User correction: thrown FROM T Spawn (not lane). Use the same
+    // T Spawn pillar world coords as red_room (the other T Spawn pillar
+    // smoke). Target stays in B Lane area.
+    radarPos: { worldX: -392, worldY: -2224 },
     radarTarget: { x: 56, y: 48 },
     austincs: { video: "", timestamp: "", note: "" },
   },
@@ -398,7 +412,10 @@ export const LINEUPS = {
       aim:    "https://assets.cs2util.com/ancient/molotov/b-site/b-cubby-molotov-from-ruins-lineup.webp",
       result: "https://assets.cs2util.com/ancient/molotov/b-site/b-cubby-molotov-from-ruins-cover.webp",
     },
-    radarPos: { worldX: 1255.967, worldY: -1479.969 },
+    // User correction: throw was too far down on Y by ~1/3. Was
+    // worldX 1255.967, worldY -1479.969 → percent (82, 71). Lift y by
+    // ~1/3 of its current value; keep x near the same B-side approach.
+    radarPos: { x: 82, y: 48 },
     radarTarget: { x: 67, y: 31 },
     austincs: { video: "", timestamp: "", note: "" },
   },
