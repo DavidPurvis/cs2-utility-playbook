@@ -2,36 +2,32 @@ import { useCallback, useRef, useState, type ReactNode } from "react";
 import { T } from "./theme";
 import { Tabs, type TabDef } from "./components/Tabs";
 import { SpawnMap } from "./components/SpawnMap";
+import { ScenarioList } from "./components/ScenarioList";
+import { ScenarioDetail } from "./components/ScenarioDetail";
 import { useMapData } from "./hooks/useMapData";
 import { AdminProvider, useAdminMode } from "./hooks/useAdminMode";
 import { EditableDataProvider, useEditableData } from "./hooks/useEditableData";
 import { AdminGate } from "./components/admin/AdminGate";
 import { AdminPanel } from "./components/admin/AdminPanel";
 import { UtilityEditor, type UtilityEditorHandle } from "./components/admin/UtilityEditor";
+import { ScenarioEditor } from "./components/admin/ScenarioEditor";
 
-function ScenariosTabPlaceholder() {
-  const { scenarios } = useEditableData();
-  return (
-    <div
-      style={{
-        padding: 24,
-        background: T.bgPanel,
-        border: `1px dashed ${T.borderLt}`,
-        borderRadius: T.radius,
-        color: T.textDim,
-        fontSize: 13,
-        lineHeight: 1.6,
-      }}
-    >
-      <h2 style={{ margin: 0, marginBottom: 6, fontSize: 16, color: T.textPri }}>
-        Scenarios coming soon{" "}
-        <span style={{ color: T.textDim, fontWeight: 400 }}>· {scenarios.length}</span>
-      </h2>
-      Wire-up for the Scenarios feature lands in Phase 6. For now, the data layer ships an empty
-      list (<code style={{ color: T.accent }}>src/data/maps/dust2/scenarios.json</code>) you can
-      populate via admin mode once the Scenario editor ships.
-    </div>
-  );
+function ScenariosTab() {
+  const { config, utilities, scenarios } = useEditableData();
+  const [openId, setOpenId] = useState<string | null>(null);
+  const open = openId ? scenarios.find((s) => s.id === openId) ?? null : null;
+
+  if (open) {
+    return (
+      <ScenarioDetail
+        config={config}
+        scenario={open}
+        utilities={utilities}
+        onBack={() => setOpenId(null)}
+      />
+    );
+  }
+  return <ScenarioList onOpen={setOpenId} />;
 }
 
 function AdminFooterLink() {
@@ -101,7 +97,7 @@ function AppInner() {
     {
       id: "scenarios",
       label: "Scenarios",
-      content: <ScenariosTabPlaceholder />,
+      content: <ScenariosTab />,
     },
     {
       id: "spawns",
@@ -202,6 +198,7 @@ function AppInner() {
           utilities: (
             <UtilityEditor ref={editorRef} onSetClickToPlace={setClickPlace} />
           ),
+          scenarios: <ScenarioEditor />,
         }}
       />
     </div>
