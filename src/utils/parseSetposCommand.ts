@@ -9,7 +9,7 @@
  * may have any sign and any number of decimals. Whitespace and case are
  * normalized.
  */
-import type { ThrowAngle, WorldPoint } from "../types/map";
+import type { ThrowAngle, WorldPoint } from "../types";
 
 export interface ParsedSetposCommand {
   world?: WorldPoint;

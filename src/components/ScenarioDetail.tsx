@@ -1,84 +1,93 @@
 /**
- * Full-detail view for a single scenario: name + description on the
- * left, ScenarioMap on the right (or top on mobile), and a numbered
- * timeline at the bottom. Clicking a timeline row highlights the
- * matching marker pair on the map.
+ * Scenario detail view. The radar shows every player's throwFrom →
+ * landing arcs, color-coded by player. A tab strip lets the user pick
+ * a role ("I'm the A-man"); when a role is active, that player's arcs
+ * stay bright while everyone else dims, and the chronological action
+ * list on the right filters to that role.
  *
- * Missing utilities (referenced ids that don't exist, or ones with no
- * landing data) are surfaced in a warning band — the spec says we do
- * NOT invent coords, so the user sees the gap explicitly.
+ * Clicking an action row dispatches SELECT_LINEUP, opening the 2×2
+ * walkthrough for that lineup.
+ *
+ * Scenario seed shells ship with empty `actions: []` — the empty
+ * state nudges the user to populate via `npm run new-scenario`.
  */
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { Radar } from "./Radar";
+import { worldToPercent } from "../utils/coordinates";
 import { T } from "../theme";
-import { ScenarioMap, findMissingActions } from "./ScenarioMap";
-import { UtilityIcon } from "./shared/UtilityIcon";
-import { useViewport } from "../hooks/useViewport";
-import type { MapConfig, Scenario, Utility } from "../types/map";
+import type { Lineup, MapConfig, Scenario, ScenarioAction, Spawn } from "../types";
+
+const UTIL_COLOR: Record<Lineup["type"], string> = {
+  smoke: T.utilSmoke,
+  flash: T.utilFlash,
+  molotov: T.utilMolly,
+  he: T.utilHE,
+};
 
 export interface ScenarioDetailProps {
-  config: MapConfig;
   scenario: Scenario;
-  utilities: Utility[];
+  config: MapConfig;
+  spawns: Spawn[];
+  lineups: Lineup[];
+  activeRoleId: string | null;
+  onSelectRole: (roleId: string) => void;
+  onSelectLineup: (lineupId: string) => void;
   onBack: () => void;
 }
 
-interface TimelineRow {
-  key: string;        // playerIdx-actionIdx
-  order: number;
-  playerLabel: string;
-  playerColor: string;
-  playerRole: string;
-  utility: Utility | null;
-  utilityIdRef: string;
-  description?: string;
-  timing?: string;
-}
-
-export function ScenarioDetail({ config, scenario, utilities, onBack }: ScenarioDetailProps) {
-  const [highlight, setHighlight] = useState<string | null>(null);
-  const { isMobile } = useViewport();
-
-  const utilIndex = useMemo(() => {
-    const m = new Map<string, Utility>();
-    for (const u of utilities) m.set(u.id, u);
+export function ScenarioDetail({
+  scenario,
+  config,
+  spawns,
+  lineups,
+  activeRoleId,
+  onSelectRole,
+  onSelectLineup,
+  onBack,
+}: ScenarioDetailProps) {
+  const lineupById = useMemo(() => {
+    const m = new Map<string, Lineup>();
+    for (const l of lineups) m.set(l.id, l);
     return m;
-  }, [utilities]);
+  }, [lineups]);
 
-  const timeline: TimelineRow[] = useMemo(() => {
-    const rows: TimelineRow[] = [];
-    scenario.players.forEach((p, pi) => {
-      p.actions.forEach((a, ai) => {
-        rows.push({
-          key: `${pi}-${ai}`,
-          order: a.order,
-          playerLabel: p.label,
-          playerColor: p.color,
-          playerRole: p.role,
-          utility: utilIndex.get(a.utilityId) ?? null,
-          utilityIdRef: a.utilityId,
-          description: a.description,
-          timing: a.timing,
-        });
-      });
-    });
-    return rows.sort((a, b) => a.order - b.order || a.key.localeCompare(b.key));
-  }, [scenario, utilIndex]);
+  const spawnById = useMemo(() => {
+    const m = new Map<string, Spawn>();
+    for (const s of spawns) m.set(s.id, s);
+    return m;
+  }, [spawns]);
 
-  const missing = useMemo(() => findMissingActions(scenario, utilities), [scenario, utilities]);
+  // Player ordering respects roleOrder if given, else array order.
+  const orderedPlayers = useMemo(() => {
+    if (!scenario.roleOrder?.length) return scenario.players;
+    const idx = (role: string) => {
+      const i = scenario.roleOrder!.indexOf(role);
+      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+    };
+    return [...scenario.players].sort((a, b) => idx(a.role) - idx(b.role));
+  }, [scenario.players, scenario.roleOrder]);
+
+  const activePlayer = activeRoleId
+    ? scenario.players.find((p) => p.role === activeRoleId) ?? null
+    : null;
+  const sortedActions = activePlayer
+    ? [...activePlayer.actions].sort((a, b) => a.order - b.order)
+    : [];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+    <div style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
         <button
           type="button"
           onClick={onBack}
+          aria-label="Back"
           style={{
             background: T.bgPanel,
-            border: `1px solid ${T.borderLt}`,
+            border: `1px solid ${T.border}`,
             color: T.textSec,
             borderRadius: T.radiusSm,
-            padding: "5px 10px",
-            fontSize: 11,
+            padding: "6px 12px",
+            fontSize: 12,
             fontFamily: T.fontMono,
             fontWeight: 700,
             cursor: "pointer",
@@ -86,225 +95,255 @@ export function ScenarioDetail({ config, scenario, utilities, onBack }: Scenario
         >
           ← Back
         </button>
-        <h2 style={{ margin: 0, fontSize: 18, color: T.textPri }}>{scenario.name}</h2>
         <span
           style={{
-            background: scenario.side === "T" ? T.tSideBg : T.ctSideBg,
-            color: scenario.side === "T" ? T.tSide : T.ctSide,
-            border: `1px solid ${scenario.side === "T" ? T.tSide : T.ctSide}55`,
-            padding: "2px 6px",
-            fontSize: 10,
+            background: T.accentBg,
+            color: T.accentDk,
+            border: `1px solid ${T.accent}55`,
+            borderRadius: 999,
+            padding: "2px 10px",
+            fontSize: 12,
             fontFamily: T.fontMono,
             fontWeight: 800,
-            borderRadius: 3,
           }}
         >
-          {scenario.side} · {scenario.targetArea}
+          Scenario {scenario.number}
         </span>
-        <span style={{ fontSize: 10, color: T.textDim, fontFamily: T.fontMono, textTransform: "uppercase" }}>
-          {scenario.difficulty} · {scenario.playerCount}-man
+        <h2 style={{ margin: 0, fontSize: 18, color: T.textPri }}>{scenario.name}</h2>
+        <span style={{ color: T.textDim, fontFamily: T.fontMono, fontSize: 11 }}>
+          {scenario.side} · {scenario.targetArea} · {scenario.difficulty} · {scenario.playerCount}-man
         </span>
       </div>
 
       {scenario.description && (
-        <p style={{ margin: 0, color: T.textSec, fontSize: 13, lineHeight: 1.5 }}>{scenario.description}</p>
+        <p style={{ marginTop: 0, marginBottom: 12, fontSize: 13, color: T.textSec, lineHeight: 1.5 }}>
+          {scenario.description}
+        </p>
       )}
 
-      {missing.length > 0 && (
-        <div
-          role="alert"
-          style={{
-            padding: 8,
-            border: `1px solid ${T.danger}55`,
-            background: T.bgPanel,
-            borderRadius: T.radiusSm,
-            color: T.danger,
-            fontSize: 11,
-            fontFamily: T.fontMono,
-          }}
-        >
-          {missing.length} action(s) cannot render — utility data missing:
-          <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>
-            {missing.map((m, i) => (
-              <li key={i}>
-                player {m.playerIdx + 1} action {m.actionIdx + 1}: {m.reason}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1fr) minmax(280px, 360px)",
-          gap: 12,
-          alignItems: "start",
-        }}
-      >
-        <ScenarioMap
-          config={config}
-          scenario={scenario}
-          utilities={utilities}
-          highlightedActionKey={highlight}
-        />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <PlayerLegend scenario={scenario} />
-          <h3 style={{ margin: 0, marginTop: 8, fontSize: 12, color: T.textDim, letterSpacing: 0.6, textTransform: "uppercase" }}>
-            Timeline
-          </h3>
-          <ol
-            style={{
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
+      <div className="app-grid">
+        <div>
+          <Radar
+            config={config}
+            ariaLabel={`Scenario ${scenario.number} arcs on Dust 2`}
           >
-            {timeline.map((row) => (
-              <TimelineRowItem
-                key={row.key}
-                row={row}
-                highlighted={highlight === row.key}
-                onHover={() => setHighlight(row.key)}
-                onUnhover={() => setHighlight(null)}
-              />
-            ))}
-          </ol>
+            {() => (
+              <g>
+                {orderedPlayers.flatMap((p) => {
+                  const dim = activeRoleId && p.role !== activeRoleId ? 0.18 : 0.9;
+                  // Player's spawn dot (visual anchor)
+                  const spawnNode = p.startingSpawnId
+                    ? spawnById.get(p.startingSpawnId)
+                    : null;
+                  const spawnPct = spawnNode
+                    ? worldToPercent(spawnNode.world.x, spawnNode.world.y, config)
+                    : null;
 
-          {scenario.notes && (
+                  const arcs = p.actions.map((a) => {
+                    const l = lineupById.get(a.lineupId);
+                    if (!l) return null;
+                    const o = worldToPercent(l.throwFrom.world.x, l.throwFrom.world.y, config);
+                    const land = l.landingAt.world
+                      ? worldToPercent(l.landingAt.world.x, l.landingAt.world.y, config)
+                      : l.landingAt.percent ?? null;
+                    if (!o || !land) return null;
+                    return (
+                      <g key={`${p.role}-${a.order}`} opacity={dim}>
+                        <line
+                          x1={o.x}
+                          y1={o.y}
+                          x2={land.x}
+                          y2={land.y}
+                          stroke={p.color}
+                          strokeWidth={0.5}
+                          strokeDasharray="1.5 1"
+                        />
+                        <circle cx={o.x} cy={o.y} r={1.5} fill="none" stroke={p.color} strokeWidth={0.5} />
+                        <circle cx={land.x} cy={land.y} r={2.1} fill={UTIL_COLOR[l.type]} stroke="#FFFFFF" strokeWidth={0.3} />
+                      </g>
+                    );
+                  });
+
+                  return [
+                    spawnPct && (
+                      <g key={`${p.role}-spawn`} opacity={dim}>
+                        <circle cx={spawnPct.x} cy={spawnPct.y} r={3.4} fill="none" stroke={p.color} strokeWidth={0.6} />
+                        <circle cx={spawnPct.x} cy={spawnPct.y} r={2.2} fill={p.color} />
+                      </g>
+                    ),
+                    ...arcs,
+                  ].filter(Boolean);
+                })}
+              </g>
+            )}
+          </Radar>
+        </div>
+
+        <aside style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div role="tablist" aria-label="Player roles" style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            {orderedPlayers.map((p) => {
+              const active = p.role === activeRoleId;
+              return (
+                <button
+                  key={p.role}
+                  role="tab"
+                  type="button"
+                  aria-selected={active}
+                  onClick={() => onSelectRole(p.role)}
+                  style={{
+                    background: active ? p.color : T.bgPanel,
+                    color: active ? "#FFFFFF" : T.textPri,
+                    border: `1px solid ${active ? p.color : T.border}`,
+                    borderRadius: T.radiusSm,
+                    padding: "6px 12px",
+                    fontSize: 12,
+                    fontFamily: T.fontUI,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      display: "inline-block",
+                      width: 8,
+                      height: 8,
+                      borderRadius: 999,
+                      background: p.color,
+                      marginRight: 6,
+                      border: active ? "1px solid #FFFFFF" : "none",
+                    }}
+                  />
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {!activePlayer ? (
             <div
               style={{
-                marginTop: 10,
-                padding: 8,
+                padding: 16,
                 background: T.bgPanel,
-                border: `1px solid ${T.borderLt}`,
-                borderRadius: T.radiusSm,
+                border: `1px dashed ${T.border}`,
+                borderRadius: T.radius,
+                color: T.textDim,
+                fontSize: 13,
+                lineHeight: 1.5,
+                textAlign: "center",
+              }}
+            >
+              Pick a role above to see that player's chronological lineups.
+            </div>
+          ) : sortedActions.length === 0 ? (
+            <div
+              style={{
+                padding: 16,
+                background: T.bgPanel,
+                border: `1px dashed ${T.border}`,
+                borderRadius: T.radius,
+                color: T.textDim,
                 fontSize: 12,
-                color: T.textSec,
                 lineHeight: 1.5,
               }}
             >
-              <div style={{ fontSize: 10, color: T.textDim, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 4 }}>
-                Notes
-              </div>
-              {scenario.notes}
+              <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no actions
+              yet. Add lineups to this role with{" "}
+              <code style={{ color: T.accent }}>npm run new-scenario</code> or edit{" "}
+              <code style={{ color: T.accent }}>src/data/dust2.json</code> directly.
             </div>
+          ) : (
+            <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+              {sortedActions.map((a) => (
+                <StepRow
+                  key={a.order}
+                  action={a}
+                  lineup={lineupById.get(a.lineupId) ?? null}
+                  color={activePlayer.color}
+                  onSelect={() => onSelectLineup(a.lineupId)}
+                />
+              ))}
+            </ol>
           )}
-        </div>
+        </aside>
       </div>
     </div>
   );
 }
 
-function PlayerLegend({ scenario }: { scenario: Scenario }) {
-  return (
-    <div
-      style={{
-        background: T.bgPanel,
-        border: `1px solid ${T.borderLt}`,
-        borderRadius: T.radiusSm,
-        padding: 8,
-        display: "flex",
-        flexDirection: "column",
-        gap: 4,
-      }}
-    >
-      <div style={{ fontSize: 10, color: T.textDim, letterSpacing: 0.6, textTransform: "uppercase" }}>Players</div>
-      {scenario.players.map((p, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
-          <span
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              background: p.color,
-              border: `1px solid ${T.bgDeep}`,
-              display: "inline-block",
-            }}
-          />
-          <strong style={{ color: T.textPri }}>{p.label}</strong>
-          <span style={{ color: T.textDim, fontFamily: T.fontMono, fontSize: 11 }}>{p.role}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function TimelineRowItem({
-  row,
-  highlighted,
-  onHover,
-  onUnhover,
+function StepRow({
+  action,
+  lineup,
+  color,
+  onSelect,
 }: {
-  row: TimelineRow;
-  highlighted: boolean;
-  onHover: () => void;
-  onUnhover: () => void;
+  action: ScenarioAction;
+  lineup: Lineup | null;
+  color: string;
+  onSelect: () => void;
 }) {
   return (
-    <li
-      onMouseEnter={onHover}
-      onMouseLeave={onUnhover}
-      onFocus={onHover}
-      onBlur={onUnhover}
-      tabIndex={0}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "auto auto 1fr auto",
-        alignItems: "center",
-        gap: 6,
-        padding: "5px 8px",
-        background: highlighted ? T.bgHover : T.bg,
-        border: `1px solid ${highlighted ? row.playerColor + "88" : T.borderLt}`,
-        borderRadius: T.radiusSm,
-        fontSize: 12,
-        cursor: "default",
-      }}
-    >
-      <span
+    <li>
+      <button
+        type="button"
+        onClick={onSelect}
         style={{
-          color: row.playerColor,
-          fontFamily: T.fontMono,
-          fontWeight: 800,
-          fontSize: 11,
-          minWidth: 14,
-          textAlign: "right",
+          width: "100%",
+          textAlign: "left",
+          background: T.bgPanel,
+          border: `1px solid ${T.border}`,
+          borderRadius: T.radiusSm,
+          padding: 10,
+          cursor: "pointer",
+          display: "grid",
+          gridTemplateColumns: "auto 1fr auto",
+          alignItems: "center",
+          gap: 10,
+          fontFamily: T.fontUI,
         }}
       >
-        {row.order}.
-      </span>
-      <span
-        style={{
-          display: "inline-block",
-          width: 8,
-          height: 8,
-          borderRadius: 999,
-          background: row.playerColor,
-        }}
-      />
-      <div style={{ minWidth: 0 }}>
-        {row.utility ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <UtilityIcon type={row.utility.type} size={12} />
-            <span style={{ color: T.textPri, fontWeight: 600 }}>{row.utility.name}</span>
-          </div>
-        ) : (
-          <span style={{ color: T.danger, fontFamily: T.fontMono, fontSize: 11 }}>
-            unknown utility: {row.utilityIdRef}
-          </span>
-        )}
-        {(row.description || row.timing) && (
-          <div style={{ color: T.textDim, fontSize: 11, lineHeight: 1.3 }}>
-            {row.timing && <span style={{ color: T.textSec, fontFamily: T.fontMono, marginRight: 4 }}>{row.timing}</span>}
-            {row.description}
-          </div>
-        )}
-      </div>
-      <span style={{ color: T.textDim, fontFamily: T.fontMono, fontSize: 10 }}>{row.playerLabel}</span>
+        <span
+          aria-label={`Step ${action.order}`}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 24,
+            height: 24,
+            borderRadius: 999,
+            background: color,
+            color: "#FFFFFF",
+            fontFamily: T.fontMono,
+            fontWeight: 800,
+            fontSize: 12,
+          }}
+        >
+          {action.order}
+        </span>
+        <div style={{ minWidth: 0 }}>
+          {lineup ? (
+            <>
+              <div style={{ color: T.textPri, fontWeight: 700, fontSize: 13 }}>{lineup.name}</div>
+              <div style={{ color: T.textDim, fontSize: 11, fontFamily: T.fontMono }}>
+                {lineup.type} · {lineup.throwStyle} · {lineup.area}
+              </div>
+              {(action.description || action.timing) && (
+                <div style={{ color: T.textSec, fontSize: 11, marginTop: 2 }}>
+                  {action.timing && (
+                    <span style={{ fontFamily: T.fontMono, marginRight: 6 }}>{action.timing}</span>
+                  )}
+                  {action.description}
+                </div>
+              )}
+            </>
+          ) : (
+            <span style={{ color: T.danger, fontSize: 12 }}>
+              unknown lineup: {action.lineupId}
+            </span>
+          )}
+        </div>
+        <span aria-hidden style={{ color: T.textMute, fontSize: 14 }}>›</span>
+      </button>
     </li>
   );
 }

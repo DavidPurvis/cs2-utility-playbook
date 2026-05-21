@@ -22,5 +22,22 @@ if (!index.includes("/cs2-utility-playbook/assets/") && !index.includes('src="/c
   }
 }
 
+// TKT-025: radar image must be bundled into dist/. The walkthrough
+// view depends on it for fallback radar crops; missing it silently
+// would degrade the experience for every lineup card.
+const radar = join(dist, "maps/dust2/radar.png");
+if (!existsSync(radar)) {
+  console.error(`Missing ${radar} — radar image not bundled.`);
+  failed = true;
+}
+// And at least one screenshot under public/screenshots/ should make
+// it through. We don't check every file (10 dirs × 4 slots) — just
+// a sentinel — to keep the check fast.
+const sentinelShot = join(dist, "screenshots/dust2/xbox_smoke/position.webp");
+if (!existsSync(sentinelShot)) {
+  console.error(`Missing ${sentinelShot} — screenshots not bundled (or xbox_smoke moved).`);
+  failed = true;
+}
+
 if (failed) process.exit(1);
 console.log("dist/ verification passed");

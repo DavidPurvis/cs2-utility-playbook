@@ -16,7 +16,7 @@ import {
   worldToPercent,
   worldToPixel,
 } from "./coordinates";
-import type { MapConfig } from "../types/map";
+import type { MapConfig } from "../types";
 
 const DUST2: MapConfig = {
   id: "dust2",

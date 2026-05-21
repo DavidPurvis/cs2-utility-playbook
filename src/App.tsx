@@ -1,185 +1,149 @@
-import { useCallback, useRef, useState, type ReactNode } from "react";
-import { T } from "./theme";
-import { Tabs, type TabDef } from "./components/Tabs";
-import { SpawnMap } from "./components/SpawnMap";
-import { ScenarioList } from "./components/ScenarioList";
+/**
+ * Top-level app shell.
+ *
+ * Owns all UI state via `useReducer` (see ./reducer). Renders one of
+ * three views based on `state.view`: Home, ScenarioDetail, or
+ * LineupDetail. Browser back-button + Esc both dispatch BACK.
+ *
+ * Global Toast container lives here (singleton, id-keyed) so any
+ * descendent's CopyButton can dispatch through it.
+ */
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { dustData } from "./data/loadDust2";
+import { Header } from "./components/Header";
+import { Home } from "./components/Home";
 import { ScenarioDetail } from "./components/ScenarioDetail";
-import { UtilitiesTab } from "./components/UtilitiesTab";
-import { useMapData } from "./hooks/useMapData";
-import { AdminProvider, useAdminMode } from "./hooks/useAdminMode";
-import { EditableDataProvider, useEditableData } from "./hooks/useEditableData";
-import { AdminGate } from "./components/admin/AdminGate";
-import { AdminPanel } from "./components/admin/AdminPanel";
-import { UtilityEditor, type UtilityEditorHandle } from "./components/admin/UtilityEditor";
-import { ScenarioEditor } from "./components/admin/ScenarioEditor";
-import { DataExporter } from "./components/admin/DataExporter";
-import { MapCalibrator } from "./components/admin/MapCalibrator";
+import { LineupDetail } from "./components/LineupDetail";
+import { Toast, type ToastState } from "./components/Toast";
+import { uiReducer, initialUiState } from "./reducer";
+import type { CopyResult } from "./components/CopyButton";
+import { T } from "./theme";
 
-function ScenariosTab() {
-  const { config, utilities, scenarios } = useEditableData();
-  const [openId, setOpenId] = useState<string | null>(null);
-  const open = openId ? scenarios.find((s) => s.id === openId) ?? null : null;
+export default function App() {
+  const [state, dispatch] = useReducer(uiReducer, initialUiState);
+  const [toast, setToast] = useState<ToastState>(null);
+  const toastIdRef = useRef(0);
 
-  if (open) {
-    return (
-      <ScenarioDetail
-        config={config}
-        scenario={open}
-        utilities={utilities}
-        onBack={() => setOpenId(null)}
-      />
-    );
-  }
-  return <ScenarioList onOpen={setOpenId} />;
-}
-
-function AdminFooterLink() {
-  const { isAdmin, openPrompt } = useAdminMode();
-  return (
-    <button
-      type="button"
-      onClick={openPrompt}
-      title={isAdmin ? "Already in admin mode" : "Enter admin mode"}
-      style={{
-        background: "transparent",
-        border: "none",
-        color: isAdmin ? T.accent : T.textDim,
-        cursor: "pointer",
-        fontSize: 11,
-        fontFamily: T.fontMono,
-        letterSpacing: 0.3,
-        textDecoration: "underline",
-        padding: 0,
-      }}
-    >
-      {isAdmin ? "admin · on" : "admin"}
-    </button>
-  );
-}
-
-function ClickToPlaceBanner() {
-  return (
-    <div
-      role="status"
-      style={{
-        marginBottom: 10,
-        padding: "8px 12px",
-        background: T.accentBg,
-        border: `1px solid ${T.accent}55`,
-        borderRadius: T.radiusSm,
-        color: T.accent,
-        fontSize: 12,
-        fontWeight: 700,
-        letterSpacing: 0.4,
-        textAlign: "center",
-      }}
-    >
-      Click anywhere on the radar to set the landing position.
-    </div>
-  );
-}
-
-function AppInner() {
-  const { isAdmin } = useAdminMode();
-  const { config, spawns, utilities } = useEditableData();
-
-  // Admin click-to-place wiring: the editor toggles clickPlace on, the
-  // user clicks the radar, and we hand the percent coords straight to
-  // the editor's imperative handle (no transient prop, no effect cascade).
-  const [clickPlace, setClickPlace] = useState(false);
-  const editorRef = useRef<UtilityEditorHandle | null>(null);
-
-  const handleMapClick = useCallback((percent: { x: number; y: number }) => {
-    editorRef.current?.applyClickedLanding(percent);
-    setClickPlace(false);
+  const showToast = useCallback((kind: "ok" | "error", msg: string) => {
+    toastIdRef.current += 1;
+    setToast({ kind, msg, id: toastIdRef.current });
   }, []);
 
-  const clickable = isAdmin && clickPlace;
+  const handleCopy = useCallback(
+    (result: CopyResult, text: string) => {
+      if (result === "ok" || result === "fallback") {
+        showToast("ok", "Copied setpos to clipboard");
+      } else {
+        showToast("error", `Copy blocked by browser — copy manually: ${text}`);
+      }
+    },
+    [showToast]
+  );
 
-  const tabs: TabDef[] = [
-    {
-      id: "scenarios",
-      label: "Scenarios",
-      content: <ScenariosTab />,
-    },
-    {
-      id: "utilities",
-      label: "Utilities",
-      content: <UtilitiesTab />,
-    },
-    {
-      id: "spawns",
-      label: "Spawn Positions",
-      content: (
-        <div>
-          {clickable && <ClickToPlaceBanner />}
-          <SpawnMap
-            config={config}
-            spawns={spawns}
-            utilities={utilities}
-            clickable={clickable}
-            onMapClick={handleMapClick}
-          />
-        </div>
-      ),
-    },
+  const activeScenario =
+    state.activeScenarioId != null
+      ? dustData.scenarios.find((s) => s.id === state.activeScenarioId) ?? null
+      : null;
+  const activeLineup =
+    state.activeLineupId != null
+      ? dustData.lineups.find((l) => l.id === state.activeLineupId) ?? null
+      : null;
+
+  const onSelectScenario = useCallback((id: string) => {
+    dispatch({ type: "SELECT_SCENARIO", scenarioId: id });
+    if (typeof history !== "undefined") history.pushState({ view: "scenario", id }, "");
+  }, []);
+  const onSelectRole = useCallback((roleId: string) => {
+    dispatch({ type: "SELECT_ROLE", roleId });
+  }, []);
+  const onSelectLineup = useCallback((id: string) => {
+    dispatch({ type: "SELECT_LINEUP", lineupId: id });
+    if (typeof history !== "undefined") history.pushState({ view: "lineup", id }, "");
+  }, []);
+  const onPickSpawn = useCallback((id: string) => dispatch({ type: "PICK_SPAWN", spawnId: id }), []);
+  const onClearSpawn = useCallback(() => dispatch({ type: "CLEAR_SPAWN" }), []);
+  const onGoHome = useCallback(() => {
+    dispatch({ type: "GO_HOME" });
+    if (typeof history !== "undefined") history.pushState({ view: "home" }, "");
+  }, []);
+  const onBack = useCallback(() => dispatch({ type: "BACK" }), []);
+
+  // Browser back-button.
+  useEffect(() => {
+    const onPop = () => dispatch({ type: "BACK" });
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  // Auto-dismiss the toast after 1.5s (ok) / 4s (error). The setState
+  // call lives inside the setTimeout callback, not the effect body, so
+  // it doesn't trigger react-hooks/set-state-in-effect.
+  useEffect(() => {
+    if (!toast) return;
+    const ms = toast.kind === "error" ? 4000 : 1500;
+    const timer = setTimeout(() => setToast(null), ms);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  // Esc → BACK inside scenario / lineup views.
+  useEffect(() => {
+    if (state.view === "home") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dispatch({ type: "BACK" });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [state.view]);
+
+  const crumbs: Array<{ label: string; onClick?: () => void }> = [
+    { label: "Dust 2 Playbook", onClick: state.view === "home" ? undefined : onGoHome },
   ];
+  if (activeScenario) {
+    crumbs.push({
+      label: `Scenario ${activeScenario.number} · ${activeScenario.name}`,
+      onClick: state.view === "scenario" ? undefined : onBack,
+    });
+  }
+  if (activeLineup) {
+    crumbs.push({ label: activeLineup.name });
+  }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: T.bg,
-        color: T.textPri,
-        fontFamily: T.fontUI,
-      }}
-    >
-      <header
-        style={{
-          padding: "14px 24px",
-          borderBottom: `1px solid ${T.border}`,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        <div
-          aria-hidden
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 6,
-            background: T.accentBg,
-            border: `1px solid ${T.accent}55`,
-            color: T.accent,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: T.fontMono,
-            fontWeight: 900,
-            fontSize: 14,
-            letterSpacing: 0.5,
-          }}
-        >
-          D2
-        </div>
-        <div>
-          <div style={{ fontSize: 10, color: T.textDim, letterSpacing: 1.5, textTransform: "uppercase" }}>
-            CS2 Utility
-          </div>
-          <div style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.1 }}>Dust 2 Playbook</div>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: T.fontUI, color: T.textPri }}>
+      <a href="#lineup-list" className="skip-link">Jump to content</a>
+      <Header crumbs={crumbs} />
 
-      <main
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-          padding: 20,
-        }}
-      >
-        <Tabs tabs={tabs} defaultId="scenarios" />
-      </main>
+      {state.view === "home" && (
+        <Home
+          data={dustData}
+          pickedSpawnId={state.pickedSpawnId}
+          onSelectScenario={onSelectScenario}
+          onPickSpawn={onPickSpawn}
+          onClearSpawn={onClearSpawn}
+        />
+      )}
+
+      {state.view === "scenario" && activeScenario && (
+        <ScenarioDetail
+          scenario={activeScenario}
+          config={dustData.config}
+          spawns={dustData.spawns}
+          lineups={dustData.lineups}
+          activeRoleId={state.activeRoleId}
+          onSelectRole={onSelectRole}
+          onSelectLineup={onSelectLineup}
+          onBack={onBack}
+        />
+      )}
+
+      {state.view === "lineup" && activeLineup && (
+        <LineupDetail
+          lineup={activeLineup}
+          config={dustData.config}
+          onBack={onBack}
+          onCopy={handleCopy}
+        />
+      )}
 
       <footer
         style={{
@@ -188,86 +152,14 @@ function AppInner() {
           color: T.textDim,
           fontSize: 11,
           fontFamily: T.fontMono,
-          letterSpacing: 0.3,
           textAlign: "center",
-          display: "flex",
-          gap: 16,
-          alignItems: "center",
-          justifyContent: "center",
-          flexWrap: "wrap",
         }}
       >
-        <span>Dust 2 Playbook · CMS edition · all coordinates verified against in-game setpos</span>
-        <span style={{ color: T.borderAlt }}>·</span>
-        <AdminFooterLink />
+        Dust 2 Playbook · v6 · {dustData.lineups.length} lineups · {dustData.scenarios.length} scenarios ·{" "}
+        {dustData.spawns.length} spawns
       </footer>
-      <AdminGate />
-      <AdminPanel
-        slots={{
-          utilities: (
-            <UtilityEditor ref={editorRef} onSetClickToPlace={setClickPlace} />
-          ),
-          scenarios: <ScenarioEditor />,
-          calibration: <MapCalibrator />,
-          data: <DataExporter />,
-        }}
-      />
-    </div>
-  );
-}
 
-function BootGate({ children }: { children: ReactNode }) {
-  const { errors } = useMapData();
-  if (errors.length === 0) return <>{children}</>;
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: T.bg,
-        color: T.textPri,
-        fontFamily: T.fontUI,
-        padding: 24,
-      }}
-    >
-      <div
-        role="alert"
-        style={{
-          maxWidth: 720,
-          margin: "40px auto",
-          padding: 16,
-          background: T.bgPanel,
-          border: `1px solid ${T.danger}55`,
-          borderRadius: T.radius,
-          color: T.danger,
-          fontSize: 13,
-          fontFamily: T.fontMono,
-        }}
-      >
-        <strong>{errors.length} data validation issue(s):</strong>
-        <ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>
-          {errors.slice(0, 10).map((e, i) => (
-            <li key={i}>
-              <code>{e.file}</code> · <code>{e.path}</code>: {e.message}
-            </li>
-          ))}
-          {errors.length > 10 && <li>…and {errors.length - 10} more</li>}
-        </ul>
-        <div style={{ marginTop: 12, color: T.textDim }}>
-          Fix the JSON files under <code>src/data/maps/dust2/</code> then reload.
-        </div>
-      </div>
+      <Toast state={toast} />
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <AdminProvider>
-      <BootGate>
-        <EditableDataProvider>
-          <AppInner />
-        </EditableDataProvider>
-      </BootGate>
-    </AdminProvider>
   );
 }
