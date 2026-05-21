@@ -14,7 +14,7 @@
  * image's size. They depend on the display size; world and percent
  * do not.
  */
-import type { MapConfig, PercentPoint, PixelPoint, WorldPoint } from "../types/map";
+import type { MapConfig, PercentPoint, PixelPoint, WorldPoint } from "../types";
 
 const DEFAULT_SOURCE_RESOLUTION = 1024;
 

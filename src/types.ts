@@ -33,6 +33,12 @@ export interface PercentPoint {
   y: number;
 }
 
+/** Pixel coords inside a rendered radar image — derived, never stored. */
+export interface PixelPoint {
+  x: number;
+  y: number;
+}
+
 export interface ThrowAngle {
   pitch: number;
   yaw: number;

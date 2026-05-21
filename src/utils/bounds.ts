@@ -4,7 +4,7 @@
  * (0..100) so it composes cleanly with MapRenderer's viewBox prop.
  */
 import { worldToPercent } from "./coordinates";
-import type { MapConfig, Spawn, WorldPoint } from "../types/map";
+import type { MapConfig, Spawn, WorldPoint } from "../types";
 
 export interface Bounds {
   x: number;

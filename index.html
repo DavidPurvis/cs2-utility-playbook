@@ -3,125 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="CS2 Utility Playbook — Premier map pool lineups, combos, utility belts, spawn smokes, and team study sheets." />
-    <meta name="theme-color" content="#0a0e15" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="application-name" content="CS2 Utility Playbook" />
+    <meta name="description" content="Dust 2 Playbook — personal CS2 reference for multi-player executes, lineups, and team coordination." />
+    <meta name="theme-color" content="#FAF9F6" />
+    <meta name="color-scheme" content="light" />
+    <meta name="application-name" content="Dust 2 Playbook" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="CS2 Utility Playbook" />
-    <meta property="og:description" content="Team utility reference for Ancient, Cache, Dust II, Inferno, Mirage, Nuke, Anubis, and Overpass." />
+    <meta property="og:title" content="Dust 2 Playbook" />
+    <meta property="og:description" content="Multi-player executes and 4-card lineup walkthroughs for CS2 Dust 2." />
     <meta property="og:image" content="/cs2-utility-playbook/og-image.png" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>CS2 Utility Playbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <title>Dust 2 Playbook</title>
     <style>
-      html, body, #root { margin: 0; padding: 0; background: #0a0e15; min-height: 100vh; }
+      html, body, #root { margin: 0; padding: 0; min-height: 100vh; background: #FAF9F6; }
       body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        color: #e6ebf2;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #1F1B16;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-feature-settings: 'cv11', 'ss01';
-        letter-spacing: -0.005em;
       }
       * { box-sizing: border-box; }
       .noscript-banner {
         padding: 16px;
-        background: #1a1010;
-        border-bottom: 1px solid #ef5969;
-        color: #ff8899;
+        background: #F4E1D2;
+        border-bottom: 1px solid #C25A3A;
+        color: #9C3C3C;
         text-align: center;
         font-size: 14px;
       }
 
-      /* Scrollbar hiding for custom scroll areas */
-      .pa-scroll::-webkit-scrollbar { width: 0; height: 0; }
-      .pa-scroll { scrollbar-width: none; }
-
-      /* Button hover/focus */
-      .pa-btn-hov { transition: background .14s ease, border-color .14s ease, transform .06s ease, filter .14s ease, color .14s ease; }
-      .pa-btn-hov:hover { filter: brightness(1.08); }
-      .pa-btn-hov:active { transform: translateY(1px); }
-      .pa-btn-hov:focus-visible { outline: 2px solid #3ed5b8; outline-offset: 2px; }
-
-      /* Fully-clickable row pattern */
-      [data-row] {
-        cursor: pointer;
-        transition: background .14s ease, transform .06s ease;
+      /* App layout — media queries live here because inline style={} doesn't support them */
+      .app-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 40%);
+        gap: 16px;
       }
-      [data-row]:hover { background: #181f2a; }
-      [data-row]:active { transform: translateY(0.5px); }
-      [data-row]:focus-visible { outline: none; box-shadow: inset 0 0 0 1.5px #3ed5b8; }
-      [data-row]:hover .pa-row-cta {
-        background: #3ed5b8;
-        color: #001a14;
-        border-color: #3ed5b8;
+      @media (max-width: 767px) {
+        .app-grid { grid-template-columns: 1fr; }
       }
 
-      /* Toast animation */
-      .pa-toast { animation: paToastIn .18s ease-out, paToastOut .18s ease-in 1.8s forwards; }
-      @keyframes paToastIn { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
-      @keyframes paToastOut { to { opacity: 0; transform: translate(-50%, -6px); } }
-
-      /* Responsive layout */
-      .pa-shell { max-width: 1280px; margin: 0 auto; padding: 0; }
-      .pa-content { padding: 16px; }
-      .pa-content-narrow { max-width: 760px; margin: 0 auto; }
-      .pa-two-col { display: flex; flex-direction: column; gap: 16px; }
-      .pa-col-main { min-width: 0; }
-      .pa-col-rail { min-width: 0; }
-      .pa-grid-cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
-      .pa-map-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-      .pa-rail-sticky { position: static; }
-      .pa-tabbar-bottom { display: flex; }
-      .pa-tabbar-top { display: none; }
-      .pa-brand { display: none; }
-      .pa-must-mobile { display: block; }
-      .pa-rail-desktop { display: none; }
-
-      @media (min-width: 760px) {
-        .pa-content { padding: 24px; }
-        .pa-tabbar-bottom { display: none; }
-        .pa-tabbar-top { display: flex; }
-        .pa-brand { display: flex; }
-        .pa-grid-cards { grid-template-columns: 1fr 1fr; }
-      }
-      @media (min-width: 1024px) {
-        .pa-two-col {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) 340px;
-          gap: 24px;
-          align-items: start;
-        }
-        .pa-rail-sticky { position: sticky; top: 96px; }
-        .pa-map-grid { grid-template-columns: minmax(0, 1fr) 340px; }
-        .pa-must-mobile { display: none !important; }
-        .pa-rail-desktop { display: block !important; }
-      }
-      @media (min-width: 1280px) {
-        .pa-two-col { grid-template-columns: minmax(0, 1fr) 380px; }
-        .pa-map-grid { grid-template-columns: minmax(0, 1fr) 400px; }
+      /* 4-card walkthrough — 2x2 even on mobile (halved cards, NOT collapsed to 1x4) */
+      .walkthrough-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
 
-      .pa-modal { max-width: 520px; }
-      @media (min-width: 1024px) {
-        .pa-modal { max-width: 760px; }
+      /* Skip link */
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 8px;
+        background: #FFFFFF;
+        color: #1F1B16;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #E7E2D6;
       }
-
-      @media print {
-        .no-print { display: none !important; }
-        body, #root { background: #fff; color: #111; }
-        .study-sheet-view { max-width: 100% !important; padding: 0 !important; }
-      }
+      .skip-link:focus { left: 8px; z-index: 1000; }
     </style>
   </head>
   <body>
     <noscript>
-      <div class="noscript-banner">CS2 Utility Playbook requires JavaScript. Enable it to view lineups and study sheets.</div>
+      <div class="noscript-banner">Dust 2 Playbook requires JavaScript. Enable it to view lineups.</div>
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

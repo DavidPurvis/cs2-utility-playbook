@@ -1,11 +1,11 @@
 {
-  "name": "CS2 Utility Playbook",
-  "short_name": "CS2 Utility",
-  "description": "Team utility playbook for the CS2 Premier map pool — lineups, combos, belts, and study sheets.",
+  "name": "Dust 2 Playbook",
+  "short_name": "Dust 2 Playbook",
+  "description": "Personal CS2 reference for multi-player executes and 4-card lineup walkthroughs.",
   "start_url": "/cs2-utility-playbook/",
   "display": "standalone",
-  "background_color": "#060a10",
-  "theme_color": "#060a10",
+  "background_color": "#FAF9F6",
+  "theme_color": "#FAF9F6",
   "orientation": "portrait-primary",
   "icons": [
     {
