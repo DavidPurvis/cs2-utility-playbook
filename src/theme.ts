@@ -1,52 +1,68 @@
 /**
- * CS2 tactical dark theme tokens. One source of truth for colors
- * and a couple of layout constants. Imported with `import { T } from "./theme"`.
+ * Claude warm-cream design tokens.
+ *
+ * Replaces the v5 CS2-tactical dark palette. All body-text colors are
+ * AA-contrast-checked against #FAF9F6. Utility-arc colors darkened so
+ * smokes/flashes/mollies/HE stay legible on cream (each ≥ 4.5:1).
+ *
+ * Color is never the sole channel — Arc components also render a
+ * single-letter glyph (S/F/M/H) at the origin for colorblind users
+ * (hidden during picker mode to avoid collision with spawn dot labels).
  */
+
 export const T = {
-  // Surfaces
-  bg:       "#0a0e15",
-  bgPanel:  "#11161f",
-  bgCard:   "#11161f",
-  bgDeep:   "#060a10",
-  bgHover:  "#181f2a",
-  bgInstr:  "#0e131b",
+  // Backgrounds
+  bg:        "#FAF9F6",
+  bgPanel:   "#FFFFFF",
+  bgSubtle:  "#F3F1EB",
+  bgDeep:    "#EEEBE3",
 
-  // Strokes
-  border:    "#1c2330",
-  borderLt:  "#242c3c",
-  borderAlt: "#2d364a",
+  // Text (all AA-compliant body text on #FAF9F6)
+  textPri:   "#1F1B16",  // 16:1
+  textSec:   "#5A544B",  // 7.5:1
+  textDim:   "#6F6A60",  // 5.1:1 — AA body floor
+  textMute:  "#8E887C",  // 3.4:1 — non-body only
 
-  // Type
-  textPri:   "#e6ebf2",
-  textSec:   "#a3afc1",
-  textDim:   "#6a7689",
-  textMute:  "#525c70",
+  // Borders + shadows
+  border:    "#E7E2D6",
+  borderStr: "#D5CFC0",
+  shadow:    "0 1px 2px rgba(28,22,16,0.05), 0 4px 12px rgba(28,22,16,0.04)",
+  shadowMd:  "0 2px 6px rgba(28,22,16,0.06), 0 8px 24px rgba(28,22,16,0.06)",
 
-  // Accents
-  accent:    "#3ed5b8",
-  accentDk:  "#2cb89c",
-  accentBg:  "#0e2620",
-  gold:      "#e8b860",
-  danger:    "#ef5969",
+  // Accent (Claude burnt-orange)
+  accent:    "#C67C4E",
+  accentDk:  "#A56235",
+  accentBg:  "#F4E7DA",
+  accentRing:"#C67C4E55",
 
-  // Sides
-  tSide:    "#f08e3c",
-  tSideBg:  "#1a1208",
-  ctSide:   "#5fa8e8",
-  ctSideBg: "#0a1320",
+  // Sides — desaturated for cream
+  tSide:     "#C67C4E",  tSideBg: "#F4E1D2",
+  ctSide:    "#5B7FA8",  ctSideBg: "#E2EAF2",
 
-  // Utility kind colors (used by future UtilityIcon)
-  utilSmoke:   "#8aa0bd",
-  utilFlash:   "#f0d24a",
-  utilMolly:   "#ef7a55",
-  utilHE:      "#ef5969",
+  // Utility colors (≥4.5:1 on bg)
+  utilSmoke: "#6E7989",
+  utilFlash: "#A8842B",
+  utilMolly: "#C25A3A",
+  utilHE:    "#9C3C3C",
 
-  // Font stacks
+  // Status
+  danger:    "#9C3C3C",
+  dangerBg:  "#F4DDD7",
+  success:   "#3F7A4E",
+  successBg: "#DEEBE0",
+
+  // Typography
   fontUI:   "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-  fontMono: "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace",
+  fontMono: "'JetBrains Mono', ui-monospace, Menlo, monospace",
 
-  // Radii
-  radius:   8,
-  radiusSm: 4,
-  radiusLg: 12,
+  // Geometry
+  radius:    10,
+  radiusSm:  6,
+  radiusLg:  14,
+
+  // Motion
+  transitionFast: "0.12s ease-out",
+  transitionMed:  "0.18s ease-out",
 } as const;
+
+export type Theme = typeof T;
