@@ -239,9 +239,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/xbox-smoke-from-t-spawn"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-cover.webp"
+        "position": "/screenshots/dust2/xbox_smoke/position.webp",
+        "aim": "/screenshots/dust2/xbox_smoke/aim.webp",
+        "result": "/screenshots/dust2/xbox_smoke/result.webp"
       }
     },
     {
@@ -271,9 +271,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/ct-smoke-from-long-a"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-cover.webp"
+        "position": "/screenshots/dust2/a_ct_smoke/position.webp",
+        "aim": "/screenshots/dust2/a_ct_smoke/aim.webp",
+        "result": "/screenshots/dust2/a_ct_smoke/result.webp"
       }
     },
     {
@@ -303,9 +303,9 @@
         "url": "https://blast.tv/article/cs2-dust2-flashes"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-cover.webp"
+        "position": "/screenshots/dust2/a_long_flash/position.webp",
+        "aim": "/screenshots/dust2/a_long_flash/aim.webp",
+        "result": "/screenshots/dust2/a_long_flash/result.webp"
       }
     },
     {
@@ -335,9 +335,9 @@
         "url": "https://refrag.gg/blog/cs2-dust2-lineups/"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-cover.webp"
+        "position": "/screenshots/dust2/ct_molly_from_long/position.webp",
+        "aim": "/screenshots/dust2/ct_molly_from_long/aim.webp",
+        "result": "/screenshots/dust2/ct_molly_from_long/result.webp"
       }
     },
     {
@@ -367,9 +367,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/short-flash"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-cover.webp"
+        "position": "/screenshots/dust2/a_short_flash/position.webp",
+        "aim": "/screenshots/dust2/a_short_flash/aim.webp",
+        "result": "/screenshots/dust2/a_short_flash/result.webp"
       }
     },
     {
@@ -399,9 +399,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/b-window-smoke"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-cover.webp"
+        "position": "/screenshots/dust2/b_window_smoke/position.webp",
+        "aim": "/screenshots/dust2/b_window_smoke/aim.webp",
+        "result": "/screenshots/dust2/b_window_smoke/result.webp"
       }
     },
     {
@@ -431,9 +431,9 @@
         "url": "https://blast.tv/article/cs2-dust2-flashes"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-cover.webp"
+        "position": "/screenshots/dust2/b_tunnel_flash/position.webp",
+        "aim": "/screenshots/dust2/b_tunnel_flash/aim.webp",
+        "result": "/screenshots/dust2/b_tunnel_flash/result.webp"
       }
     },
     {
@@ -463,9 +463,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/long-doors-smoke-ct"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-cover.webp"
+        "position": "/screenshots/dust2/ct_long_doors_smoke/position.webp",
+        "aim": "/screenshots/dust2/ct_long_doors_smoke/aim.webp",
+        "result": "/screenshots/dust2/ct_long_doors_smoke/result.webp"
       }
     },
     {
@@ -495,9 +495,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/b-tunnels-smoke-ct"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-cover.webp"
+        "position": "/screenshots/dust2/ct_b_tuns_smoke/position.webp",
+        "aim": "/screenshots/dust2/ct_b_tuns_smoke/aim.webp",
+        "result": "/screenshots/dust2/ct_b_tuns_smoke/result.webp"
       }
     },
     {
@@ -527,9 +527,9 @@
         "url": "https://www.nadeking.com/utility/dust-2/mid-doors-smoke-ct"
       },
       "screenshots": {
-        "position": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-lineup-mini.webp",
-        "aim": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-lineup.webp",
-        "result": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-cover.webp"
+        "position": "/screenshots/dust2/ct_mid_smoke/position.webp",
+        "aim": "/screenshots/dust2/ct_mid_smoke/aim.webp",
+        "result": "/screenshots/dust2/ct_mid_smoke/result.webp"
       }
     }
   ],
