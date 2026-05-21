@@ -44,6 +44,10 @@ export function inPctRange(n) {
   return true;
 }
 
+function hasOwn(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 function isNonEmptyString(v) {
   return typeof v === "string" && v.length > 0;
 }
@@ -81,8 +85,31 @@ function pointOk(p, label, path) {
     errs.push(`${path}: missing ${label}`);
     return errs;
   }
-  if (!inPctRange(p.x)) errs.push(`${path}: ${label}.x must be 0–100, got ${p.x}`);
-  if (!inPctRange(p.y)) errs.push(`${path}: ${label}.y must be 0–100, got ${p.y}`);
+  const hasPct = hasOwn(p, "x") || hasOwn(p, "y");
+  const hasWorld = hasOwn(p, "worldX") || hasOwn(p, "worldY");
+
+  if (hasPct && hasWorld) {
+    errs.push(`${path}: ${label} cannot mix x/y with worldX/worldY`);
+    return errs;
+  }
+
+  if (hasWorld) {
+    if (typeof p.worldX !== "number" || !Number.isFinite(p.worldX)) {
+      errs.push(`${path}: ${label}.worldX must be a finite number, got ${p.worldX}`);
+    }
+    if (typeof p.worldY !== "number" || !Number.isFinite(p.worldY)) {
+      errs.push(`${path}: ${label}.worldY must be a finite number, got ${p.worldY}`);
+    }
+    return errs;
+  }
+
+  if (hasPct) {
+    if (!inPctRange(p.x)) errs.push(`${path}: ${label}.x must be 0–100, got ${p.x}`);
+    if (!inPctRange(p.y)) errs.push(`${path}: ${label}.y must be 0–100, got ${p.y}`);
+    return errs;
+  }
+
+  errs.push(`${path}: ${label} must use x/y percent or worldX/worldY coordinates`);
   return errs;
 }
 
@@ -173,8 +200,8 @@ export function validateMapModule(mod, mapId = "unknown", options = {}) {
 
   const radarCoords = [];
   for (const L of Object.values(LINEUPS)) {
-    if (L?.radarPos?.x != null && Number.isFinite(L.radarPos.x)) radarCoords.push(L.radarPos.x);
-    if (L?.radarPos?.y != null && Number.isFinite(L.radarPos.y)) radarCoords.push(L.radarPos.y);
+    if (L?.radarPos && hasOwn(L.radarPos, "x") && Number.isFinite(L.radarPos.x)) radarCoords.push(L.radarPos.x);
+    if (L?.radarPos && hasOwn(L.radarPos, "y") && Number.isFinite(L.radarPos.y)) radarCoords.push(L.radarPos.y);
   }
   if (radarCoords.length > 4) {
     const maxC = Math.max(...radarCoords);

@@ -8,7 +8,9 @@ import {
   mapMissingExports,
   mapWithBadRadarScale,
   mapWithBeltOverload,
+  mapWithMixedPointSchema,
   mapWithMustLearnMismatch,
+  mapWithWorldCoordinatePoints,
   minimalValidMap,
 } from "./fixtures/mockMapModules.js";
 
@@ -39,6 +41,11 @@ describe("validateMapModule", () => {
     expect(r.errors).toEqual([]);
   });
 
+  it("accepts world-coordinate point schema for lineup, setup, and spawns", () => {
+    const r = validateMapModule(mapWithWorldCoordinatePoints(), "testmap", { wip: true });
+    expect(r.errors).toEqual([]);
+  });
+
   it("reports missing required exports", () => {
     const r = validateMapModule(mapMissingExports(), "broken");
     expect(r.errors.some((e) => e.includes("Missing export"))).toBe(true);
@@ -58,6 +65,11 @@ describe("validateMapModule", () => {
   it("rejects radar coordinates in 0–1 scale", () => {
     const r = validateMapModule(mapWithBadRadarScale(), "testmap", { wip: true });
     expect(r.errors.some((e) => e.includes("radarPos.x"))).toBe(true);
+  });
+
+  it("rejects mixed point schema that combines percent and world keys", () => {
+    const r = validateMapModule(mapWithMixedPointSchema(), "testmap", { wip: true });
+    expect(r.errors.some((e) => e.includes("cannot mix x/y with worldX/worldY"))).toBe(true);
   });
 
   it("enforces CS2 grenade carry cap per belt carrier", () => {

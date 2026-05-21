@@ -136,6 +136,22 @@ Two modes:
 - Yellow dots with numbers = spawns with instant lineups
 - Click a spawn, then click a landing-point dot to open Practice mode
 
+### Coordinate System (Map Overlay)
+
+The map overlay supports a **hybrid point format**:
+
+- **Percent points (existing data):** `{ x, y }` where each value is `0–100`
+- **World points (new support):** `{ worldX, worldY }` in CS2 world coordinates
+
+World coordinates are converted with Valve overview metadata from `data/radarMetadata.js` using:
+
+```js
+percentX = ((worldX - pos_x) / (scale * 1024)) * 100;
+percentY = ((worldY - pos_y) / -(scale * 1024)) * 100;
+```
+
+Render path is a square SVG (`viewBox="0 0 100 100"`) with map image + dots in the same coordinate space to avoid layer drift.
+
 ### Practice Mode
 
 Hit **PRACTICE** on any lineup for a 3-step walkthrough:
@@ -194,8 +210,12 @@ my_new_lineup: {
     aim:    "https://...",
     result: "https://...",
   },
-  radarPos:    { x: 50, y: 50 },  // % on radar (where you stand)
-  radarTarget: { x: 40, y: 30 },  // % on radar (where utility lands)
+  // Either percent space...
+  radarPos:    { x: 50, y: 50 },           // where you stand
+  radarTarget: { x: 40, y: 30 },           // where utility lands
+  // ...or world space (auto-converted with map metadata)
+  // radarPos:    { worldX: -1591, worldY: 583 },
+  // radarTarget: { worldX: 146, worldY: 2876 },
   austincs: { video: "", timestamp: "", note: "" },
 },
 ```
@@ -263,6 +283,7 @@ cs2_utility/
   App.jsx                     — All React UI components
   data/
     mapMeta.js                — Selector metadata (no lineup payloads)
+    radarMetadata.js          — Valve radar metadata (pos_x, pos_y, scale, 1024 source resolution)
     loadMapModule.js          — Lazy map loaders (production bundles)
     maps-registry.js          — Eager registry for tests/validation
     maps.js                   — App-facing map API re-exports
@@ -276,6 +297,7 @@ cs2_utility/
     overpass.js               — Overpass lineup database + spawns
     cache.js                  — Cache lineup database + spawns
   main.jsx                    — React entry point
+  lib/mapCoordinates.js       — World↔percent conversion + hybrid point resolver
   index.html                  — HTML shell
   vite.config.js              — Vite config
   package.json                — Dependencies

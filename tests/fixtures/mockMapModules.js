@@ -114,3 +114,22 @@ export function mapWithMustLearnMismatch() {
   mod.LINEUPS.l1.mustLearn = false;
   return mod;
 }
+
+export function mapWithWorldCoordinatePoints() {
+  const mod = minimalValidMap();
+  mod.LINEUPS.l1 = lineup("l1", {
+    mustLearn: true,
+    radarPos: { worldX: -1200, worldY: 800 },
+    radarTarget: { worldX: -600, worldY: 200 },
+  });
+  mod.SETUP_POSITIONS[0].pos = { worldX: -900, worldY: 500 };
+  mod.SPAWNS.T[0].pos = { worldX: -1400, worldY: 1200 };
+  mod.SPAWNS.CT[0].pos = { worldX: 1300, worldY: -900 };
+  return mod;
+}
+
+export function mapWithMixedPointSchema() {
+  const mod = minimalValidMap();
+  mod.LINEUPS.l1.radarPos = { x: 50, y: 50, worldX: -800, worldY: 600 };
+  return mod;
+}
