@@ -28,7 +28,10 @@ export interface SpawnPickerProps {
 export function SpawnPicker({ config, spawns, pickedSpawnId, onPick, onClear }: SpawnPickerProps) {
   const [side, setSide] = useState<Side>("T");
   const filtered = useMemo(() => spawns.filter((s) => s.side === side), [spawns, side]);
-  const cluster = useMemo(() => spawnClusterBounds(filtered, config, 4), [filtered, config]);
+  // Slightly looser padding (was 4) gives small-dot rendering more breathing
+  // room — the T-spawn cluster is tight enough that closer padding made labels
+  // overlap.
+  const cluster = useMemo(() => spawnClusterBounds(filtered, config, 7), [filtered, config]);
   const sideColor = side === "T" ? T.tSide : T.ctSide;
   const sideBg = side === "T" ? T.tSideBg : T.ctSideBg;
 
@@ -105,25 +108,30 @@ export function SpawnPicker({ config, spawns, pickedSpawnId, onPick, onClear }: 
                 style={{ cursor: "pointer" }}
                 onClick={() => onPick(spawn.id)}
               >
-                <circle r={3.6} fill="transparent" />
+                {/* Wide transparent hit target stays generous (~2.6 percent units)
+                    so taps don't miss, even though the visible dot is much smaller. */}
+                <circle r={2.6} fill="transparent" />
                 <circle
-                  r={picked ? 2.9 : 2.3}
+                  r={picked ? 1.2 : 0.85}
                   fill={picked ? sideColor : T.bgPanel}
                   stroke={sideColor}
-                  strokeWidth={picked ? 0.6 : 0.4}
+                  strokeWidth={picked ? 0.35 : 0.22}
                 />
+                {/* Label sits OUTSIDE the dot (above it) so dots can pack
+                    tighter without numbers stacking. Picked-state inflates the
+                    label for clarity. */}
                 <text
                   x={0}
-                  y={0.4}
+                  y={picked ? 0.3 : -1.4}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={1.9}
+                  fontSize={picked ? 1.1 : 0.85}
                   fontWeight={800}
                   fill={picked ? "#FFFFFF" : sideColor}
                   fontFamily={T.fontMono}
                   style={{ pointerEvents: "none", userSelect: "none" }}
                 >
-                  {spawn.label}
+                  {spawn.label.replace(/^S/, "")}
                 </text>
                 <title>{`${spawn.side} ${spawn.label} — setpos ${spawn.world.x} ${spawn.world.y}`}</title>
               </g>
