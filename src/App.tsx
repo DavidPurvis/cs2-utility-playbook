@@ -117,6 +117,7 @@ export default function App() {
         <Home
           data={dustData}
           pickedSpawnId={state.pickedSpawnId}
+          onSelectLineup={onSelectLineup}
           onSelectScenario={onSelectScenario}
           onPickSpawn={onPickSpawn}
           onClearSpawn={onClearSpawn}

@@ -19,7 +19,7 @@
  */
 
 import raw from "./dust2.json";
-import type { DustData, Lineup, Scenario, ScenarioPlayer } from "../types";
+import type { CtPosition, DustData, Lineup, Scenario, ScenarioPlayer } from "../types";
 
 export function assertDustData(d: unknown): asserts d is DustData {
   if (typeof d !== "object" || d === null) {
@@ -33,6 +33,10 @@ export function assertDustData(d: unknown): asserts d is DustData {
   if (!Array.isArray(o.spawns)) throw new Error("dust2.json: spawns must be array");
   if (!Array.isArray(o.lineups)) throw new Error("dust2.json: lineups must be array");
   if (!Array.isArray(o.scenarios)) throw new Error("dust2.json: scenarios must be array");
+  // ctPositions is optional — older data files won't have it. Treat as empty.
+  if (o.ctPositions !== undefined && !Array.isArray(o.ctPositions)) {
+    throw new Error("dust2.json: ctPositions must be array if present");
+  }
 
   // Build a lookup of known lineup ids, and assert each lineup has at
   // least one resolvable landing coordinate.
@@ -61,7 +65,31 @@ export function assertDustData(d: unknown): asserts d is DustData {
       }
     }
   }
+
+  // CT position ref integrity: every recommendedLineupId must resolve.
+  if (Array.isArray(o.ctPositions)) {
+    for (const pos of o.ctPositions as CtPosition[]) {
+      if (typeof pos.id !== "string" || typeof pos.label !== "string") {
+        throw new Error("dust2.json: every ctPosition must have id + label strings");
+      }
+      for (const lineupId of pos.recommendedLineupIds ?? []) {
+        if (!lineupIds.has(lineupId)) {
+          throw new Error(
+            `dust2.json: CT position '${pos.id}' references unknown lineup '${lineupId}'`
+          );
+        }
+      }
+    }
+  }
 }
 
-assertDustData(raw);
-export const dustData: DustData = raw;
+// `assertDustData` runs before the cast; if the source data lacks
+// `ctPositions` we default to an empty array so downstream consumers
+// can iterate without null-checking.
+const validated = (() => {
+  assertDustData(raw);
+  const d = raw as DustData;
+  return { ...d, ctPositions: d.ctPositions ?? [] };
+})();
+
+export const dustData: DustData = validated;

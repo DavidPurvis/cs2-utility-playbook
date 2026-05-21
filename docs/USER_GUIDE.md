@@ -22,11 +22,42 @@ After clicking a dot:
 
 The picked dot turns solid; the chip below changes from instruction to **Spawn: S6** with a clear button. This is purely a visual reference — it doesn't filter scenarios.
 
-### Spawn picker — CT side
+### Spawn picker — CT side + position guide
 
-![CT-side spawn cluster, 5 dots](./images/guide/spawn-picker-ct.png)
+![CT-side spawn cluster, 5 dots, with the CT position guide visible below](./images/guide/spawn-picker-ct.png)
 
-CT side has 5 spawns inside the bombsite — wider spread, easier to read.
+CT side has 5 spawns labelled `ct-1`..`ct-5` (T side labels are `t-1`..`t-15`). The side prefix exists so there's no miscommunication on voice — saying "ct-3" is unambiguous, while "spawn 3" is not.
+
+Below the picker on CT side, you'll see the **CT positions** panel:
+
+![CT position guide: A anchor, B anchor, Mid control, Aggressive AWP, Rotator](./images/guide/ct-position-guide.png)
+
+Five common CT roles with:
+- **Spawn hint** — where to start and which way to walk.
+- **Description** — one or two sentences on the role.
+- **Focus** — what utility to carry and when.
+- **Clickable lineup chips** — links straight to the 4-card walkthrough for the recommended utility.
+
+This is a loose guide, not a strict prescription. Pick a role on a call ("I'll anchor B"), check the position card, learn the recommended lineups over time. The list grows as you author more CT-side lineups.
+
+### Editing the CT position guide
+
+CT positions live in `src/data/dust2.json` under the `ctPositions` array. Add or edit them directly:
+
+```json
+"ctPositions": [
+  {
+    "id": "a-anchor",
+    "label": "A Anchor",
+    "description": "Solo or paired hold of A site.",
+    "spawnHint": "Spawn near CT-1 or CT-5, walk down ramp.",
+    "recommendedLineupIds": ["ct_long_doors_smoke"],
+    "utilityFocus": "Smoke long early. Molly default. Flash for retake."
+  }
+]
+```
+
+The boot validator rejects any `recommendedLineupIds` that doesn't match an existing lineup — same ref-integrity rule as scenario actions.
 
 ---
 

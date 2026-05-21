@@ -59,7 +59,13 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
 
     case "BACK":
       if (state.view === "lineup") {
-        return { ...state, view: "scenario", activeLineupId: null };
+        // If the user reached the lineup view via a scenario, back to
+        // that scenario. If they reached it directly (e.g. via the CT
+        // position guide on home), back to home — avoids landing on a
+        // blank "scenario view with no active scenario" page.
+        return state.activeScenarioId
+          ? { ...state, view: "scenario", activeLineupId: null }
+          : { ...state, view: "home", activeLineupId: null };
       }
       if (state.view === "scenario") {
         return {
