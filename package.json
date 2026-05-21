@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.0.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "type": "module",
   "scripts": {
@@ -17,7 +17,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "validate": "npm run typecheck && npm run lint && npm test && vite build"
+    "test:scripts": "node --test scripts/*.test.mjs",
+    "validate": "npm run typecheck && npm run lint && npm test && npm run test:scripts && vite build"
   },
   "dependencies": {
     "react": "^18.3.1",

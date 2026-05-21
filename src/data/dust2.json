@@ -1,0 +1,720 @@
+{
+  "config": {
+    "id": "dust2",
+    "displayName": "Dust 2",
+    "valveMapId": "de_dust2",
+    "radarImage": "/maps/dust2/radar.png",
+    "pos_x": -2476,
+    "pos_y": 3239,
+    "scale": 4.4,
+    "sourceResolution": 1024
+  },
+  "spawns": [
+    {
+      "id": "dust2-t-s1",
+      "side": "T",
+      "label": "S1",
+      "world": {
+        "x": -332,
+        "y": -754,
+        "z": 78.877106
+      }
+    },
+    {
+      "id": "dust2-t-s2",
+      "side": "T",
+      "label": "S2",
+      "world": {
+        "x": -367,
+        "y": -808,
+        "z": 83.744965
+      }
+    },
+    {
+      "id": "dust2-t-s3",
+      "side": "T",
+      "label": "S3",
+      "world": {
+        "x": -428,
+        "y": -843,
+        "z": 156.245865
+      }
+    },
+    {
+      "id": "dust2-t-s4",
+      "side": "T",
+      "label": "S4",
+      "world": {
+        "x": -493,
+        "y": -808,
+        "z": 108.6
+      }
+    },
+    {
+      "id": "dust2-t-s5",
+      "side": "T",
+      "label": "S5",
+      "world": {
+        "x": -533,
+        "y": -754,
+        "z": 113.848976
+      }
+    },
+    {
+      "id": "dust2-t-s6",
+      "side": "T",
+      "label": "S6",
+      "world": {
+        "x": -657.271362,
+        "y": -755.879639,
+        "z": 116.708206
+      }
+    },
+    {
+      "id": "dust2-t-s7",
+      "side": "T",
+      "label": "S7",
+      "world": {
+        "x": -696.844604,
+        "y": -806.623718,
+        "z": 116.708206
+      }
+    },
+    {
+      "id": "dust2-t-s8",
+      "side": "T",
+      "label": "S8",
+      "world": {
+        "x": -760.662964,
+        "y": -836.174011,
+        "z": 117.071777
+      }
+    },
+    {
+      "id": "dust2-t-s9",
+      "side": "T",
+      "label": "S9",
+      "world": {
+        "x": -822.365173,
+        "y": -795.64209,
+        "z": 117.264
+      }
+    },
+    {
+      "id": "dust2-t-s10",
+      "side": "T",
+      "label": "S10",
+      "world": {
+        "x": -857.506531,
+        "y": -738.361328,
+        "z": 122.089119
+      }
+    },
+    {
+      "id": "dust2-t-s11",
+      "side": "T",
+      "label": "S11",
+      "world": {
+        "x": -980,
+        "y": -754,
+        "z": 120.181252
+      }
+    },
+    {
+      "id": "dust2-t-s12",
+      "side": "T",
+      "label": "S12",
+      "world": {
+        "x": -1015,
+        "y": -808,
+        "z": 116.082619
+      }
+    },
+    {
+      "id": "dust2-t-s13",
+      "side": "T",
+      "label": "S13",
+      "world": {
+        "x": -1076,
+        "y": -843,
+        "z": 116.789474
+      }
+    },
+    {
+      "id": "dust2-t-s14",
+      "side": "T",
+      "label": "S14",
+      "world": {
+        "x": -1141,
+        "y": -808,
+        "z": 116.685997
+      }
+    },
+    {
+      "id": "dust2-t-s15",
+      "side": "T",
+      "label": "S15",
+      "world": {
+        "x": -1181,
+        "y": -754,
+        "z": 120.181252
+      }
+    },
+    {
+      "id": "dust2-ct-s1",
+      "side": "CT",
+      "label": "S1",
+      "world": {
+        "x": 160.122742,
+        "y": 2369.67627,
+        "z": -119.918701
+      }
+    },
+    {
+      "id": "dust2-ct-s2",
+      "side": "CT",
+      "label": "S2",
+      "world": {
+        "x": 182.249908,
+        "y": 2439.011719,
+        "z": -120.96875
+      }
+    },
+    {
+      "id": "dust2-ct-s3",
+      "side": "CT",
+      "label": "S3",
+      "world": {
+        "x": 258.159393,
+        "y": 2480.553711,
+        "z": -121.07666
+      }
+    },
+    {
+      "id": "dust2-ct-s4",
+      "side": "CT",
+      "label": "S4",
+      "world": {
+        "x": 334.368744,
+        "y": 2433.733643,
+        "z": -120.362549
+      }
+    },
+    {
+      "id": "dust2-ct-s5",
+      "side": "CT",
+      "label": "S5",
+      "world": {
+        "x": 351.39212,
+        "y": 2352.942383,
+        "z": -120.474915
+      }
+    }
+  ],
+  "lineups": [
+    {
+      "id": "xbox_smoke",
+      "name": "Xbox Smoke from T Spawn",
+      "type": "smoke",
+      "side": "T",
+      "area": "Mid",
+      "throwFrom": {
+        "world": {
+          "x": -299.969,
+          "y": -1163.764
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 46.387,
+          "y": 38.867
+        }
+      },
+      "throwStyle": "jump",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks the CT AWP from mid doors. THE most important T-side smoke on Dust II — throw it every single round to allow safe mid-to-B or catwalk crossing.\n\nStand in T Spawn near the right-side wall, aligned with the corner of the dark doorframe overhead.\n\nLook up at the antenna/wire above T Spawn. Place crosshair just below where the wire meets the wall on the left building.\n\nWhoever has the closest spawn throws this. Must land before CTs set up mid AWP. If it fails, your team dies crossing mid doors.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/xbox-smoke-from-t-spawn"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/xbox/xbox-smoke-from-nomal-t-spawn-cover.webp"
+      }
+    },
+    {
+      "id": "a_ct_smoke",
+      "name": "A Site CT Spawn Smoke from Long",
+      "type": "smoke",
+      "side": "T",
+      "area": "A",
+      "throwFrom": {
+        "world": {
+          "x": 969.842,
+          "y": 734.246
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 70,
+          "y": 14
+        }
+      },
+      "throwStyle": "jump",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks CT spawn/ramp connection to A site. Essential for any A take — prevents CTs rotating through spawn from catching you on site.\n\nStand at A Long near the corner of the blue container/dumpster, lined up with the right edge of pit wall.\n\nLook up at the building ahead. Place crosshair on the corner of the wooden overhang above the CT spawn archway.\n\nJump throw. Without this smoke, CTs can freely peek from spawn during your plant. Throw after taking long control.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/ct-smoke-from-long-a"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/CT-Spawn/ct-spawn-smoke-from-a-site-pit-cover.webp"
+      }
+    },
+    {
+      "id": "a_long_flash",
+      "name": "A Long Pop Flash",
+      "type": "flash",
+      "side": "T",
+      "area": "A",
+      "throwFrom": {
+        "world": {
+          "x": 1585.34,
+          "y": 1077.385
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 85,
+          "y": 48
+        }
+      },
+      "throwStyle": "normal",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blinds CTs holding pit or A site as your team pushes out of long doors.\n\nInside long doors, right side, a few steps before the exit to long A.\n\nFace the exit and aim at the top edge of the doorway. Right-click underhand toss so it pops instantly over the door.\n\nRight-click underhand throw. Push out the instant the flash leaves your hand — it pops almost immediately above the doors.",
+      "source": {
+        "name": "BLAST.tv",
+        "url": "https://blast.tv/article/cs2-dust2-flashes"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/flash/a-site/a-site-pop-flash-from-long-cafe-cover.webp"
+      }
+    },
+    {
+      "id": "ct_molly_from_long",
+      "name": "CT Spawn Molotov from A Long",
+      "type": "molotov",
+      "side": "T",
+      "area": "A",
+      "throwFrom": {
+        "world": {
+          "x": 1593.969,
+          "y": 1148.323
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 70,
+          "y": 14
+        }
+      },
+      "throwStyle": "normal",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Burns out CTs hiding behind the CT spawn boxes during an A take. Forces them to rotate or peek into your crosshairs.\n\nA Long near the pit area, pressed against the right-side wall.\n\nAim high above the A site toward CT spawn, arc the molotov over the wall so it lands behind the boxes at CT.\n\nLeft-click full throw. High arc needed to clear the walls. Pairs with CT spawn smoke for a complete CT deny.",
+      "source": {
+        "name": "Refrag",
+        "url": "https://refrag.gg/blog/cs2-dust2-lineups/"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/molotov/a-site/default-molotov-from-long-cover.webp"
+      }
+    },
+    {
+      "id": "a_short_flash",
+      "name": "A Short Pop Flash (Catwalk)",
+      "type": "flash",
+      "side": "T",
+      "area": "A",
+      "throwFrom": {
+        "world": {
+          "x": -183.899,
+          "y": 691.25
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 72,
+          "y": 22
+        }
+      },
+      "throwStyle": "normal",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blinds CTs holding A site or short from the catwalk push. Pops over the staircase wall.\n\nTop of catwalk stairs, pressed against the right wall before the corner.\n\nFace the A site direction. Right-click underhand throw the flash off the wall above the corner — it pops over the top instantly.\n\nRight-click underhand throw. The flash bounces off the wall above and pops instantly into A site. Push immediately.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/short-flash"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/flash/a-short/short-a-stairs-pop-flash-from-catwalk-cover.webp"
+      }
+    },
+    {
+      "id": "b_window_smoke",
+      "name": "B Window Smoke from Tunnels",
+      "type": "smoke",
+      "side": "T",
+      "area": "B",
+      "throwFrom": {
+        "world": {
+          "x": -1729.437,
+          "y": 1064.032
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 15,
+          "y": 25
+        }
+      },
+      "throwStyle": "jump",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks the CT AWP watching from B window (doors). Critical for any B site take — without this smoke, the window player picks off your whole team.\n\nInside upper B tunnels, stand against the left wall near the exit toward B site.\n\nLook up and to the left. Aim at the dark spot on the ceiling beam where it meets the stone arch.\n\nJump throw. Must land before your team exits tunnels. Combine with B doors/car smoke for a full B execute.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/b-window-smoke"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/b-site/window-smoke-from-upper-tunnels2-cover.webp"
+      }
+    },
+    {
+      "id": "b_tunnel_flash",
+      "name": "B Tunnels Exit Flash",
+      "type": "flash",
+      "side": "T",
+      "area": "B",
+      "throwFrom": {
+        "world": {
+          "x": -1783.032,
+          "y": 1036.286
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 25,
+          "y": 16
+        }
+      },
+      "throwStyle": "normal",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blinds CTs holding B site as your team exits upper tunnels.\n\nInside upper B tunnels, behind the entry player near the exit.\n\nFace the B tunnels exit. Right-click underhand throw off the upper wall — flash pops into site instantly.\n\nRight-click underhand throw. Push out immediately after releasing. The first player out should already be moving as the flash is thrown.",
+      "source": {
+        "name": "BLAST.tv",
+        "url": "https://blast.tv/article/cs2-dust2-flashes"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/flash/b-site/b-rush-entry-bounce-flash-cover.webp"
+      }
+    },
+    {
+      "id": "ct_long_doors_smoke",
+      "name": "Long Doors Smoke from CT",
+      "type": "smoke",
+      "side": "CT",
+      "area": "A",
+      "throwFrom": {
+        "world": {
+          "x": 1004.97,
+          "y": 2304.832
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 80,
+          "y": 55
+        }
+      },
+      "throwStyle": "jump",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks T-side long doors push. Foundation CT-side A hold — gives you time to set up on long or rotate if they push.\n\nAt the A site corner near the barrel, facing toward long A.\n\nLook up toward the sky above long. Place crosshair on the corner of the building edge overhead.\n\nJump throw. Throw this early round. If Ts push through the smoke, you hear footsteps and can call for backup.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/long-doors-smoke-ct"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/long/ct-long-cut-off-smoke-cover.webp"
+      }
+    },
+    {
+      "id": "ct_b_tuns_smoke",
+      "name": "B Tunnels Smoke from B Site",
+      "type": "smoke",
+      "side": "CT",
+      "area": "B",
+      "throwFrom": {
+        "world": {
+          "x": -1765.525,
+          "y": 2752.159
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 14.746,
+          "y": 50.586
+        }
+      },
+      "throwStyle": "normal",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks the B tunnel exit. Foundation CT-side B hold — solo anchor's lifeline to delay pushes.\n\nOn B site behind the big box, facing the upper tunnel entrance.\n\nAim directly at the upper tunnel exit — left-click throw the smoke to land in the archway.\n\nLeft-click throw. Simple lineup — just throw it at the tunnel exit. Follow up with molly for ~25 sec of delay.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/b-tunnels-smoke-ct"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/b-site/b-tunnels-smoke-from-b-plat-cover.webp"
+      }
+    },
+    {
+      "id": "ct_mid_smoke",
+      "name": "Mid Doors Smoke from CT Spawn",
+      "type": "smoke",
+      "side": "CT",
+      "area": "Mid",
+      "throwFrom": {
+        "world": {
+          "x": -337.031,
+          "y": 2423.969
+        }
+      },
+      "landingAt": {
+        "percent": {
+          "x": 43.262,
+          "y": 68.945
+        }
+      },
+      "throwStyle": "jump",
+      "movement": "standing",
+      "difficulty": "medium",
+      "description": "Blocks mid doors from CT spawn. Prevents Ts from getting mid control or AWPing through doors early round.\n\nCT spawn, right side near the wall facing mid doors.\n\nLook up at the building above mid. Aim at the rooftop edge/antenna above mid doors.\n\nJump throw. An alternative to playing the mid AWP — smoke it off and play passive. Good for eco/force rounds.",
+      "source": {
+        "name": "NadeKing",
+        "url": "https://www.nadeking.com/utility/dust-2/mid-doors-smoke-ct"
+      },
+      "screenshots": {
+        "position": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-lineup-mini.webp",
+        "aim": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-lineup.webp",
+        "result": "https://assets.cs2util.com/dust2/smoke/mid/suicide-smoke-from-ct-mid-cover.webp"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "a_default_3_man",
+      "number": 1,
+      "name": "A Default Take",
+      "description": "Standard A-site execute with CT smoke + long flash + default molly. A-man entries through long, B-man supports, support-man holds rotates.",
+      "side": "T",
+      "targetArea": "A site",
+      "difficulty": "intermediate",
+      "playerCount": 3,
+      "roleOrder": [
+        "a-man",
+        "b-man",
+        "support"
+      ],
+      "players": [
+        {
+          "role": "a-man",
+          "label": "Player A — Entry",
+          "color": "#C67C4E",
+          "startingSpawnId": "dust2-t-s6",
+          "actions": []
+        },
+        {
+          "role": "b-man",
+          "label": "Player B — Long",
+          "color": "#5B7FA8",
+          "startingSpawnId": "dust2-t-s10",
+          "actions": []
+        },
+        {
+          "role": "support",
+          "label": "Player C — Support",
+          "color": "#A8842B",
+          "startingSpawnId": "dust2-t-s4",
+          "actions": []
+        }
+      ]
+    },
+    {
+      "id": "b_split_4_man",
+      "number": 2,
+      "name": "B Split",
+      "description": "Four-man B split — two through tunnels, two through mid-doors. Requires mid control first.",
+      "side": "T",
+      "targetArea": "B site",
+      "difficulty": "advanced",
+      "playerCount": 4,
+      "roleOrder": [
+        "tuns-entry",
+        "tuns-support",
+        "mid-entry",
+        "mid-support"
+      ],
+      "players": [
+        {
+          "role": "tuns-entry",
+          "label": "Tunnels Entry",
+          "color": "#C67C4E",
+          "startingSpawnId": "dust2-t-s14",
+          "actions": []
+        },
+        {
+          "role": "tuns-support",
+          "label": "Tunnels Support",
+          "color": "#5B7FA8",
+          "startingSpawnId": "dust2-t-s12",
+          "actions": []
+        },
+        {
+          "role": "mid-entry",
+          "label": "Mid Entry",
+          "color": "#A8842B",
+          "startingSpawnId": "dust2-t-s6",
+          "actions": []
+        },
+        {
+          "role": "mid-support",
+          "label": "Mid Support",
+          "color": "#9C3C3C",
+          "startingSpawnId": "dust2-t-s4",
+          "actions": []
+        }
+      ]
+    },
+    {
+      "id": "mid_control_2_man",
+      "number": 3,
+      "name": "Mid Control",
+      "description": "Two-man mid take with xbox smoke + mid-doors flash. Sets up B split or A short rotate.",
+      "side": "T",
+      "targetArea": "Mid",
+      "difficulty": "beginner",
+      "playerCount": 2,
+      "roleOrder": [
+        "mid-lurker",
+        "mid-support"
+      ],
+      "players": [
+        {
+          "role": "mid-lurker",
+          "label": "Mid Lurker",
+          "color": "#C67C4E",
+          "startingSpawnId": "dust2-t-s2",
+          "actions": []
+        },
+        {
+          "role": "mid-support",
+          "label": "Mid Support",
+          "color": "#5B7FA8",
+          "startingSpawnId": "dust2-t-s4",
+          "actions": []
+        }
+      ]
+    },
+    {
+      "id": "b_execute_mid_smoke_3_man",
+      "number": 4,
+      "name": "B Execute with Mid Smoke",
+      "description": "Three-man B execute via tunnels, with mid-doors smoke to deny CT rotate from mid. Classic.",
+      "side": "T",
+      "targetArea": "B site",
+      "difficulty": "intermediate",
+      "playerCount": 3,
+      "roleOrder": [
+        "a-man",
+        "b-man",
+        "lurker"
+      ],
+      "players": [
+        {
+          "role": "a-man",
+          "label": "Player A — Entry",
+          "color": "#C67C4E",
+          "startingSpawnId": "dust2-t-s14",
+          "actions": []
+        },
+        {
+          "role": "b-man",
+          "label": "Player B — Support",
+          "color": "#5B7FA8",
+          "startingSpawnId": "dust2-t-s12",
+          "actions": []
+        },
+        {
+          "role": "lurker",
+          "label": "Player C — Mid Lurk",
+          "color": "#A8842B",
+          "startingSpawnId": "dust2-t-s6",
+          "actions": []
+        }
+      ]
+    },
+    {
+      "id": "a_long_default_2_man",
+      "number": 5,
+      "name": "A Long Default",
+      "description": "Quick two-man long take with pop flash + CT smoke. Hits A while the team contests mid/B.",
+      "side": "T",
+      "targetArea": "A long",
+      "difficulty": "beginner",
+      "playerCount": 2,
+      "roleOrder": [
+        "long-entry",
+        "long-support"
+      ],
+      "players": [
+        {
+          "role": "long-entry",
+          "label": "Long Entry",
+          "color": "#C67C4E",
+          "startingSpawnId": "dust2-t-s2",
+          "actions": []
+        },
+        {
+          "role": "long-support",
+          "label": "Long Support",
+          "color": "#5B7FA8",
+          "startingSpawnId": "dust2-t-s4",
+          "actions": []
+        }
+      ]
+    }
+  ]
+}
