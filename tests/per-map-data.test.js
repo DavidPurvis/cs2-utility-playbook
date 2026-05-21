@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import MAPS, { MAP_IDS } from "../data/maps-registry.js";
+import { getRadarMetadata } from "../data/radarMetadata.js";
+import { isPercentPoint, isWorldPoint, resolveHybridPoint } from "../lib/mapCoordinates.js";
 import { validateMapModule } from "./validateMapData.js";
 
 describe.each(MAP_IDS)("map module %s", (mapId) => {
@@ -18,16 +20,24 @@ describe.each(MAP_IDS)("map module %s", (mapId) => {
     }
   });
 
-  it("keeps radar positions in percentage space", () => {
+  it("keeps radar positions resolvable into percentage space", () => {
     const mod = MAPS[mapId].module;
+    const mapMeta = getRadarMetadata(mapId);
     for (const L of Object.values(mod.LINEUPS)) {
-      const { x, y } = L.radarPos;
-      expect(x).toBeGreaterThanOrEqual(0);
-      expect(x).toBeLessThanOrEqual(100);
-      expect(y).toBeGreaterThanOrEqual(0);
-      expect(y).toBeLessThanOrEqual(100);
-      if (x > 0 && x < 1) expect.fail(`${mapId} ${L.id} radarPos.x looks normalized`);
-      if (y > 0 && y < 1) expect.fail(`${mapId} ${L.id} radarPos.y looks normalized`);
+      expect(
+        isPercentPoint(L.radarPos) || isWorldPoint(L.radarPos),
+        `${mapId} ${L.id} radarPos format`
+      ).toBe(true);
+      const resolved = resolveHybridPoint(L.radarPos, mapMeta);
+      expect(resolved, `${mapId} ${L.id} radarPos resolves`).not.toBeNull();
+      expect(resolved.x).toBeGreaterThanOrEqual(0);
+      expect(resolved.x).toBeLessThanOrEqual(100);
+      expect(resolved.y).toBeGreaterThanOrEqual(0);
+      expect(resolved.y).toBeLessThanOrEqual(100);
+      if (isPercentPoint(L.radarPos)) {
+        if (L.radarPos.x > 0 && L.radarPos.x < 1) expect.fail(`${mapId} ${L.id} radarPos.x looks normalized`);
+        if (L.radarPos.y > 0 && L.radarPos.y < 1) expect.fail(`${mapId} ${L.id} radarPos.y looks normalized`);
+      }
     }
   });
 
