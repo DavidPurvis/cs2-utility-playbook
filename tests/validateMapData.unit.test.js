@@ -51,10 +51,18 @@ describe("validateMapModule", () => {
     expect(r.errors.some((e) => e.includes("Missing export"))).toBe(true);
   });
 
-  it("requires exactly five MUST_LEARN entries on Premier maps", () => {
+  it("warns when MUST_LEARN has fewer than 5 entries (cs2util-only mode)", () => {
     const mod = minimalValidMap({ MUST_LEARN: ["l1", "l2"] });
     const r = validateMapModule(mod, "mirage");
-    expect(r.errors.some((e) => e.includes("MUST_LEARN must have exactly 5"))).toBe(true);
+    // Was an error; now a warning so the strict-accuracy mode can drop
+    // unverified picks without breaking validation.
+    expect(r.warnings.some((w) => w.includes("MUST_LEARN has only"))).toBe(true);
+  });
+
+  it("rejects more than five MUST_LEARN entries", () => {
+    const mod = minimalValidMap({ MUST_LEARN: ["l1", "l2", "l3", "l4", "l5", "l6"] });
+    const r = validateMapModule(mod, "mirage");
+    expect(r.errors.some((e) => e.includes("at most 5"))).toBe(true);
   });
 
   it("syncs mustLearn flag with MUST_LEARN array", () => {

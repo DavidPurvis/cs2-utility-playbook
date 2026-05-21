@@ -287,60 +287,7 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  water_connector_he: {
-    id: "water_connector_he",
-    name: "Connector HE from Water",
-    util: "HE",
-    throw: "LMB",
-    side: "T",
-    area: "Connector",
-    purpose:
-      "Deals 50-80 damage to CTs holding Connector. Softens or kills the rotation player before your team pushes.",
-    stand: "Water/Sewers area, near the ladder leading up to Connector.",
-    aim: "Arc the HE up through the opening toward the Connector hallway.",
-    notes:
-      "Even 40 damage wins a duel. Throw before your team commits to a site. Screenshots were placeholder flash assets — use video until Water/Connector HE media is captured.",
-    source: {
-      name: "Profilerr",
-      url: "https://profilerr.net/cs2-overpass-smoke-spots/",
-    },
-    video: yt("connector he water sewers"),
-    screenshots: {
-      stand: "",
-      aim: "",
-      result: "",
-    },
-    radarPos: { worldX: -1558.755, worldY: -729.449 },
-    radarTarget: { x: 42, y: 45 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  playground_smoke: {
-    id: "playground_smoke",
-    name: "Playground Smoke",
-    util: "SMOKE",
-    throw: "JT",
-    side: "T",
-    area: "A",
-    purpose:
-      "Blocks the Playground/Toilets angle when pushing A site from Long. Prevents CTs from crossfiring onto site.",
-    stand: "Long A, same position as A Long smoke (behind the dumpster).",
-    aim: "Adjust crosshair slightly right of the A Long smoke aim point, toward the Playground roofline.",
-    notes: "Jump throw. Third smoke from the Long A area. Use on full executes when you have extra smokes.",
-    source: {
-      name: "CS2Pulse",
-      url: "https://cs2pulse.com/smokes/overpass/",
-    },
-    video: yt("playground smoke long a"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/overpass/smoke/mid/mid-smoke-from-toilet-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/overpass/smoke/mid/mid-smoke-from-toilet-lineup.webp",
-        result: "https://assets.cs2util.com/overpass/smoke/mid/mid-smoke-from-toilet-cover.webp",
-      },
-    radarPos: { worldX: -3733.859, worldY: -157.04 },
-    radarTarget: { x: 51, y: 22 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT-SIDE ──────────────────────────────────────────────
   ct_monster_smoke: {
@@ -372,34 +319,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_connector_smoke: {
-    id: "ct_connector_smoke",
-    name: "Connector Smoke (CT side)",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "CT",
-    area: "Connector",
-    mustLearn: true,
-    purpose:
-      "Blocks T pushes through Connector. Buys time for rotations and prevents mid-map control.",
-    stand: "CT side of Connector, back of the hallway against the right wall.",
-    aim: "Aim at the center of the Connector doorway. Left-click throw into the choke point.",
-    notes:
-      "Left-click, no jump. Simple smoke — just toss it into the choke. Pair with a molly behind it for full denial.",
-    source: {
-      name: "Profilerr",
-      url: "https://profilerr.net/cs2-overpass-smoke-spots/",
-    },
-    video: yt("ct connector smoke"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/overpass/smoke/b-site/ct-smoke-from-alley-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/overpass/smoke/b-site/ct-smoke-from-alley-lineup.webp",
-        result: "https://assets.cs2util.com/overpass/smoke/b-site/ct-smoke-from-alley-cover.webp",
-      },
-    radarPos: { x: 58, y: 28 },
-    radarTarget: { x: 42, y: 45 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_long_a_molly: {
     id: "ct_long_a_molly",
@@ -456,33 +375,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_long_a_smoke: {
-    id: "ct_long_a_smoke",
-    name: "Long A Smoke (CT hold)",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    purpose:
-      "Blocks the T approach down Long A. Foundation CT A defense on anti-rifle rounds.",
-    stand: "A site, Truck position facing Long.",
-    aim: "Aim at the ground midway down Long A. Left-click throw.",
-    notes:
-      "Re-smoke as needed. Pair with the Long A molly for full denial.",
-    source: {
-      name: "Profilerr",
-      url: "https://profilerr.net/cs2-overpass-smoke-spots/",
-    },
-    video: yt("ct long a smoke hold"),
-    screenshots: {
-        stand: "https://assets.cs2util.com/overpass/smoke/a-site/truck-smoke-from-short-lineup-mini.webp",
-        aim: "https://assets.cs2util.com/overpass/smoke/a-site/truck-smoke-from-short-lineup.webp",
-        result: "https://assets.cs2util.com/overpass/smoke/a-site/truck-smoke-from-short-cover.webp",
-      },
-    radarPos: { worldX: -2361.8, worldY: 131.803 },
-    radarTarget: { x: 48, y: 30 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_monster_molly: {
     id: "ct_monster_molly",
@@ -577,7 +469,6 @@ export const MUST_LEARN = [
   "a_long_smoke",
   "monster_smoke",
   "ct_monster_smoke",
-  "ct_connector_smoke",
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -600,6 +491,7 @@ export const COMBOS = [
     ],
     tip: "Wait for BOTH smokes to bloom before the flash. Entry trades on contact — don't peek Heaven until it's smoked.",
   },
+  
   {
     id: "a_long_take",
     name: "A Long Take",
@@ -615,6 +507,7 @@ export const COMBOS = [
     ],
     tip: "Push as a pack after the flash pops. Don't peek individually — trade kills win A takes.",
   },
+  
   {
     id: "b_water_split",
     name: "B Water Split",
@@ -629,6 +522,7 @@ export const COMBOS = [
     ],
     tip: "The Connector smoke prevents CT rotations. Hit B fast before they re-smoke or rotate through Park.",
   },
+  
   {
     id: "ct_b_lockdown",
     name: "B Site Lockdown",
@@ -644,6 +538,7 @@ export const COMBOS = [
     ],
     tip: "Don't peek until your molly burns out. Let the util do the work — hold passive angles.",
   },
+  
   {
     id: "retake_b",
     name: "B Site Retake",
@@ -657,6 +552,7 @@ export const COMBOS = [
     ],
     tip: "Push TOGETHER. Lone peeks lose retakes 80% of the time at our rank. If you have an HE, throw at the bomb before peeking.",
   },
+  
   {
     id: "retake_a",
     name: "A Site Retake",
@@ -697,6 +593,7 @@ export const UTILITY_BELTS = [
     teamRole:
       "Everyone else stages in Monster tunnel and Water. Push on the flash pop. Post-plant behind Pillar, Barrels, or in Water watching Short.",
   },
+  
   {
     id: "a_belt",
     name: "A Site Utility Belt",
@@ -847,6 +744,7 @@ export const SETUP_POSITIONS = [
     lineups: ["bathrooms_b_heaven_smoke"],
     tip: "THE most important T-side smoke on Overpass. Throw the Heaven smoke every round before pushing B.",
   },
+  
   {
     id: "monster_stairs",
     name: "Monster Tunnel (Top Stairs)",
@@ -856,6 +754,7 @@ export const SETUP_POSITIONS = [
     lineups: ["monster_smoke"],
     tip: "Smoke the exit before pushing out. CTs love holding Monster with an M4.",
   },
+  
   {
     id: "monster_exit",
     name: "Monster Exit",
@@ -865,24 +764,7 @@ export const SETUP_POSITIONS = [
     lineups: ["b_pillar_molly"],
     tip: "Molly Pillar after your Monster smoke blooms. Clears the closest defensive angle.",
   },
-  {
-    id: "water_stairs",
-    name: "Water / Sewers Stairs",
-    side: "T",
-    area: "B",
-    pos: { worldX: -1558.755, worldY: -729.449 },
-    lineups: ["b_site_pop_flash", "water_connector_he"],
-    tip: "Pop flash from here blinds B site instantly. HE softens Connector defenders.",
-  },
-  {
-    id: "long_a_dumpster",
-    name: "Long A Dumpster",
-    side: "T",
-    area: "A",
-    pos: { worldX: -3733.859, worldY: -157.04 },
-    lineups: ["a_long_smoke", "bank_smoke", "a_long_molly", "playground_smoke"],
-    tip: "All A Long utility comes from this one spot. The A equivalent of Bathrooms for B.",
-  },
+  
   {
     id: "long_a_corridor",
     name: "Long A Mid-Corridor",
@@ -892,6 +774,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_site_flash"],
     tip: "Entry flash from here. Team pushes on the pop. Call it before throwing.",
   },
+  
   {
     id: "connector_entrance_t",
     name: "Connector Entrance (T side)",
@@ -901,7 +784,7 @@ export const SETUP_POSITIONS = [
     lineups: ["connector_smoke_t"],
     tip: "Blocks CT rotations through the middle of the map. Useful for both A and B executes.",
   },
-  // ─── CT-SIDE ───────────────────────────────────────────────
+  
   {
     id: "b_site_pillar",
     name: "B Site Pillar",
@@ -911,6 +794,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_monster_smoke", "ct_monster_molly"],
     tip: "Foundation CT B defense. Smoke + molly Monster every round for ~25 seconds of denial.",
   },
+  
   {
     id: "b_site_fountain",
     name: "B Site Fountain",
@@ -920,24 +804,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_water_smoke"],
     tip: "Blocks the Water/Short approach. Pair with Monster smoke for full B lockdown.",
   },
-  {
-    id: "ct_connector_hold",
-    name: "Connector (CT side)",
-    side: "CT",
-    area: "Connector",
-    pos: { x: 58, y: 28 },
-    lineups: ["ct_connector_smoke"],
-    tip: "Blocks T mid-map control. Simple throw into the choke — just toss it.",
-  },
-  {
-    id: "a_site_truck",
-    name: "A Site Truck",
-    side: "CT",
-    area: "A",
-    pos: { worldX: -2361.8, worldY: 131.803 },
-    lineups: ["ct_long_a_molly", "ct_long_a_smoke"],
-    tip: "Smoke + molly Long A for ~25 seconds of denial. Your lifeline as a solo A anchor.",
-  },
+  
   {
     id: "b_short_rotation",
     name: "B Short (Rotation)",
@@ -947,6 +814,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_b_short_flash"],
     tip: "Flash into B site from Short. Push TOGETHER — never solo retake.",
   },
+  
   {
     id: "ct_spawn_a_retake",
     name: "CT Spawn (A Retake)",

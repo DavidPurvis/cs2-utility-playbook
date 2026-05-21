@@ -28,6 +28,8 @@ describe("map data integrity", () => {
     for (const r of Object.values(byMap)) {
       lineups += r.stats.lineupCount || 0;
     }
-    expect(lineups).toBeGreaterThanOrEqual(148);
+    // Was: 148 (full dataset including hand-tuned). After the cs2util-
+    // only strict-mode filter, only setpos-verified lineups remain.
+    expect(lineups).toBeGreaterThanOrEqual(80);
   });
 });

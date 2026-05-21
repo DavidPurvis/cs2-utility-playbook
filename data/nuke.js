@@ -64,63 +64,7 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  mini_smoke: {
-    id: "mini_smoke",
-    name: "Mini / Garage Smoke",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "T",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Blocks the Mini/Garage angle on the outside area. Prevents CTs from spotting your yard push from the garage window.",
-    stand: "On T Roof, near the right-side railing overlooking outside.",
-    aim: "Face outside and aim at the edge of the Mini building roof. Left-click — no jump needed.",
-    notes:
-      "Simple left-click throw. Pairs with Outside smoke to fully isolate Yard from CT sightlines.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-nuke-utility-guide/",
-    },
-    video: yt("mini garage smoke t roof"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/nuke/smoke/outside/garage-smoke-from-t-spawn3-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/nuke/smoke/outside/garage-smoke-from-t-spawn3-lineup.webp",
-      result: "https://assets.cs2util.com/nuke/smoke/outside/garage-smoke-from-t-spawn3-cover.webp",
-    },
-    radarPos: { worldX: -1243.491, worldY: -1142.971 },
-    radarTarget: { x: 51, y: 39 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  outside_heaven_molly: {
-    id: "outside_heaven_molly",
-    name: "Heaven Molotov (Flush Heaven)",
-    util: "MOLLY",
-    throw: "JT",
-    side: "T",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Burns the Heaven/Catwalk position. Forces the CT AWP to reposition away from the window.",
-    stand: "On T Roof, same general area as the Outside smoke — left-side railing.",
-    aim: "Aim higher than the smoke lineup, toward the top of the Heaven window frame. Jump throw.",
-    notes:
-      "Throw AFTER the Outside smoke. The smoke blocks their vision while the molly forces them off the position entirely. Devastating combo.",
-    source: {
-      name: "CS2Pulse",
-      url: "https://cs2pulse.com/mollys/nuke/",
-    },
-    video: yt("heaven molotov outside t roof"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/nuke/molotov/a-site/hut-molotov-from-heaven-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/nuke/molotov/a-site/hut-molotov-from-heaven-lineup.webp",
-      result: "https://assets.cs2util.com/nuke/molotov/a-site/hut-molotov-from-heaven-cover.webp",
-    },
-    radarPos: { worldX: -1243.491, worldY: -1142.971 },
-    radarTarget: { x: 41, y: 29 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── T-SIDE A SITE ────────────────────────────────────────
   hut_smoke: {
@@ -269,34 +213,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ramp_he: {
-    id: "ramp_he",
-    name: "Ramp Room HE",
-    util: "HE",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Deals 50-80 damage to CTs playing Ramp positions. Softens defenders before your team commits down Ramp.",
-    stand: "Top of Ramp on T side, center of the corridor.",
-    aim: "Arc the HE down Ramp toward the bottom — aim slightly above the doorframe to bounce it off the back wall.",
-    notes:
-      "Even 40 damage wins a duel at close range. Throw this before pushing down.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-nuke-utility-guide/",
-    },
-    video: yt("ramp room he grenade"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/nuke/grenade/a-site/squeaky-grenade-from-t-roof-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/nuke/grenade/a-site/squeaky-grenade-from-t-roof-lineup.webp",
-      result: "https://assets.cs2util.com/nuke/grenade/a-site/squeaky-grenade-from-t-roof-cover.webp",
-    },
-    radarPos: { worldX: 251.969, worldY: -353.561 },
-    radarTarget: { x: 44, y: 45 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT SIDE ──────────────────────────────────────────────
   ct_outside_smoke: {
@@ -329,34 +245,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  ct_ramp_smoke: {
-    id: "ct_ramp_smoke",
-    name: "Ramp Smoke from CT",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "CT",
-    area: "B",
-    mustLearn: true,
-    purpose:
-      "Blocks the T-side push down Ramp. Buys time for rotations and lets you hold Ramp solo.",
-    stand: "Bottom of Ramp on CT side, stand behind the left wall corner (B halls entrance).",
-    aim: "Face Ramp and aim at the center of the corridor, slightly above head height. Left-click throw.",
-    notes:
-      "Simple left-click. Smoke blooms in the middle of Ramp, blocking T vision. Pair with the Ramp molly for ~25 seconds of denial.",
-    source: {
-      name: "BLAST.tv",
-      url: "https://blast.tv/article/cs2-nuke-smokes",
-    },
-    video: yt("ramp smoke from ct side"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/nuke/smoke/B%20site/decon-smoke-from-trophy-room-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/nuke/smoke/B%20site/decon-smoke-from-trophy-room-lineup.webp",
-      result: "https://assets.cs2util.com/nuke/smoke/B%20site/decon-smoke-from-trophy-room-cover.webp",
-    },
-    radarPos: { worldX: 1791.969, worldY: -959.564 },
-    radarTarget: { x: 46, y: 48 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   trophy_molly: {
     id: "trophy_molly",
@@ -387,34 +275,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  heaven_retake_flash: {
-    id: "heaven_retake_flash",
-    name: "Heaven Retake Flash",
-    util: "FLASH",
-    throw: "LMB",
-    side: "CT",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Flash from Heaven/Catwalk over A site. Blinds Ts on the A site floor during retake without flashing your rotating teammates.",
-    stand: "On Heaven/Catwalk, near the railing overlooking A site.",
-    aim: "Aim high above A site, toward the far wall. Full-throw the flash over the site.",
-    notes:
-      "Call 'flashing A from Heaven' first. Your team pushes from multiple angles on the flash. The height advantage makes this incredibly strong.",
-    source: {
-      name: "Profilerr",
-      url: "https://profilerr.net/cs2-nuke-utility-guide/",
-    },
-    video: yt("heaven retake flash a site"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/nuke/flash/heaven/heaven-popflash-for-retake-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/nuke/flash/heaven/heaven-popflash-for-retake-lineup.webp",
-      result: "https://assets.cs2util.com/nuke/flash/heaven/heaven-popflash-for-retake-cover.webp",
-    },
-    radarPos: { x: 41, y: 29 },
-    radarTarget: { x: 39, y: 35 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   ct_ramp_molly: {
     id: "ct_ramp_molly",
@@ -484,7 +344,6 @@ export const MUST_LEARN = [
   "ramp_smoke",
   "a_main_pop_flash",
   "ct_outside_smoke",
-  "ct_ramp_smoke",
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -492,21 +351,6 @@ export const MUST_LEARN = [
 // ═══════════════════════════════════════════════════════════════
 
 export const COMBOS = [
-  {
-    id: "outside_execute",
-    name: "Outside Execute",
-    site: "Outside",
-    side: "T",
-    desc: "Full outside takeover: smoke Heaven, molly the AWP off, push yard. The bread-and-butter Nuke T opener.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"Outside execute. Heaven smoke, molly Heaven, push yard."',
-    lineups: [
-      { lineup: "outside_smoke", who: "Closest spawn — throw from T Roof" },
-      { lineup: "outside_heaven_molly", who: "Second player on T Roof" },
-      { lineup: "mini_smoke", who: "Same player as Heaven molly, or a third" },
-    ],
-    tip: "Smoke first, then molly. The smoke blocks their vision while the molly forces them off Heaven. Push yard together — don't trickle through one by one.",
-  },
   {
     id: "a_site_push",
     name: "A Site Push (Squeaky)",
@@ -521,21 +365,7 @@ export const COMBOS = [
     ],
     tip: "The Hut smoke must bloom BEFORE the flash. Flasher opens Squeaky, throws the flash, and the whole team pours through. Entry trades on contact.",
   },
-  {
-    id: "ramp_rush",
-    name: "Ramp Rush",
-    site: "B",
-    side: "T",
-    desc: "Smoke bottom of Ramp + pop flash from Lobby. Fast B take through Ramp.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"Ramp rush. Smoking bottom, flashing, go."',
-    lineups: [
-      { lineup: "ramp_smoke", who: "Lead player at top of Ramp" },
-      { lineup: "lobby_pop_flash", who: "Second player in Lobby" },
-      { lineup: "ramp_he", who: "Third player — throw HE down Ramp before push" },
-    ],
-    tip: "The HE softens anyone holding close. Wait for the smoke and flash, then flood Ramp as 3-4. Don't stop on the stairs — commit fully or don't go.",
-  },
+  
   {
     id: "outside_lockdown",
     name: "Outside Lockdown",
@@ -550,34 +380,7 @@ export const COMBOS = [
     ],
     tip: "The smoke buys time for the Heaven AWP to set up. The Trophy molly prevents Ts from sneaking through Trophy while your smoke is up. Re-smoke if you have a second smoke.",
   },
-  {
-    id: "ramp_hold",
-    name: "Ramp Hold",
-    site: "B",
-    side: "CT",
-    desc: "Smoke + molly Ramp. Buys ~25 seconds of full Ramp denial. Your lifeline as a solo B anchor.",
-    roundTypes: ["FULL"],
-    callout: '"Ramp hold. Smoking Ramp, mollying behind it. I can hold alone."',
-    lineups: [
-      { lineup: "ct_ramp_smoke", who: "Solo B player from CT-side Ramp" },
-      { lineup: "ct_ramp_molly", who: "Same player — throw molly through your smoke" },
-    ],
-    tip: "Smoke first, then immediately molly through it. Anyone pushing through the smoke takes fire damage. This combo alone lets one player hold B for half the round.",
-  },
-  {
-    id: "a_retake",
-    name: "A Site Retake",
-    site: "A",
-    side: "CT",
-    desc: "Flash from Heaven over A site. Use the vertical advantage that makes Nuke retakes uniquely powerful.",
-    roundTypes: ["FULL", "FORCE"],
-    callout: '"A retake. Flashing from Heaven. Push on the flash."',
-    lineups: [
-      { lineup: "heaven_retake_flash", who: "Heaven/Catwalk player" },
-    ],
-    tip: "Push TOGETHER from multiple angles: Heaven, CT spawn, and Hut ladder. Nuke retakes are CT-favored because of the verticality — use it. Don't peek one at a time.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITY BELTS — one player carries the full execute
@@ -585,45 +388,7 @@ export const COMBOS = [
 // ═══════════════════════════════════════════════════════════════
 
 export const UTILITY_BELTS = [
-  {
-    id: "outside_belt",
-    name: "Outside Utility Belt",
-    site: "Outside",
-    side: "T",
-    desc: "One player carries the full outside execute: 2 smokes + 1 molly + 1 flash (exactly 4 grenades). Shuts down Heaven and Mini, then leads the push.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s outside belt. We push yard on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 molly + 1 flash. That's exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "outside_smoke", step: 1, note: "From T Roof. Jump throw. Blocks Heaven." },
-      { lineup: "mini_smoke", step: 2, note: "Same area on T Roof. Left click. Blocks Mini." },
-      { lineup: "outside_heaven_molly", step: 3, note: "Jump throw. Flushes the AWP off Heaven." },
-      { lineup: "a_main_pop_flash", step: 4, note: "Move to Squeaky. Pop flash. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages in Lobby and Yard. Push A site on the Squeaky flash. Two players can also push from outside through Main while the carrier opens Squeaky.",
-  },
-  {
-    id: "ramp_belt",
-    name: "Ramp Utility Belt",
-    site: "B",
-    side: "T",
-    desc: "One player carries the full Ramp execute: 1 smoke + 1 molly + 1 HE + 1 flash (exactly 4 grenades). Controls Ramp and leads the B push.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s ramp belt. We push B on their flash."',
-    preRound:
-      "Belt carrier buys 1 smoke + 1 molly + 1 HE + 1 flash. That's exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "ramp_smoke", step: 1, note: "Top of Ramp. Jump throw. Covers bottom." },
-      { lineup: "ramp_sandbags_molly", step: 2, note: "Left click. Burns sandbags position." },
-      { lineup: "ramp_he", step: 3, note: "Left click. Softens anyone holding close." },
-      { lineup: "lobby_pop_flash", step: 4, note: "Pop flash from Lobby. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages at top of Ramp. Push down together on the flash. Post-plant positions: Secret, Vents, and Ramp corners.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
@@ -746,15 +511,6 @@ export const SCENARIOS = [
 export const SETUP_POSITIONS = [
   // ─── T-SIDE ────────────────────────────────────────────────
   {
-    id: "t_roof",
-    name: "T Roof",
-    side: "T",
-    area: "A",
-    pos: { worldX: -1243.491, worldY: -1142.971 },
-    lineups: ["outside_smoke", "mini_smoke", "outside_heaven_molly"],
-    tip: "The single most important T-side spot on Nuke. All outside control utility comes from here.",
-  },
-  {
     id: "lobby_center",
     name: "Lobby",
     side: "T",
@@ -763,6 +519,7 @@ export const SETUP_POSITIONS = [
     lineups: ["hut_smoke"],
     tip: "Smoke Hut from Lobby to isolate the A site defender. Push through Squeaky after.",
   },
+  
   {
     id: "squeaky_door",
     name: "Squeaky Door",
@@ -772,15 +529,7 @@ export const SETUP_POSITIONS = [
     lineups: ["a_main_pop_flash"],
     tip: "Pop flash through Squeaky and rush A site. The door sound tells CTs you're coming — speed is everything.",
   },
-  {
-    id: "t_ramp_top",
-    name: "Top of Ramp",
-    side: "T",
-    area: "B",
-    pos: { worldX: 251.969, worldY: -353.561 },
-    lineups: ["ramp_smoke", "ramp_sandbags_molly", "ramp_he"],
-    tip: "All Ramp control utility comes from here. Smoke + molly + HE, then push down as a group.",
-  },
+  
   {
     id: "lobby_ramp_entrance",
     name: "Lobby (Ramp Side)",
@@ -790,7 +539,7 @@ export const SETUP_POSITIONS = [
     lineups: ["lobby_pop_flash"],
     tip: "Pop flash from Lobby to support the Ramp push. Throw as your team starts moving down.",
   },
-  // ─── CT-SIDE ───────────────────────────────────────────────
+  
   {
     id: "ct_spawn",
     name: "CT Spawn",
@@ -800,15 +549,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_outside_smoke"],
     tip: "Foundation CT smoke. Throw this every round to delay the T outside push.",
   },
-  {
-    id: "heaven_catwalk",
-    name: "Heaven / Catwalk",
-    side: "CT",
-    area: "A",
-    pos: { x: 41, y: 29 },
-    lineups: ["heaven_retake_flash"],
-    tip: "The most powerful CT position on Nuke. Flash over A site for devastating retakes.",
-  },
+  
   {
     id: "a_site_ct_defender",
     name: "A Site (Defender)",
@@ -818,15 +559,7 @@ export const SETUP_POSITIONS = [
     lineups: ["trophy_molly"],
     tip: "Molly Trophy to prevent T pushes through that corridor. Also strong for retake clears.",
   },
-  {
-    id: "ramp_ct_side",
-    name: "Ramp (CT Side)",
-    side: "CT",
-    area: "B",
-    pos: { x: 50, y: 45 },
-    lineups: ["ct_ramp_smoke", "ct_ramp_molly"],
-    tip: "Smoke + molly buys ~25 seconds. Your lifeline as a solo Ramp anchor.",
-  },
+  
   {
     id: "secret_passage",
     name: "Secret Passage",

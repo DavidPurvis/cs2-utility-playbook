@@ -82,7 +82,7 @@ for (const mapId of MAPS) {
     }
     // Prefer exact world (setpos) coords; fall back to cs2util's 2D-map
     // percent if no world is recorded for that slug.
-    let posLiteral = null;
+    let posLiteral;
     if (entry.throwFrom?.world) {
       const w = entry.throwFrom.world;
       posLiteral = `{ worldX: ${fmt(w.worldX)}, worldY: ${fmt(w.worldY)} }`;

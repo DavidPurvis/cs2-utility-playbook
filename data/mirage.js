@@ -183,34 +183,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  a_site_molly: {
-    id: "a_site_molly",
-    name: "A Site Default Plant Molotov",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "T",
-    area: "A",
-    mustLearn: false,
-    purpose:
-      "Burns the default plant position / triple box area on A site. Forces CTs off the most common defensive position.",
-    stand: "Top of A ramp, right side near the wall.",
-    aim: "Aim at the top edge of the triple box. Left-click throw.",
-    notes:
-      "Throw this before pushing site. CTs love to play behind triple — this forces them into the open.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-mirage-smokes/",
-    },
-    video: yt("a site default molly triple"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/molotov/a-site/default-molotov-from-stairs-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/molotov/a-site/default-molotov-from-stairs-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/molotov/a-site/default-molotov-from-stairs-cover.webp",
-    },
-    radarPos: { worldX: 1391.969, worldY: -808.042 },
-    radarTarget: { x: 62, y: 55 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── T-SIDE MID ───────────────────────────────────────────
   short_smoke: {
@@ -243,34 +215,6 @@ export const LINEUPS = {
   },
 
   // ─── T-SIDE B ─────────────────────────────────────────────
-  b_apartments_smoke: {
-    id: "b_apartments_smoke",
-    name: "B Apartments Smoke (Market Window)",
-    util: "SMOKE",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: true,
-    purpose:
-      "Blocks the market/kitchen window angle into B apartments. Allows safe push through apartments without getting picked from window.",
-    stand: "Inside B apartments, left side against the wall, near the bench before the drop into B site.",
-    aim: "Look toward market window. Place crosshair on the top-left corner of the window frame. Left-click throw.",
-    notes:
-      "Left-click throw, no jump. Must land before your team drops down to site. CTs love to hold this angle with an AWP.",
-    source: {
-      name: "BLAST.tv",
-      url: "https://blast.tv/article/cs2-mirage-smokes",
-    },
-    video: yt("b apartments smoke market window"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/smoke/apartments/apartments-smoke-from-market-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/smoke/apartments/apartments-smoke-from-market-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/smoke/apartments/apartments-smoke-from-market-cover.webp",
-    },
-    radarPos: { worldX: -160.912, worldY: 887.969 },
-    radarTarget: { x: 22.559, y: 6.543 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   b_short_smoke: {
     id: "b_short_smoke",
@@ -301,63 +245,7 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  b_site_molly: {
-    id: "b_site_molly",
-    name: "B Site Bench Molotov",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "T",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Burns the bench/default position on B site. Forces CTs off the most common B anchor spot.",
-    stand: "B apartments, near the doorway before the drop to B site.",
-    aim: "Aim toward the bench area on B site. Arc the molotov down onto the bench.",
-    notes:
-      "Left-click throw. Throw right before your team drops into site.",
-    source: {
-      name: "CS2Pulse",
-      url: "https://cs2pulse.com/smokes/mirage/",
-    },
-    video: yt("b site bench molly apartments"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/molotov/b-site/bench-molotov-from-b-apartments-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/molotov/b-site/bench-molotov-from-b-apartments-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/molotov/b-site/bench-molotov-from-b-apartments-cover.webp",
-    },
-    radarPos: { worldX: -160.912, worldY: 887.969 },
-    radarTarget: { x: 20, y: 26 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
-  b_apps_flash: {
-    id: "b_apps_flash",
-    name: "B Apartments Pop Flash",
-    util: "FLASH",
-    throw: "RMB",
-    side: "T",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Blinds CTs holding B site as your team drops from apartments. Pop flash that's hard to dodge.",
-    stand: "B apartments, right against the wall near the doorway to the drop.",
-    aim: "Face B site and aim at the ceiling above the door frame. Right-click underhand throw.",
-    notes:
-      "Right-click underhand. Flash pops instantly as it clears the doorway. Drop onto site immediately after throwing.",
-    source: {
-      name: "Profilerr",
-      url: "https://profilerr.net/cs2-mirage-smokes/",
-    },
-    video: yt("b apartments pop flash"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/flash/b-site/b-apartments-flash-from-bench-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/flash/b-site/b-apartments-flash-from-bench-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/flash/b-site/b-apartments-flash-from-bench-cover.webp",
-    },
-    radarPos: { worldX: -160.912, worldY: 887.969 },
-    radarTarget: { x: 20, y: 26 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT-SIDE A ────────────────────────────────────────────
   ct_a_ramp_smoke: {
@@ -478,34 +366,6 @@ export const LINEUPS = {
   },
 
   // ─── CT-SIDE MID ──────────────────────────────────────────
-  ct_window_molly: {
-    id: "ct_window_molly",
-    name: "Window Molotov (Anti-Boost)",
-    util: "MOLLY",
-    throw: "LMB",
-    side: "CT",
-    area: "Mid",
-    mustLearn: false,
-    purpose:
-      "Burns the window position from below. Forces Ts out of window if they take mid control and boost up.",
-    stand: "Connector, near the ladder room entrance.",
-    aim: "Aim up at the window ledge. Left-click arc the molotov onto the window sill.",
-    notes:
-      "Useful for retakes when Ts have mid control. Forces them off the window angle.",
-    source: {
-      name: "Refrag",
-      url: "https://refrag.gg/blog/cs2-mirage-smokes/",
-    },
-    video: yt("window molly connector"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/molotov/mid/mid-window-molotov-from-mid-boxes-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/molotov/mid/mid-window-molotov-from-mid-boxes-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/molotov/mid/mid-window-molotov-from-mid-boxes-cover.webp",
-    },
-    radarPos: { x: 46, y: 34 },
-    radarTarget: { x: 46, y: 50 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── CT-SIDE RETAKE ───────────────────────────────────────
   jungle_retake_flash: {
@@ -537,34 +397,6 @@ export const LINEUPS = {
     austincs: { video: "", timestamp: "", note: "" },
   },
 
-  b_retake_flash: {
-    id: "b_retake_flash",
-    name: "B Retake Flash from Short",
-    util: "FLASH",
-    throw: "LMB",
-    side: "CT",
-    area: "B",
-    mustLearn: false,
-    purpose:
-      "Flashes B site from short/catwalk. Blinds Ts in post-plant positions on B site.",
-    stand: "Short/catwalk area, near the entrance to B site.",
-    aim: "Full throw flash high over the wall into B site.",
-    notes:
-      "Call 'flashing B' first. Push together on count. Lone peeks lose retakes at our rank.",
-    source: {
-      name: "BLAST.tv",
-      url: "https://blast.tv/article/cs2-mirage-smokes",
-    },
-    video: yt("b retake flash short catwalk"),
-    screenshots: {
-      stand: "https://assets.cs2util.com/mirage/flash/b-site/air-pop-flash-for-b-rush-from-back-alley-lineup-mini.webp",
-      aim: "https://assets.cs2util.com/mirage/flash/b-site/air-pop-flash-for-b-rush-from-back-alley-lineup.webp",
-      result: "https://assets.cs2util.com/mirage/flash/b-site/air-pop-flash-for-b-rush-from-back-alley-cover.webp",
-    },
-    radarPos: { x: 30, y: 30 },
-    radarTarget: { x: 15.723, y: 15.723 },
-    austincs: { video: "", timestamp: "", note: "" },
-  },
 
   // ─── T-SIDE EXTRAS ────────────────────────────────────────
   palace_flash: {
@@ -632,7 +464,6 @@ export const LINEUPS = {
 
 export const MUST_LEARN = [
   "window_smoke",
-  "b_apartments_smoke",
   "ct_a_ramp_smoke",
   "ct_b_apartments_smoke",
   "a_ramp_flash",
@@ -659,6 +490,7 @@ export const COMBOS = [
     ],
     tip: "All three smokes come from T spawn — practice the timing so they land together. Flasher waits at ramp until smokes bloom, then flashes and the team pushes.",
   },
+  
   {
     id: "a_split",
     name: "A Split (Ramp + Palace)",
@@ -674,20 +506,7 @@ export const COMBOS = [
     ],
     tip: "Palace player waits for the callout. When ramp team says 'go', palace flashes and pushes simultaneously. Crossfire catches CTs off guard.",
   },
-  {
-    id: "b_rush",
-    name: "B Rush",
-    site: "B",
-    side: "T",
-    desc: "Market window smoke + flash + drop onto B site. Fast and overwhelming.",
-    roundTypes: ["FULL", "FORCE", "PISTOL"],
-    callout: '"B rush. Market smoke, flash and drop."',
-    lineups: [
-      { lineup: "b_apartments_smoke", who: "First player into apartments" },
-      { lineup: "b_apps_flash",       who: "Second player — flash before drop" },
-    ],
-    tip: "Speed kills on B rushes. Smoke market window, flash, and everyone drops together. Don't trickle in one at a time.",
-  },
+  
   {
     id: "mid_control",
     name: "Mid Control",
@@ -702,6 +521,7 @@ export const COMBOS = [
     ],
     tip: "Window smoke first, then push mid and throw short smoke from top-mid. Don't peek connector without flashing first. Mid control opens up both A and B splits.",
   },
+  
   {
     id: "ct_a_defense",
     name: "A Site Defense",
@@ -716,6 +536,7 @@ export const COMBOS = [
     ],
     tip: "Don't both peek the same angle. One holds ramp, one holds palace. Call early if Ts are pushing — numbers win retakes.",
   },
+  
   {
     id: "retake_a_ct",
     name: "A Retake",
@@ -737,45 +558,7 @@ export const COMBOS = [
 // ═══════════════════════════════════════════════════════════════
 
 export const UTILITY_BELTS = [
-  {
-    id: "a_belt",
-    name: "A Site Utility Belt",
-    site: "A",
-    side: "T",
-    desc: "One player carries the full A execute: 2 smokes + 1 molly + 1 flash (exactly 4 grenades, the CS2 max). Devastating when the carrier knows the lineups cold.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s A belt. We push ramp on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 molly + 1 flash. That's exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "jungle_smoke",  step: 1, note: "From T spawn. Jump throw. Blocks connector." },
-      { lineup: "ct_smoke",      step: 2, note: "From T spawn. Jump throw. Blocks CT rotation." },
-      { lineup: "a_site_molly",  step: 3, note: "From top of ramp. Burns triple box." },
-      { lineup: "a_ramp_flash",  step: 4, note: "Pop flash from ramp. Team pushes on this." },
-    ],
-    teamRole:
-      "Everyone else stages on A ramp. Push on the flash. Entry frags trade on contact — don't ego-peek. Post-plant positions: one ramp, one palace, one CT.",
-  },
-  {
-    id: "b_belt",
-    name: "B Site Utility Belt",
-    site: "B",
-    side: "T",
-    desc: "One player carries the full B execute: 2 smokes + 1 molly + 1 flash. Fast B take from apartments.",
-    roundTypes: ["FULL"],
-    callout: '"[Name]\'s B belt. Drop together on their flash."',
-    preRound:
-      "Belt carrier buys 2 smokes + 1 molly + 1 flash. Exactly 4 grenades — the CS2 carry cap. No teammate drops required.",
-    sequence: [
-      { lineup: "b_apartments_smoke", step: 1, note: "From apartments. Left-click. Blocks market window." },
-      { lineup: "b_short_smoke",      step: 2, note: "From apartments. Jump throw. Blocks short rotation." },
-      { lineup: "b_site_molly",       step: 3, note: "From apartments doorway. Burns bench position." },
-      { lineup: "b_apps_flash",       step: 4, note: "Pop flash. Everyone drops onto site." },
-    ],
-    teamRole:
-      "Everyone else stages in B apartments. Drop onto site on the flash. Post-plant positions: one apartments, one short, one market.",
-  },
-];
+  ];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)
@@ -900,6 +683,7 @@ export const SETUP_POSITIONS = [
     lineups: ["window_smoke", "ct_smoke"],
     tip: "Closest spawn throws window smoke every round. CT smoke also comes from here.",
   },
+  
   {
     id: "t_spawn_dumpster",
     name: "T Spawn (Dumpster)",
@@ -909,6 +693,7 @@ export const SETUP_POSITIONS = [
     lineups: ["jungle_smoke", "stairs_smoke"],
     tip: "Jungle and stairs smokes from T spawn. Part of the full A execute.",
   },
+  
   {
     id: "top_mid",
     name: "Top Mid",
@@ -918,15 +703,7 @@ export const SETUP_POSITIONS = [
     lineups: ["short_smoke"],
     tip: "Short smoke from top mid. Throw after window smoke blooms for full mid control.",
   },
-  {
-    id: "a_ramp_corridor",
-    name: "A Ramp Corridor",
-    side: "T",
-    area: "A",
-    pos: { worldX: 1391.969, worldY: -808.042 },
-    lineups: ["a_ramp_flash", "a_site_molly"],
-    tip: "Pop flash and molly from the ramp corridor. Throw smokes first, then flash and push.",
-  },
+  
   {
     id: "palace_exit",
     name: "Palace Exit",
@@ -936,15 +713,7 @@ export const SETUP_POSITIONS = [
     lineups: ["palace_flash"],
     tip: "Pop flash from palace. Used in A splits — flash on callout and push with ramp team.",
   },
-  {
-    id: "b_apartments",
-    name: "B Apartments",
-    side: "T",
-    area: "B",
-    pos: { x: 22, y: 37 },
-    lineups: ["b_apartments_smoke", "b_short_smoke", "b_site_molly", "b_apps_flash"],
-    tip: "The B execute hub. All B-site utility comes from apartments. Smoke market window first.",
-  },
+  
   {
     id: "underpass",
     name: "Underpass",
@@ -954,7 +723,7 @@ export const SETUP_POSITIONS = [
     lineups: ["underpass_to_b_smoke"],
     tip: "Mid-to-B split smoke. Blocks short angle on B site from underpass.",
   },
-  // ─── CT-SIDE ───────────────────────────────────────────────
+  
   {
     id: "a_site_stairs",
     name: "A Site (Stairs)",
@@ -964,6 +733,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_a_ramp_smoke", "ct_palace_smoke"],
     tip: "Foundation A defense. Smoke ramp every round as the A anchor.",
   },
+  
   {
     id: "b_site_pillar",
     name: "B Site (Pillar)",
@@ -973,15 +743,7 @@ export const SETUP_POSITIONS = [
     lineups: ["ct_b_apartments_smoke", "ct_b_molly"],
     tip: "Smoke + molly apartments as the B anchor. Buys ~25 seconds for rotates.",
   },
-  {
-    id: "connector_ct",
-    name: "Connector / Jungle",
-    side: "CT",
-    area: "Mid",
-    pos: { x: 46, y: 34 },
-    lineups: ["ct_window_molly"],
-    tip: "Window molly from connector. Use to force Ts off window during retakes.",
-  },
+  
   {
     id: "jungle_ct",
     name: "Jungle (Retake)",
@@ -991,16 +753,7 @@ export const SETUP_POSITIONS = [
     lineups: ["jungle_retake_flash"],
     tip: "A retake flash from jungle. Call 'flashing A' and push together.",
   },
-  {
-    id: "b_short_ct",
-    name: "B Short (Retake)",
-    side: "CT",
-    area: "B",
-    pos: { x: 30, y: 30 },
-    lineups: ["b_retake_flash"],
-    tip: "B retake flash from short. Push together — lone peeks lose retakes.",
-  },
-];
+  ];
 
 export const SPAWNS = {
   T: [
