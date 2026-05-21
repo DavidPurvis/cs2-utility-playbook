@@ -2,23 +2,43 @@
  * Top-level app shell.
  *
  * Owns all UI state via `useReducer` (see ./reducer). Renders one of
- * three views based on `state.view`: Home (scenario grid + spawn
- * picker), ScenarioDetail (Phase 4), or LineupDetail (Phase 4).
+ * three views based on `state.view`: Home, ScenarioDetail, or
+ * LineupDetail. Browser back-button + Esc both dispatch BACK.
  *
- * Hooks the browser back button to dispatch BACK via a `popstate`
- * listener so navigation feels native on mobile without bringing in a
- * router library (ADR-004). Each navigation push uses
- * `history.pushState` with a state marker so we can detect direction.
+ * Global Toast container lives here (singleton, id-keyed) so any
+ * descendent's CopyButton can dispatch through it.
  */
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { dustData } from "./data/loadDust2";
 import { Header } from "./components/Header";
 import { Home } from "./components/Home";
+import { ScenarioDetail } from "./components/ScenarioDetail";
+import { LineupDetail } from "./components/LineupDetail";
+import { Toast, type ToastState } from "./components/Toast";
 import { uiReducer, initialUiState } from "./reducer";
+import type { CopyResult } from "./components/CopyButton";
 import { T } from "./theme";
 
 export default function App() {
   const [state, dispatch] = useReducer(uiReducer, initialUiState);
+  const [toast, setToast] = useState<ToastState>(null);
+  const toastIdRef = useRef(0);
+
+  const showToast = useCallback((kind: "ok" | "error", msg: string) => {
+    toastIdRef.current += 1;
+    setToast({ kind, msg, id: toastIdRef.current });
+  }, []);
+
+  const handleCopy = useCallback(
+    (result: CopyResult, text: string) => {
+      if (result === "ok" || result === "fallback") {
+        showToast("ok", "Copied setpos to clipboard");
+      } else {
+        showToast("error", `Copy blocked by browser — copy manually: ${text}`);
+      }
+    },
+    [showToast]
+  );
 
   const activeScenario =
     state.activeScenarioId != null
@@ -33,22 +53,39 @@ export default function App() {
     dispatch({ type: "SELECT_SCENARIO", scenarioId: id });
     if (typeof history !== "undefined") history.pushState({ view: "scenario", id }, "");
   }, []);
-
+  const onSelectRole = useCallback((roleId: string) => {
+    dispatch({ type: "SELECT_ROLE", roleId });
+  }, []);
+  const onSelectLineup = useCallback((id: string) => {
+    dispatch({ type: "SELECT_LINEUP", lineupId: id });
+    if (typeof history !== "undefined") history.pushState({ view: "lineup", id }, "");
+  }, []);
   const onPickSpawn = useCallback((id: string) => dispatch({ type: "PICK_SPAWN", spawnId: id }), []);
   const onClearSpawn = useCallback(() => dispatch({ type: "CLEAR_SPAWN" }), []);
   const onGoHome = useCallback(() => {
     dispatch({ type: "GO_HOME" });
     if (typeof history !== "undefined") history.pushState({ view: "home" }, "");
   }, []);
+  const onBack = useCallback(() => dispatch({ type: "BACK" }), []);
 
-  // Browser back-button → dispatch BACK.
+  // Browser back-button.
   useEffect(() => {
     const onPop = () => dispatch({ type: "BACK" });
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  // Esc key inside scenario/lineup → dispatch BACK.
+  // Auto-dismiss the toast after 1.5s (ok) / 4s (error). The setState
+  // call lives inside the setTimeout callback, not the effect body, so
+  // it doesn't trigger react-hooks/set-state-in-effect.
+  useEffect(() => {
+    if (!toast) return;
+    const ms = toast.kind === "error" ? 4000 : 1500;
+    const timer = setTimeout(() => setToast(null), ms);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  // Esc → BACK inside scenario / lineup views.
   useEffect(() => {
     if (state.view === "home") return;
     const onKey = (e: KeyboardEvent) => {
@@ -64,7 +101,7 @@ export default function App() {
   if (activeScenario) {
     crumbs.push({
       label: `Scenario ${activeScenario.number} · ${activeScenario.name}`,
-      onClick: state.view === "scenario" ? undefined : () => dispatch({ type: "BACK" }),
+      onClick: state.view === "scenario" ? undefined : onBack,
     });
   }
   if (activeLineup) {
@@ -87,11 +124,25 @@ export default function App() {
       )}
 
       {state.view === "scenario" && activeScenario && (
-        <PhasePlaceholder label={`Scenario detail (Phase 4): ${activeScenario.name}`} />
+        <ScenarioDetail
+          scenario={activeScenario}
+          config={dustData.config}
+          spawns={dustData.spawns}
+          lineups={dustData.lineups}
+          activeRoleId={state.activeRoleId}
+          onSelectRole={onSelectRole}
+          onSelectLineup={onSelectLineup}
+          onBack={onBack}
+        />
       )}
 
       {state.view === "lineup" && activeLineup && (
-        <PhasePlaceholder label={`Lineup detail (Phase 4): ${activeLineup.name}`} />
+        <LineupDetail
+          lineup={activeLineup}
+          config={dustData.config}
+          onBack={onBack}
+          onCopy={handleCopy}
+        />
       )}
 
       <footer
@@ -104,31 +155,11 @@ export default function App() {
           textAlign: "center",
         }}
       >
-        Dust 2 Playbook · v6 · 10 lineups · 5 scenarios · {dustData.spawns.length} spawns
+        Dust 2 Playbook · v6 · {dustData.lineups.length} lineups · {dustData.scenarios.length} scenarios ·{" "}
+        {dustData.spawns.length} spawns
       </footer>
-    </div>
-  );
-}
 
-function PhasePlaceholder({ label }: { label: string }) {
-  return (
-    <div style={{ padding: 24, maxWidth: 1280, margin: "0 auto" }}>
-      <div
-        style={{
-          padding: 32,
-          background: T.bgPanel,
-          border: `1px dashed ${T.border}`,
-          borderRadius: T.radius,
-          color: T.textDim,
-          textAlign: "center",
-        }}
-      >
-        <strong style={{ color: T.textSec, fontSize: 14 }}>{label}</strong>
-        <p style={{ marginTop: 6, fontSize: 12, lineHeight: 1.5 }}>
-          This view ships in Phase 4 (ScenarioDetail + 2×2 walkthrough). The reducer + navigation
-          shell are already wired; press Esc or browser back to return home.
-        </p>
-      </div>
+      <Toast state={toast} />
     </div>
   );
 }
