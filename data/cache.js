@@ -114,8 +114,7 @@ export const COMBOS = [
   },
 ];
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 export const SCENARIOS = [
   {

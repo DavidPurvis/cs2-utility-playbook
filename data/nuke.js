@@ -365,8 +365,7 @@ export const COMBOS = [
     ],
     tip: "The Hut smoke must bloom BEFORE the flash. Flasher opens Squeaky, throws the flash, and the whole team pours through. Entry trades on contact.",
   },
-  
-  {
+    {
     id: "outside_lockdown",
     name: "Outside Lockdown",
     site: "Outside",
@@ -380,15 +379,14 @@ export const COMBOS = [
     ],
     tip: "The smoke buys time for the Heaven AWP to set up. The Trophy molly prevents Ts from sneaking through Trophy while your smoke is up. Re-smoke if you have a second smoke.",
   },
-  ];
+];
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITY BELTS — one player carries the full execute
 //  Teammates drop their smoke(s) pre-round so the carrier has everything.
 // ═══════════════════════════════════════════════════════════════
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)

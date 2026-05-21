@@ -490,8 +490,7 @@ export const COMBOS = [
     ],
     tip: "All three smokes come from T spawn — practice the timing so they land together. Flasher waits at ramp until smokes bloom, then flashes and the team pushes.",
   },
-  
-  {
+    {
     id: "a_split",
     name: "A Split (Ramp + Palace)",
     site: "A",
@@ -506,8 +505,7 @@ export const COMBOS = [
     ],
     tip: "Palace player waits for the callout. When ramp team says 'go', palace flashes and pushes simultaneously. Crossfire catches CTs off guard.",
   },
-  
-  {
+    {
     id: "mid_control",
     name: "Mid Control",
     site: "Mid",
@@ -521,8 +519,7 @@ export const COMBOS = [
     ],
     tip: "Window smoke first, then push mid and throw short smoke from top-mid. Don't peek connector without flashing first. Mid control opens up both A and B splits.",
   },
-  
-  {
+    {
     id: "ct_a_defense",
     name: "A Site Defense",
     site: "A",
@@ -536,8 +533,7 @@ export const COMBOS = [
     ],
     tip: "Don't both peek the same angle. One holds ramp, one holds palace. Call early if Ts are pushing — numbers win retakes.",
   },
-  
-  {
+    {
     id: "retake_a_ct",
     name: "A Retake",
     site: "A",
@@ -557,8 +553,7 @@ export const COMBOS = [
 //  Teammates drop their smoke(s) pre-round so the carrier has everything.
 // ═══════════════════════════════════════════════════════════════
 
-export const UTILITY_BELTS = [
-  ];
+export const UTILITY_BELTS = [];
 
 // ═══════════════════════════════════════════════════════════════
 //  SCENARIOS — basic-knowledge reminders (no lineups)

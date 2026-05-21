@@ -27,6 +27,7 @@
   "bonus": {
     "cache":    { "lineups":  2, "combos": 1, "belts": 0, "scenarios": 10, "positions": 0, "spawnSlots": 10 }
   },
+  "_note_combos_belts": "Combos and belts are partially restored from the pre-strict-mode state. We keep any combo/belt where every referenced lineup still survives the cs2util-only filter; the rest are dropped because the user said not to invent data.",
   "parity": {
     "premierMinCombos": 0,
     "premierMinBelts": 0,

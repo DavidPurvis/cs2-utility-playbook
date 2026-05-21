@@ -491,8 +491,7 @@ export const COMBOS = [
     ],
     tip: "Wait for BOTH smokes to bloom before the flash. Entry trades on contact — don't peek Heaven until it's smoked.",
   },
-  
-  {
+    {
     id: "a_long_take",
     name: "A Long Take",
     site: "A",
@@ -507,8 +506,7 @@ export const COMBOS = [
     ],
     tip: "Push as a pack after the flash pops. Don't peek individually — trade kills win A takes.",
   },
-  
-  {
+    {
     id: "b_water_split",
     name: "B Water Split",
     site: "B",
@@ -522,8 +520,7 @@ export const COMBOS = [
     ],
     tip: "The Connector smoke prevents CT rotations. Hit B fast before they re-smoke or rotate through Park.",
   },
-  
-  {
+    {
     id: "ct_b_lockdown",
     name: "B Site Lockdown",
     site: "B",
@@ -538,8 +535,7 @@ export const COMBOS = [
     ],
     tip: "Don't peek until your molly burns out. Let the util do the work — hold passive angles.",
   },
-  
-  {
+    {
     id: "retake_b",
     name: "B Site Retake",
     site: "B",
@@ -552,8 +548,7 @@ export const COMBOS = [
     ],
     tip: "Push TOGETHER. Lone peeks lose retakes 80% of the time at our rank. If you have an HE, throw at the bomb before peeking.",
   },
-  
-  {
+    {
     id: "retake_a",
     name: "A Site Retake",
     site: "A",
@@ -593,8 +588,7 @@ export const UTILITY_BELTS = [
     teamRole:
       "Everyone else stages in Monster tunnel and Water. Push on the flash pop. Post-plant behind Pillar, Barrels, or in Water watching Short.",
   },
-  
-  {
+    {
     id: "a_belt",
     name: "A Site Utility Belt",
     site: "A",
