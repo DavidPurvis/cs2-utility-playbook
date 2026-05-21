@@ -1,0 +1,789 @@
+{
+  "byMap": {
+    "ancient": {
+      "count": 2,
+      "combos": [
+        {
+          "comboSlug": "back-alley-b-alley-cave-from-ruins",
+          "name": "Back Alley + B Alley + Cave from Ruins",
+          "csnadesUrl": "https://csnades.gg/ancient/combinations/back-alley-b-alley-cave-from-ruins",
+          "matched": [
+            {
+              "csnadesSlug": "b-alley-from-ruins",
+              "util": "SMOKE",
+              "cs2utilSlug": "alley-smoke-from-ruins-1",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 1129.2146,
+                "worldY": -1403.401855
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "back-alley-from-ruins-corner",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "alley-smoke-from-ruins-1",
+                "score": 0.5
+              }
+            },
+            {
+              "csnadesSlug": "cave-from-ruins",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "b-long-smoke-from-ruins-2",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "temple-ct-donut-tunnel-from-outside-a",
+          "name": "Temple + CT + Donut Tunnel from Outside A",
+          "csnadesUrl": "https://csnades.gg/ancient/combinations/temple-ct-donut-tunnel-from-outside-a",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "temple-from-outside-a-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "temple-smoke-from-split-2",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "ct-from-outside-a",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "a-main-smoke-from-ct-spawn-1",
+                "score": 0.25
+              }
+            },
+            {
+              "csnadesSlug": "donut-tunnel-from-outside-a",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "b-long-smoke-from-ruins-2",
+                "score": 0
+              }
+            }
+          ],
+          "fullyMatched": false
+        }
+      ]
+    },
+    "anubis": {
+      "count": 4,
+      "combos": [
+        {
+          "comboSlug": "b-site-back-site-ebox-from-ruins",
+          "name": "B Site + Back Site + Ebox from Ruins",
+          "csnadesUrl": "https://csnades.gg/anubis/combinations/b-site-back-site-ebox-from-ruins",
+          "matched": [
+            {
+              "csnadesSlug": "b-site-from-ruins-d",
+              "util": "SMOKE",
+              "cs2utilSlug": "b-site-smoke-from-ruins-4",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 1495.965454,
+                "worldY": 451.96875
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "back-site-from-ruins-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "b-site-smoke-from-ruins-4",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": 1495.965454,
+                "worldY": 451.96875
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "ebox-from-ruins",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "ebox-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "heaven-plat-from-water",
+          "name": "Heaven + Plat from Water",
+          "csnadesUrl": "https://csnades.gg/anubis/combinations/heaven-plat-from-water",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "heaven-from-water-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "heaven-smoke-from-boat",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "platform-from-water",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "palace-smoke-from-water",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "top-mid-canals-from-t-spawn",
+          "name": "Top Mid + Canals from T Spawn",
+          "csnadesUrl": "https://csnades.gg/anubis/combinations/top-mid-canals-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "top-mid-from-t-spawn-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "top-mid-smoke-from-t-spawn",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -938.398499,
+                "worldY": -1363.428101
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "canals-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "ebox-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "ebox-b-site-temple-from-t-spawn",
+          "name": "Ebox + B Site + Temple from T Spawn",
+          "csnadesUrl": "https://csnades.gg/anubis/combinations/ebox-b-site-temple-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "ebox-from-t-spawn",
+              "util": "SMOKE",
+              "cs2utilSlug": "ebox-smoke-from-t-spawn",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 23.966978,
+                "worldY": -1744.96875
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "temple-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "ebox-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "b-site-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "ebox-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        }
+      ]
+    },
+    "cache": {
+      "count": 0,
+      "combos": []
+    },
+    "dust2": {
+      "count": 1,
+      "combos": [
+        {
+          "comboSlug": "window-doors-from-outside-b-tunnels",
+          "name": "Window + Doors from Outside B Tunnels",
+          "csnadesUrl": "https://csnades.gg/dust2/combinations/window-doors-from-outside-b-tunnels",
+          "matched": [
+            {
+              "csnadesSlug": "b-window-from-outside-b-tunnels",
+              "util": "SMOKE",
+              "cs2utilSlug": "b-window-smoke-from-outside-tunnels",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -1332.025757,
+                "worldY": 491.966278
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "b-doors-from-outside-b-tunnels",
+              "util": "SMOKE",
+              "cs2utilSlug": "b-doors-smoke-from-outside-tunnels-cover",
+              "score": 0.75,
+              "throwWorld": {
+                "worldX": -1783.030762,
+                "worldY": 1031.588135
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        }
+      ]
+    },
+    "inferno": {
+      "count": 3,
+      "combos": [
+        {
+          "comboSlug": "ct-coffins-from-banana",
+          "name": "CT + Coffins from Banana",
+          "csnadesUrl": "https://csnades.gg/inferno/combinations/ct-coffins-from-banana",
+          "matched": [
+            {
+              "csnadesSlug": "ct-from-banana-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "ct-boost-smoke-from-banana",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": 290.327515,
+                "worldY": 1564.969238
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "coffins-from-banana",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "fountain-smoke-from-banana",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "pit-moto-from-alt-mid",
+          "name": "Pit + Moto from Alt-Mid",
+          "csnadesUrl": "https://csnades.gg/inferno/combinations/pit-moto-from-alt-mid",
+          "matched": [
+            {
+              "csnadesSlug": "pit-from-alt-mid-2",
+              "util": "SMOKE",
+              "cs2utilSlug": "pit-smoke-from-alt-mid",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 187.968658,
+                "worldY": -197.972534
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "moto-from-alt-mid",
+              "util": "SMOKE",
+              "cs2utilSlug": "moto-smoke-from-mid",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": 205.828857,
+                "worldY": 436.779663
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        },
+        {
+          "comboSlug": "arch-library-from-bottom-mid",
+          "name": "Arch + Library from Bottom Mid",
+          "csnadesUrl": "https://csnades.gg/inferno/combinations/arch-library-from-bottom-mid",
+          "matched": [
+            {
+              "csnadesSlug": "arch-from-bottom-mid",
+              "util": "SMOKE",
+              "cs2utilSlug": "arch-smoke-from-bottom-mid ",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 205.968552,
+                "worldY": 436.77832
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "library-from-bottom-mid",
+              "util": "SMOKE",
+              "cs2utilSlug": "library-smoke-from-mid",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": 616.239929,
+                "worldY": -264.968506
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        }
+      ]
+    },
+    "mirage": {
+      "count": 6,
+      "combos": [
+        {
+          "comboSlug": "jungle-stairs-ticket-booth-from-a-ramp",
+          "name": "Jungle + Stairs + Ticket Booth from A Ramp",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/jungle-stairs-ticket-booth-from-a-ramp",
+          "matched": [
+            {
+              "csnadesSlug": "jungle-from-a-ramp",
+              "util": "SMOKE",
+              "cs2utilSlug": "ramp-smoke-from-jungle",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -1119.970093,
+                "worldY": -1527.96875
+              },
+              "team": "CT"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "stairs-from-a-ramp-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "ramp-smoke-from-jungle",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "ticket-booth-from-a-ramp-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "palace-smoke-from-ticket-booth",
+                "score": 0.5
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "window-connector-from-t-spawn",
+          "name": "Window + Connector from T Spawn",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/window-connector-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "window-from-t-spawn-c",
+              "util": "SMOKE",
+              "cs2utilSlug": "fast-window-smoke-from-t-spawn",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": 1296,
+                "worldY": -352
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "connector-from-t-spawn",
+              "util": "SMOKE",
+              "cs2utilSlug": "connector-smoke-from-t-spawn",
+              "score": 1,
+              "throwWorld": {
+                "worldX": 1422.966309,
+                "worldY": 70.96875
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        },
+        {
+          "comboSlug": "window-door-bench-from-back-alley",
+          "name": "Window + Door + Bench from Back Alley",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/window-door-bench-from-back-alley",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "window-from-back-alley-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "stairs-smoke-from-back-alley",
+                "score": 0.5
+              }
+            },
+            {
+              "csnadesSlug": "market-door-from-back-alley-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "market-door-smoke-from-t-house",
+                "score": 0.4
+              }
+            },
+            {
+              "csnadesSlug": "bench-from-back-alley-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "stairs-smoke-from-back-alley",
+                "score": 0.5
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "stairs-jungle-from-back-alley",
+          "name": "Stairs + Jungle from Back Alley",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/stairs-jungle-from-back-alley",
+          "matched": [
+            {
+              "csnadesSlug": "stairs-from-back-alley",
+              "util": "SMOKE",
+              "cs2utilSlug": "stairs-smoke-from-back-alley",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -351.968567,
+                "worldY": 887.96875
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "jungle-and-connector-from-back-alley",
+              "util": "SMOKE",
+              "cs2utilSlug": "jungle-connector-smoke-from-back-alley",
+              "score": 0.8,
+              "throwWorld": {
+                "worldX": -351.968567,
+                "worldY": 887.96875
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        },
+        {
+          "comboSlug": "stairs-jungle-from-t-spawn",
+          "name": "Stairs + Jungle from T Spawn",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/stairs-jungle-from-t-spawn",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "stairs-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "topmid-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "jungle-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "topmid-smoke-from-t-spawn",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "stairs-jungle-and-connector-from-t-roof",
+          "name": "Stairs + Jungle and Connector from T Roof",
+          "csnadesUrl": "https://csnades.gg/mirage/combinations/stairs-jungle-and-connector-from-t-roof",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "stairs-from-t-roof",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "stairs-smoke-from-t-spawn2",
+                "score": 0.33
+              }
+            },
+            {
+              "csnadesSlug": "jungle-and-connector-from-t-roof-c",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "jungle-connector-smoke-c",
+                "score": 0.5
+              }
+            }
+          ],
+          "fullyMatched": false
+        }
+      ]
+    },
+    "nuke": {
+      "count": 4,
+      "combos": [
+        {
+          "comboSlug": "a-main-a-site-flash-from-t-roof",
+          "name": "A Main + A Site Flash from T Roof",
+          "csnadesUrl": "https://csnades.gg/nuke/combinations/a-main-a-site-flash-from-t-roof",
+          "matched": [
+            {
+              "csnadesSlug": "a-main-from-t-roof-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "main-smoke-from-roof-2",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -105.03125,
+                "worldY": -280.033569
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "a-site-from-t-roof-b",
+              "util": "FLASH",
+              "bestCandidate": {
+                "slug": "a-site-flash-from-troof",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "secret-close-far-from-t-spawn",
+          "name": "Secret Close + Far from T Spawn",
+          "csnadesUrl": "https://csnades.gg/nuke/combinations/secret-close-far-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "secret-close-from-t-spawn",
+              "util": "SMOKE",
+              "cs2utilSlug": "close-diagonal-smoke-for-secret-from-t-spawn",
+              "score": 0.6,
+              "throwWorld": {
+                "worldX": -1351.389771,
+                "worldY": -1045.387451
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "secret-far-from-t-spawn-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "far-diagonal-smoke-for-secret-from-t-spawn",
+              "score": 0.6,
+              "throwWorld": {
+                "worldX": -1351.389771,
+                "worldY": -1045.387451
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [],
+          "fullyMatched": true
+        },
+        {
+          "comboSlug": "outside-main-front-garage-from-t-spawn",
+          "name": "Outside Main + Front Garage from T Spawn",
+          "csnadesUrl": "https://csnades.gg/nuke/combinations/outside-main-front-garage-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "front-garage-from-t-spawn",
+              "util": "SMOKE",
+              "cs2utilSlug": "garage-smoke-from-t-spawn-b",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": -916.930176,
+                "worldY": -1142.970703
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "outside-main-from-t-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "main-waterfall-smoke-b",
+                "score": 0.25
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "top-main-outside-main-front-garage-from-t-spawn",
+          "name": "Top Main + Outside Main + Front Garage from T Spawn",
+          "csnadesUrl": "https://csnades.gg/nuke/combinations/top-main-outside-main-front-garage-from-t-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "front-garage-from-t-spawn-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "garage-smoke-from-t-spawn-b",
+              "score": 0.67,
+              "throwWorld": {
+                "worldX": -916.930176,
+                "worldY": -1142.970703
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "top-main-from-t-spawn-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "main-waterfall-smoke-b",
+                "score": 0.25
+              }
+            },
+            {
+              "csnadesSlug": "outside-main-from-t-spawn-b",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "main-waterfall-smoke-b",
+                "score": 0.25
+              }
+            }
+          ],
+          "fullyMatched": false
+        }
+      ]
+    },
+    "overpass": {
+      "count": 4,
+      "combos": [
+        {
+          "comboSlug": "bank-garbage-from-mid",
+          "name": "Bank + Garbage from Mid",
+          "csnadesUrl": "https://csnades.gg/overpass/combinations/bank-garbage-from-mid",
+          "matched": [
+            {
+              "csnadesSlug": "bank-from-mid-b",
+              "util": "SMOKE",
+              "cs2utilSlug": "bank-smoke-from-mid",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -2206.232178,
+                "worldY": -1151.951782
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "dumpster-from-mid-bench",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "bank-smoke-from-mid",
+                "score": 0.25
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "heaven-barrels-pit-from-water",
+          "name": "Heaven + Barrels + Pit from Water",
+          "csnadesUrl": "https://csnades.gg/overpass/combinations/heaven-barrels-pit-from-water",
+          "matched": [
+            {
+              "csnadesSlug": "heaven-from-water",
+              "util": "SMOKE",
+              "cs2utilSlug": "heaven-smoke-from-water",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -1731.968872,
+                "worldY": -704.031189
+              },
+              "team": "T"
+            },
+            {
+              "csnadesSlug": "barrels-from-water",
+              "util": "SMOKE",
+              "cs2utilSlug": "barrels-smoke-from-water",
+              "score": 1,
+              "throwWorld": {
+                "worldX": -1559.035156,
+                "worldY": -729.447021
+              },
+              "team": "T"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "pit-from-water",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "heaven-smoke-from-water",
+                "score": 0.33
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "monster-water-tunnel-from-ct-spawn",
+          "name": "Monster + Water Tunnel from CT Spawn",
+          "csnadesUrl": "https://csnades.gg/overpass/combinations/monster-water-tunnel-from-ct-spawn",
+          "matched": [
+            {
+              "csnadesSlug": "monster-from-ct-spawn-crouch",
+              "util": "SMOKE",
+              "cs2utilSlug": "fast-monster-smoke-from-ct-spawn",
+              "score": 0.6,
+              "throwWorld": {
+                "worldX": -2116.467285,
+                "worldY": 993.140259
+              },
+              "team": "CT"
+            }
+          ],
+          "unmatched": [
+            {
+              "csnadesSlug": "water-tunnel-from-ct-spawn",
+              "util": "SMOKE",
+              "bestCandidate": {
+                "slug": "fast-short-tunnel-smoke-from-ct-spawn",
+                "score": 0.5
+              }
+            }
+          ],
+          "fullyMatched": false
+        },
+        {
+          "comboSlug": "water-cubby-he-molly-from-graffiti",
+          "name": "Water Cubby HE + Molly from Graffiti",
+          "csnadesUrl": "https://csnades.gg/overpass/combinations/water-cubby-he-molly-from-graffiti",
+          "matched": [],
+          "unmatched": [
+            {
+              "csnadesSlug": "water-cubby-from-graffiti",
+              "util": "MOLLY",
+              "bestCandidate": {
+                "slug": "barrels-molotov-from-water",
+                "score": 0.25
+              }
+            }
+          ],
+          "fullyMatched": false
+        }
+      ]
+    }
+  }
+}
