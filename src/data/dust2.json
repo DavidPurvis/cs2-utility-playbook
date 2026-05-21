@@ -13,7 +13,7 @@
     {
       "id": "dust2-t-s1",
       "side": "T",
-      "label": "S1",
+      "label": "T-1",
       "world": {
         "x": -332,
         "y": -754,
@@ -23,7 +23,7 @@
     {
       "id": "dust2-t-s2",
       "side": "T",
-      "label": "S2",
+      "label": "T-2",
       "world": {
         "x": -367,
         "y": -808,
@@ -33,7 +33,7 @@
     {
       "id": "dust2-t-s3",
       "side": "T",
-      "label": "S3",
+      "label": "T-3",
       "world": {
         "x": -428,
         "y": -843,
@@ -43,7 +43,7 @@
     {
       "id": "dust2-t-s4",
       "side": "T",
-      "label": "S4",
+      "label": "T-4",
       "world": {
         "x": -493,
         "y": -808,
@@ -53,7 +53,7 @@
     {
       "id": "dust2-t-s5",
       "side": "T",
-      "label": "S5",
+      "label": "T-5",
       "world": {
         "x": -533,
         "y": -754,
@@ -63,7 +63,7 @@
     {
       "id": "dust2-t-s6",
       "side": "T",
-      "label": "S6",
+      "label": "T-6",
       "world": {
         "x": -657.271362,
         "y": -755.879639,
@@ -73,7 +73,7 @@
     {
       "id": "dust2-t-s7",
       "side": "T",
-      "label": "S7",
+      "label": "T-7",
       "world": {
         "x": -696.844604,
         "y": -806.623718,
@@ -83,7 +83,7 @@
     {
       "id": "dust2-t-s8",
       "side": "T",
-      "label": "S8",
+      "label": "T-8",
       "world": {
         "x": -760.662964,
         "y": -836.174011,
@@ -93,7 +93,7 @@
     {
       "id": "dust2-t-s9",
       "side": "T",
-      "label": "S9",
+      "label": "T-9",
       "world": {
         "x": -822.365173,
         "y": -795.64209,
@@ -103,7 +103,7 @@
     {
       "id": "dust2-t-s10",
       "side": "T",
-      "label": "S10",
+      "label": "T-10",
       "world": {
         "x": -857.506531,
         "y": -738.361328,
@@ -113,7 +113,7 @@
     {
       "id": "dust2-t-s11",
       "side": "T",
-      "label": "S11",
+      "label": "T-11",
       "world": {
         "x": -980,
         "y": -754,
@@ -123,7 +123,7 @@
     {
       "id": "dust2-t-s12",
       "side": "T",
-      "label": "S12",
+      "label": "T-12",
       "world": {
         "x": -1015,
         "y": -808,
@@ -133,7 +133,7 @@
     {
       "id": "dust2-t-s13",
       "side": "T",
-      "label": "S13",
+      "label": "T-13",
       "world": {
         "x": -1076,
         "y": -843,
@@ -143,7 +143,7 @@
     {
       "id": "dust2-t-s14",
       "side": "T",
-      "label": "S14",
+      "label": "T-14",
       "world": {
         "x": -1141,
         "y": -808,
@@ -153,7 +153,7 @@
     {
       "id": "dust2-t-s15",
       "side": "T",
-      "label": "S15",
+      "label": "T-15",
       "world": {
         "x": -1181,
         "y": -754,
@@ -163,7 +163,7 @@
     {
       "id": "dust2-ct-s1",
       "side": "CT",
-      "label": "S1",
+      "label": "CT-1",
       "world": {
         "x": 160.122742,
         "y": 2369.67627,
@@ -173,7 +173,7 @@
     {
       "id": "dust2-ct-s2",
       "side": "CT",
-      "label": "S2",
+      "label": "CT-2",
       "world": {
         "x": 182.249908,
         "y": 2439.011719,
@@ -183,7 +183,7 @@
     {
       "id": "dust2-ct-s3",
       "side": "CT",
-      "label": "S3",
+      "label": "CT-3",
       "world": {
         "x": 258.159393,
         "y": 2480.553711,
@@ -193,7 +193,7 @@
     {
       "id": "dust2-ct-s4",
       "side": "CT",
-      "label": "S4",
+      "label": "CT-4",
       "world": {
         "x": 334.368744,
         "y": 2433.733643,
@@ -203,7 +203,7 @@
     {
       "id": "dust2-ct-s5",
       "side": "CT",
-      "label": "S5",
+      "label": "CT-5",
       "world": {
         "x": 351.39212,
         "y": 2352.942383,
@@ -715,6 +715,56 @@
           "actions": []
         }
       ]
+    }
+  ],
+  "ctPositions": [
+    {
+      "id": "a-anchor",
+      "label": "A Anchor",
+      "description": "Solo or paired hold of A site. Delay long pushes, fall back to CT for the retake.",
+      "spawnHint": "Spawn near CT-1 or CT-5, walk down ramp to pit or default plant.",
+      "recommendedLineupIds": [
+        "ct_long_doors_smoke"
+      ],
+      "utilityFocus": "Smoke long doors early to cut the T push. Molly default plant before site contact. Carry a flash for retake."
+    },
+    {
+      "id": "b-anchor",
+      "label": "B Anchor",
+      "description": "Solo hold B site. Delay tunnels with smoke + molly, fall back to car for the retake.",
+      "spawnHint": "Spawn near CT-2 or CT-4, walk down B doors to plat.",
+      "recommendedLineupIds": [
+        "ct_b_tuns_smoke"
+      ],
+      "utilityFocus": "Smoke B tunnels at 0:10 left. Molly default plant when you hear footsteps. HE the smoke if 3+ Ts push."
+    },
+    {
+      "id": "mid-control",
+      "label": "Mid Control",
+      "description": "Take and contest mid early. Rotate to whichever site takes pressure.",
+      "spawnHint": "Spawn near CT-3, push to mid doors or top mid.",
+      "recommendedLineupIds": [
+        "ct_mid_smoke"
+      ],
+      "utilityFocus": "Smoke mid doors if you can not get the AWP pick. Flash short on aggressive pushes. Track lurkers headed to B."
+    },
+    {
+      "id": "aggressive-awp",
+      "label": "Aggressive AWP",
+      "description": "Pick attempt early-round on mid or short, fall back behind teammate flashes.",
+      "spawnHint": "Spawn near CT-3, push catwalk or mid doors.",
+      "recommendedLineupIds": [
+        "ct_mid_smoke"
+      ],
+      "utilityFocus": "Smoke mid doors when you need to disengage. One flash held for support on the retake."
+    },
+    {
+      "id": "rotator",
+      "label": "Rotator / Late",
+      "description": "Hold CT spawn, rotate to whichever site takes pressure first.",
+      "spawnHint": "Stay in CT spawn, watch info from anchors.",
+      "recommendedLineupIds": [],
+      "utilityFocus": "Carry one smoke + one flash. Save utility for the retake site, not the initial hold."
     }
   ]
 }

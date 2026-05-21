@@ -22,6 +22,7 @@ describe("Home view", () => {
         pickedSpawnId={null}
         onSelectScenario={noop}
         onPickSpawn={noop}
+        onSelectLineup={noop}
         onClearSpawn={noop}
       />
     );
@@ -45,6 +46,7 @@ describe("Home view", () => {
         pickedSpawnId={null}
         onSelectScenario={onSelect}
         onPickSpawn={noop}
+        onSelectLineup={noop}
         onClearSpawn={noop}
       />
     );
@@ -62,15 +64,18 @@ describe("Home view", () => {
         pickedSpawnId={null}
         onSelectScenario={noop}
         onPickSpawn={noop}
+        onSelectLineup={noop}
         onClearSpawn={noop}
       />
     );
     // T-side toggle is selected by default; T-side has 15 spawns
     const tSpawns = dustData.spawns.filter((s) => s.side === "T");
     expect(tSpawns).toHaveLength(15);
-    // Every T-spawn label (S1..S15) appears in the picker's SVG
+    // The picker renders each label lowercased ("t-1"..."t-15") so
+    // there's no ambiguity on team voice (matches the side prefix
+    // the owner uses when calling out positions).
     for (const s of tSpawns) {
-      expect(screen.getAllByText(s.label).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(s.label.toLowerCase()).length).toBeGreaterThan(0);
     }
   });
 });

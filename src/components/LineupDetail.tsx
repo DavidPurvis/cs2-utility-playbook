@@ -188,10 +188,21 @@ function CardShell({
   );
 }
 
+/**
+ * Resolve a screenshot path against Vite's BASE_URL so the asset URL
+ * works both in dev (served from "/") and on GitHub Pages (under
+ * "/cs2-utility-playbook/"). Absolute http(s) URLs pass through.
+ */
+function resolveAsset(src: string): string {
+  if (src.startsWith("http://") || src.startsWith("https://")) return src;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${base}${src}`;
+}
+
 function CardImage({ src, alt }: { src: string; alt: string }) {
   return (
     <img
-      src={src}
+      src={resolveAsset(src)}
       alt={alt}
       loading="lazy"
       referrerPolicy="no-referrer"

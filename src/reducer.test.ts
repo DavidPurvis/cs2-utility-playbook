@@ -48,6 +48,19 @@ describe("uiReducer", () => {
     expect(next.activeRoleId).toBe("a-man");
   });
 
+  it("BACK from lineup with no active scenario returns home (CT-position-guide path)", () => {
+    const s: UiState = {
+      ...initialUiState,
+      view: "lineup",
+      activeLineupId: "xbox_smoke",
+      // No activeScenarioId — user clicked a lineup chip from the CT
+      // position guide on home, never went through a scenario.
+    };
+    const next = uiReducer(s, { type: "BACK" });
+    expect(next.view).toBe("home");
+    expect(next.activeLineupId).toBeNull();
+  });
+
   it("BACK from lineup returns to scenario, clearing lineup id", () => {
     const s: UiState = {
       ...initialUiState,

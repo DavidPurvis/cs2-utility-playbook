@@ -14,6 +14,9 @@ export interface HomeProps {
   onSelectScenario: (id: string) => void;
   onPickSpawn: (spawnId: string) => void;
   onClearSpawn: () => void;
+  /** Opens the 2x2 walkthrough for a lineup id (used by the CT
+   *  position guide's "Recommended" chips). */
+  onSelectLineup: (lineupId: string) => void;
 }
 
 export function Home({
@@ -22,6 +25,7 @@ export function Home({
   onSelectScenario,
   onPickSpawn,
   onClearSpawn,
+  onSelectLineup,
 }: HomeProps) {
   return (
     <div style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}>
@@ -42,6 +46,9 @@ export function Home({
             pickedSpawnId={pickedSpawnId}
             onPick={onPickSpawn}
             onClear={onClearSpawn}
+            ctPositions={data.ctPositions}
+            lineups={data.lineups}
+            onSelectLineup={onSelectLineup}
           />
         </aside>
       </div>

@@ -12,10 +12,11 @@
  */
 import { useMemo, useState } from "react";
 import { Radar } from "./Radar";
+import { CtPositionGuide } from "./CtPositionGuide";
 import { spawnClusterBounds } from "../utils/bounds";
 import { worldToPercent } from "../utils/coordinates";
 import { T } from "../theme";
-import type { MapConfig, Side, Spawn } from "../types";
+import type { CtPosition, Lineup, MapConfig, Side, Spawn } from "../types";
 
 export interface SpawnPickerProps {
   config: MapConfig;
@@ -23,12 +24,29 @@ export interface SpawnPickerProps {
   pickedSpawnId: string | null;
   onPick: (spawnId: string) => void;
   onClear: () => void;
+  /** Optional — when supplied alongside `lineups` and side="CT", a
+   *  position-guide panel appears below the picker. */
+  ctPositions?: CtPosition[];
+  lineups?: Lineup[];
+  onSelectLineup?: (lineupId: string) => void;
 }
 
-export function SpawnPicker({ config, spawns, pickedSpawnId, onPick, onClear }: SpawnPickerProps) {
+export function SpawnPicker({
+  config,
+  spawns,
+  pickedSpawnId,
+  onPick,
+  onClear,
+  ctPositions,
+  lineups,
+  onSelectLineup,
+}: SpawnPickerProps) {
   const [side, setSide] = useState<Side>("T");
   const filtered = useMemo(() => spawns.filter((s) => s.side === side), [spawns, side]);
-  const cluster = useMemo(() => spawnClusterBounds(filtered, config, 4), [filtered, config]);
+  // Slightly looser padding (was 4) gives small-dot rendering more breathing
+  // room — the T-spawn cluster is tight enough that closer padding made labels
+  // overlap.
+  const cluster = useMemo(() => spawnClusterBounds(filtered, config, 7), [filtered, config]);
   const sideColor = side === "T" ? T.tSide : T.ctSide;
   const sideBg = side === "T" ? T.tSideBg : T.ctSideBg;
 
@@ -105,27 +123,45 @@ export function SpawnPicker({ config, spawns, pickedSpawnId, onPick, onClear }: 
                 style={{ cursor: "pointer" }}
                 onClick={() => onPick(spawn.id)}
               >
-                <circle r={3.6} fill="transparent" />
+                {/* Wide transparent hit target stays generous (~2.6 percent units)
+                    so taps don't miss, even though the visible dot is much smaller. */}
+                <circle r={2.6} fill="transparent" />
+                {/* Black halo so dots stay legible against the radar's green/
+                    grey building backgrounds. Drawn behind the colored ring. */}
                 <circle
-                  r={picked ? 2.9 : 2.3}
+                  r={(picked ? 1.2 : 0.85) + 0.15}
+                  fill="none"
+                  stroke="#000"
+                  strokeWidth={0.18}
+                  opacity={0.55}
+                />
+                <circle
+                  r={picked ? 1.2 : 0.85}
                   fill={picked ? sideColor : T.bgPanel}
                   stroke={sideColor}
-                  strokeWidth={picked ? 0.6 : 0.4}
+                  strokeWidth={picked ? 0.4 : 0.28}
                 />
+                {/* Label "t-1" / "ct-1" sits OUTSIDE the dot when not picked.
+                    A black `stroke` rendered before the fill (paintOrder=stroke)
+                    gives the digits a halo so they pop off the radar
+                    background. Picked-state inflates the label for clarity. */}
                 <text
                   x={0}
-                  y={0.4}
+                  y={picked ? 0.3 : -1.55}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={1.9}
+                  fontSize={picked ? 1.1 : 0.95}
                   fontWeight={800}
                   fill={picked ? "#FFFFFF" : sideColor}
+                  stroke="#000"
+                  strokeWidth={0.22}
+                  paintOrder="stroke fill"
                   fontFamily={T.fontMono}
                   style={{ pointerEvents: "none", userSelect: "none" }}
                 >
-                  {spawn.label}
+                  {spawn.label.toLowerCase()}
                 </text>
-                <title>{`${spawn.side} ${spawn.label} — setpos ${spawn.world.x} ${spawn.world.y}`}</title>
+                <title>{`${spawn.label} — setpos ${spawn.world.x} ${spawn.world.y}`}</title>
               </g>
             );
           })
@@ -172,6 +208,14 @@ export function SpawnPicker({ config, spawns, pickedSpawnId, onPick, onClear }: 
           <>Click a spawn dot to mark "I am here" for visual reference.</>
         )}
       </div>
+
+      {side === "CT" && ctPositions && ctPositions.length > 0 && lineups && onSelectLineup && (
+        <CtPositionGuide
+          positions={ctPositions}
+          lineups={lineups}
+          onSelectLineup={onSelectLineup}
+        />
+      )}
     </section>
   );
 }
