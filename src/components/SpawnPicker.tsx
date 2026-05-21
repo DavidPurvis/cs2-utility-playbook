@@ -123,23 +123,32 @@ export function SpawnPicker({
                 style={{ cursor: "pointer" }}
                 onClick={() => onPick(spawn.id)}
               >
-                {/* Wide transparent hit target stays generous (~2.6 percent units)
-                    so taps don't miss, even though the visible dot is much smaller. */}
-                <circle r={2.6} fill="transparent" />
-                {/* Black halo so dots stay legible against the radar's green/
-                    grey building backgrounds. Drawn behind the colored ring. */}
+                {/* The visible dot is the ONLY click target. An earlier
+                    revision added a wide r=2.6 transparent hit circle here,
+                    but adjacent CT spawns are only ~1.7 viewBox units apart
+                    so the wide hit zones overlapped and SVG z-order routed
+                    clicks to whichever spawn rendered last (e.g. clicking
+                    CT-3 selected CT-4). The owner's complaint "you have to
+                    press off the spawn to actually select it" was exactly
+                    this: they clicked ON CT-3 but got CT-4, perceiving the
+                    "real" spawn as somewhere else.
+                    Trade-off: tap targets are smaller (~22px on desktop at
+                    cluster zoom). Mobile gets the picked-state inflation
+                    (r=1.4) below.
+                    Black halo for legibility on the radar background. */}
                 <circle
-                  r={(picked ? 1.2 : 0.85) + 0.15}
+                  r={(picked ? 1.4 : 1.05) + 0.18}
                   fill="none"
                   stroke="#000"
-                  strokeWidth={0.18}
+                  strokeWidth={0.22}
                   opacity={0.55}
+                  pointerEvents="none"
                 />
                 <circle
-                  r={picked ? 1.2 : 0.85}
+                  r={picked ? 1.4 : 1.05}
                   fill={picked ? sideColor : T.bgPanel}
                   stroke={sideColor}
-                  strokeWidth={picked ? 0.4 : 0.28}
+                  strokeWidth={picked ? 0.45 : 0.32}
                 />
                 {/* Label "t-1" / "ct-1" sits OUTSIDE the dot when not picked.
                     A black `stroke` rendered before the fill (paintOrder=stroke)
