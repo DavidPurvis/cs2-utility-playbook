@@ -766,5 +766,139 @@
       "recommendedLineupIds": [],
       "utilityFocus": "Carry one smoke + one flash. Save utility for the retake site, not the initial hold."
     }
-  ]
+  ],
+  "defaults": {
+    "plants": [
+      {
+        "id": "a-default",
+        "site": "A",
+        "name": "A site default (under default)",
+        "description": "Plant in the default-plant pit just behind site main entrance. Smokes off long + CT cover the most common picks.",
+        "percent": {
+          "x": 71,
+          "y": 19.5
+        }
+      },
+      {
+        "id": "a-goose",
+        "site": "A",
+        "name": "A site goose plant",
+        "description": "Plant behind goose (right of site as you enter from main). Forces CT to clear two corners on retake.",
+        "percent": {
+          "x": 75,
+          "y": 13.5
+        }
+      },
+      {
+        "id": "b-default",
+        "site": "B",
+        "name": "B site default (behind car)",
+        "description": "Plant behind the orange car. Standard B plant — CT must cross open ground to defuse.",
+        "percent": {
+          "x": 18,
+          "y": 23.5
+        }
+      },
+      {
+        "id": "b-window",
+        "site": "B",
+        "name": "B site window plant",
+        "description": "Plant tucked at window. Lets a tunnel/door player hold defuse from a tight angle.",
+        "percent": {
+          "x": 22.5,
+          "y": 26
+        }
+      }
+    ],
+    "timings": [
+      {
+        "id": "t-buy",
+        "label": "Buy + walk window (0:00–0:15)",
+        "body": "Buy in spawn, call rush spawns, walk to mid/long/tunnels before noise window opens.",
+        "phase": "buy"
+      },
+      {
+        "id": "t-xbox",
+        "label": "Xbox smoke lands by 0:05 left of freeze",
+        "body": "Whoever has the closest T spawn (T-1/T-5/T-6) throws the xbox smoke before pushing mid.",
+        "side": "T",
+        "phase": "buy"
+      },
+      {
+        "id": "t-mid-control",
+        "label": "Mid control decided 0:15–0:25 in",
+        "body": "Mid AWP duel or mid smoke set. If you lose mid, fall back; if you win it, the B split is open.",
+        "phase": "early"
+      },
+      {
+        "id": "t-execute",
+        "label": "Site hit 0:25–0:45 in",
+        "body": "Most T executes start around the 0:30 mark — late enough to read CT positions, early enough to leave 30+ seconds for the plant.",
+        "side": "T",
+        "phase": "mid"
+      },
+      {
+        "id": "ct-default",
+        "label": "CT default smokes by 0:10 left of freeze",
+        "body": "B-anchor smokes tunnels; A-anchor mollies default. Buys time before any T contact.",
+        "side": "CT",
+        "phase": "buy"
+      },
+      {
+        "id": "ct-rotate",
+        "label": "CT rotates committed by 0:45 in",
+        "body": "Once a site takes contact, the rotator commits. Late rotate means a 4v3 on the wrong site.",
+        "side": "CT",
+        "phase": "mid"
+      },
+      {
+        "id": "post-plant",
+        "label": "Post-plant utility cycles ~5s",
+        "body": "After plant, cycle a molly every ~5 seconds across the defuse spot. Don't blow all utility at once.",
+        "side": "T",
+        "phase": "late"
+      }
+    ],
+    "spawnRushes": [
+      {
+        "id": "rush-a-long-from-t1",
+        "fromSpawnId": "dust2-t-s1",
+        "contestPath": "A long doors",
+        "beatsSpawnIds": [
+          "dust2-ct-s3",
+          "dust2-ct-s5"
+        ],
+        "description": "Front-right T-1 to long: usually arrives at doors before CT-3 / CT-5 can set up pit."
+      },
+      {
+        "id": "rush-a-long-from-t5",
+        "fromSpawnId": "dust2-t-s5",
+        "contestPath": "A long doors",
+        "beatsSpawnIds": [
+          "dust2-ct-s3"
+        ],
+        "description": "Symmetric to T-1; works against CT-3."
+      },
+      {
+        "id": "rush-mid-from-t6",
+        "fromSpawnId": "dust2-t-s6",
+        "contestPath": "Mid doors",
+        "beatsSpawnIds": [
+          "dust2-ct-s1",
+          "dust2-ct-s5"
+        ],
+        "description": "T-6 (mid-cluster front) wins the mid AWP duel against most CT mid spawns when peeking off the smoke."
+      },
+      {
+        "id": "rush-b-tunnels-from-t14",
+        "fromSpawnId": "dust2-t-s14",
+        "contestPath": "B upper tunnels",
+        "beatsSpawnIds": [
+          "dust2-ct-s2",
+          "dust2-ct-s4"
+        ],
+        "description": "Back-left T-14: with a flash you arrive at tunnels exit before the B anchor sets up."
+      }
+    ]
+  }
 }

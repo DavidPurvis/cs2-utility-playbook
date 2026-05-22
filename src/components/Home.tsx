@@ -1,57 +1,75 @@
 /**
- * Home view — scenario grid on the left (~60%), spawn-picker on the
- * right (~40%). Stacks vertically below 768px (CSS media query in
- * index.html on .app-grid).
+ * Home view shell. Hosts the TabBar + the active tab's content.
+ *
+ * Tabs:
+ *   - defaults       → DefaultsTab
+ *   - scenarios      → ScenariosTab (existing scenario grid + spawn picker + CT guide)
+ *   - instant_smokes → InstantSmokesTab
+ *   - map            → MapTab
+ *
+ * The active tab lives in the App-level reducer so it survives
+ * navigation to scenario / lineup detail and back.
  */
-import { ScenarioGrid } from "./ScenarioGrid";
-import { SpawnPicker } from "./SpawnPicker";
-import { T } from "../theme";
+import { TabBar } from "./TabBar";
+import { ScenariosTab } from "./tabs/ScenariosTab";
+import { DefaultsTab } from "./tabs/DefaultsTab";
+import { InstantSmokesTab } from "./tabs/InstantSmokesTab";
+import { MapTab } from "./tabs/MapTab";
+import type { HomeTab } from "../reducer";
 import type { DustData } from "../types";
 
 export interface HomeProps {
   data: DustData;
+  activeTab: HomeTab;
   pickedSpawnId: string | null;
+  activeThrowFromKey: string | null;
+  onSelectTab: (tab: HomeTab) => void;
   onSelectScenario: (id: string) => void;
   onPickSpawn: (spawnId: string) => void;
   onClearSpawn: () => void;
-  /** Opens the 2x2 walkthrough for a lineup id (used by the CT
-   *  position guide's "Recommended" chips). */
   onSelectLineup: (lineupId: string) => void;
+  onSelectThrowFrom: (key: string | null) => void;
 }
 
 export function Home({
   data,
+  activeTab,
   pickedSpawnId,
+  activeThrowFromKey,
+  onSelectTab,
   onSelectScenario,
   onPickSpawn,
   onClearSpawn,
   onSelectLineup,
+  onSelectThrowFrom,
 }: HomeProps) {
   return (
-    <div style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}>
-      <div className="app-grid">
-        <main id="lineup-list" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-            <h2 style={{ margin: 0, fontSize: 20, color: T.textPri }}>Scenarios</h2>
-            <span style={{ color: T.textDim, fontSize: 13 }}>
-              {data.scenarios.length} curated · numbered for "let's do scenario 4" coordination
-            </span>
-          </div>
-          <ScenarioGrid scenarios={data.scenarios} onOpen={onSelectScenario} />
-        </main>
-        <aside>
-          <SpawnPicker
-            config={data.config}
-            spawns={data.spawns}
+    <>
+      <TabBar active={activeTab} onChange={onSelectTab} />
+      <div style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}>
+        {activeTab === "defaults" && <DefaultsTab data={data} />}
+        {activeTab === "scenarios" && (
+          <ScenariosTab
+            data={data}
             pickedSpawnId={pickedSpawnId}
-            onPick={onPickSpawn}
-            onClear={onClearSpawn}
-            ctPositions={data.ctPositions}
-            lineups={data.lineups}
+            onSelectScenario={onSelectScenario}
+            onPickSpawn={onPickSpawn}
+            onClearSpawn={onClearSpawn}
             onSelectLineup={onSelectLineup}
           />
-        </aside>
+        )}
+        {activeTab === "instant_smokes" && (
+          <InstantSmokesTab data={data} onSelectLineup={onSelectLineup} />
+        )}
+        {activeTab === "map" && (
+          <MapTab
+            data={data}
+            activeThrowFromKey={activeThrowFromKey}
+            onSelectThrowFrom={onSelectThrowFrom}
+            onSelectLineup={onSelectLineup}
+          />
+        )}
       </div>
-    </div>
+    </>
   );
 }

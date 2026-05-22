@@ -116,6 +116,23 @@ export function SpawnPicker({
             const pct = worldToPercent(spawn.world.x, spawn.world.y, config);
             if (!pct) return null;
             const picked = spawn.id === pickedSpawnId;
+            // Owner directive (2026-05): strip the side prefix on the radar
+            // icon. The side tab above the picker already tells the user
+            // which side they're looking at, so showing "t-15" or "ct-3"
+            // duplicates that info AND forces a dot too small to land on.
+            // We render the bare number ("15", "3") INSIDE the dot so the
+            // visible icon and the click target are the same shape.
+            const numberOnly = spawn.label.replace(/^(t|ct)-/i, "");
+            // Dot sizing rule: r MUST be the SAME for picked and unpicked.
+            // T-14 and T-15 sit only ~1.5 viewBox units apart at cluster
+            // zoom. If the picked dot inflates, it covers the adjacent
+            // unpicked spawn's click center and the user can't switch
+            // their selection. (Exactly the bug the owner reported.)
+            // r=0.95 keeps both dots distinct AND lets the click center
+            // of each spawn stay outside its neighbor's radius.
+            // Picked-state cue is fill + text color only — no inflation.
+            const r = 0.95;
+            const fontSize = 0.85;
             return (
               <g
                 key={spawn.id}
@@ -123,52 +140,49 @@ export function SpawnPicker({
                 style={{ cursor: "pointer" }}
                 onClick={() => onPick(spawn.id)}
               >
-                {/* The visible dot is the ONLY click target. An earlier
-                    revision added a wide r=2.6 transparent hit circle here,
-                    but adjacent CT spawns are only ~1.7 viewBox units apart
-                    so the wide hit zones overlapped and SVG z-order routed
-                    clicks to whichever spawn rendered last (e.g. clicking
-                    CT-3 selected CT-4). The owner's complaint "you have to
-                    press off the spawn to actually select it" was exactly
-                    this: they clicked ON CT-3 but got CT-4, perceiving the
-                    "real" spawn as somewhere else.
-                    Trade-off: tap targets are smaller (~22px on desktop at
-                    cluster zoom). Mobile gets the picked-state inflation
-                    (r=1.4) below.
+                {/* The dot is the ONLY click target. An earlier revision
+                    added a wide r=2.6 transparent hit circle here, but
+                    adjacent spawns' hit zones overlapped and SVG z-order
+                    routed clicks to whichever spawn rendered last
+                    (e.g. clicking CT-3 selected CT-4; clicking T-14
+                    selected T-15). The fix is: visible icon == click
+                    target, no oversized invisible halo.
                     Black halo for legibility on the radar background. */}
                 <circle
-                  r={(picked ? 1.4 : 1.05) + 0.18}
+                  r={r + 0.22}
                   fill="none"
                   stroke="#000"
-                  strokeWidth={0.22}
-                  opacity={0.55}
+                  strokeWidth={0.25}
+                  opacity={0.6}
                   pointerEvents="none"
                 />
                 <circle
-                  r={picked ? 1.4 : 1.05}
+                  r={r}
                   fill={picked ? sideColor : T.bgPanel}
                   stroke={sideColor}
-                  strokeWidth={picked ? 0.45 : 0.32}
+                  strokeWidth={picked ? 0.5 : 0.4}
                 />
-                {/* Label "t-1" / "ct-1" sits OUTSIDE the dot when not picked.
-                    A black `stroke` rendered before the fill (paintOrder=stroke)
-                    gives the digits a halo so they pop off the radar
-                    background. Picked-state inflates the label for clarity. */}
+                {/* Number lives INSIDE the dot so the click target and the
+                    visible label are one shape. The text has pointer-events
+                    disabled (attribute + CSS) so the `g`'s onClick is the
+                    only handler that fires; without it, hitting the digit
+                    glyph wouldn't bubble up in some renderers. */}
                 <text
                   x={0}
-                  y={picked ? 0.3 : -1.55}
+                  y={0.3}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={picked ? 1.1 : 0.95}
+                  fontSize={fontSize}
                   fontWeight={800}
                   fill={picked ? "#FFFFFF" : sideColor}
                   stroke="#000"
                   strokeWidth={0.22}
                   paintOrder="stroke fill"
                   fontFamily={T.fontMono}
-                  style={{ pointerEvents: "none", userSelect: "none" }}
+                  pointerEvents="none"
+                  style={{ pointerEvents: "none", userSelect: "none", cursor: "default" }}
                 >
-                  {spawn.label.toLowerCase()}
+                  {numberOnly}
                 </text>
                 <title>{`${spawn.label} — setpos ${spawn.world.x} ${spawn.world.y}`}</title>
               </g>

@@ -23,6 +23,10 @@ describe("Home view", () => {
         onSelectScenario={noop}
         onPickSpawn={noop}
         onSelectLineup={noop}
+        activeTab="scenarios"
+        activeThrowFromKey={null}
+        onSelectTab={noop}
+        onSelectThrowFrom={noop}
         onClearSpawn={noop}
       />
     );
@@ -47,6 +51,10 @@ describe("Home view", () => {
         onSelectScenario={onSelect}
         onPickSpawn={noop}
         onSelectLineup={noop}
+        activeTab="scenarios"
+        activeThrowFromKey={null}
+        onSelectTab={noop}
+        onSelectThrowFrom={noop}
         onClearSpawn={noop}
       />
     );
@@ -65,17 +73,22 @@ describe("Home view", () => {
         onSelectScenario={noop}
         onPickSpawn={noop}
         onSelectLineup={noop}
+        activeTab="scenarios"
+        activeThrowFromKey={null}
+        onSelectTab={noop}
+        onSelectThrowFrom={noop}
         onClearSpawn={noop}
       />
     );
     // T-side toggle is selected by default; T-side has 15 spawns
     const tSpawns = dustData.spawns.filter((s) => s.side === "T");
     expect(tSpawns).toHaveLength(15);
-    // The picker renders each label lowercased ("t-1"..."t-15") so
-    // there's no ambiguity on team voice (matches the side prefix
-    // the owner uses when calling out positions).
+    // Owner directive 2026-05: the icon shows just the NUMBER (no "t-"
+    // prefix) because the side toggle above already disambiguates.
+    // Numbers 1..15 must each appear at least once on the T-side radar.
     for (const s of tSpawns) {
-      expect(screen.getAllByText(s.label.toLowerCase()).length).toBeGreaterThan(0);
+      const numberOnly = s.label.replace(/^(t|ct)-/i, "");
+      expect(screen.getAllByText(numberOnly).length).toBeGreaterThan(0);
     }
   });
 });

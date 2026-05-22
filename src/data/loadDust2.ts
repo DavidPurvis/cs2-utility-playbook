@@ -83,13 +83,16 @@ export function assertDustData(d: unknown): asserts d is DustData {
   }
 }
 
-// `assertDustData` runs before the cast; if the source data lacks
-// `ctPositions` we default to an empty array so downstream consumers
-// can iterate without null-checking.
+// `assertDustData` runs before the cast; downstream consumers can
+// iterate without null-checking optional arrays / objects.
 const validated = (() => {
   assertDustData(raw);
   const d = raw as DustData;
-  return { ...d, ctPositions: d.ctPositions ?? [] };
+  return {
+    ...d,
+    ctPositions: d.ctPositions ?? [],
+    defaults: d.defaults ?? { plants: [], timings: [], spawnRushes: [] },
+  };
 })();
 
 export const dustData: DustData = validated;
