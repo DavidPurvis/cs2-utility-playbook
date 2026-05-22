@@ -24,7 +24,7 @@
 
 ## Part 1 — The product in one paragraph
 
-> The Dust 2 Playbook is a personal, single-page web app for one CS2 player and his friends, hosted statically (no backend). Its purpose is to make team coordination on Discord trivially fast: someone says "let's do scenario 4, I'm A-man," everyone clicks scenario 4 in the app, picks their role, walks through their utility lineups in chronological order via a four-card visual sequence (where to stand → how to aim → how to throw → where it lands), and the team executes in sync. Lineups, scenarios, spawn positions, and a curated CT-side position guide all live as JSON data in the repo; the owner edits the JSON (directly or via two CLI helpers) and pushes; CI runs ~99 automated tests; GitHub Pages publishes the result within 60 seconds. The visual design is warm cream + burnt-orange accent (Claude's design language). The app deliberately omits multi-map support, authentication, real-time multiplayer, dark mode, analytics, and any in-app authoring UI.
+> The Dust 2 Playbook is a personal, single-page web app for one CS2 player and his friends, hosted statically (no backend). The primary audience is **"an autistic 25-year-old that needs structure when playing cs2"** (owner's direct words) — every layout decision favors a labelled, sectioned, predictable structure over compactness or cleverness. Its purpose is to make team coordination on Discord trivially fast: someone says "let's do scenario 4, I'm A-man," everyone clicks Scenarios tab → scenario 4, picks their role, walks through their utility lineups in chronological order via a four-card visual sequence (where to stand → how to aim → how to throw → where it lands), and the team executes in sync. The home view is organized into four FIXED-ORDER tabs: Defaults (plant spots, round timings, spawn-rush matrix), Scenarios (team executes + spawn picker + CT position guide), Instant smokes (lineups throwable from spawn at round start), and Map (origin-first radar — click a throw-from position to see what's available from there). The Map tab is deliberately the INVERSE of cs2util.com / csnades.gg (which are destination-first). Lineups, scenarios, spawn positions, defaults, and a curated CT-side position guide all live as JSON data in the repo; the owner edits the JSON (directly or via two CLI helpers) and pushes; CI runs ~114 automated tests; GitHub Pages publishes the result within 60 seconds. The visual design is warm cream + burnt-orange accent (Claude's design language). The app deliberately omits multi-map support, authentication, real-time multiplayer, dark mode, analytics, and any in-app authoring UI.
 
 ---
 
@@ -108,6 +108,21 @@ A CtPosition has:
 
 These are deliberately loose. Not a strict prescription. The owner said: *"This does not need to be hyper specific but more as these would be helpful to know if you are playing here kind of thing."*
 
+### 2.5 Defaults — round-level references that don't depend on a scenario
+
+A bundle of three lists that populate the Defaults tab. Edited freely in `dust2.json defaults`.
+
+**PlantSpot** — a default bomb-plant location.
+- `id`, `site` (`A` or `B`), `name`, `description`, `percent` (the radar coordinates).
+
+**TimingNote** — a single round-timing milestone.
+- `id`, `label`, `body`, optional `side` (`T` / `CT`), `phase` (`buy` | `early` | `mid` | `late`).
+
+**SpawnRush** — one row of the T-spawn rush matrix.
+- `id`, `fromSpawnId` (references a T-side Spawn), `contestPath` (free text, e.g. "mid doors"), `beatsSpawnIds: string[]`, optional `losesToSpawnIds: string[]`, optional `description`.
+
+The boot loader does shape checking on `defaults` but does NOT cross-validate the spawn-id references inside `spawnRushes` — that gap is tracked as DECISIONS_LEDGER W-12.
+
 ---
 
 ## Part 3 — The user's primary workflow
@@ -152,9 +167,9 @@ Spell-out, step-by-step. This is the workflow that justifies the entire product:
 
 ---
 
-## Part 4 — The five views
+## Part 4 — The views
 
-Every observable behavior in the app belongs to one of five surfaces. Spec-level, no code.
+Every observable behavior in the app belongs to one of these surfaces. The home view is sectioned into **four labelled, fixed-order tabs**; the drill-down views (scenario detail, lineup walkthrough) sit on top of that. Spec-level, no code.
 
 ### View 4.1 — Header (always visible)
 
@@ -164,38 +179,89 @@ Every observable behavior in the app belongs to one of five surfaces. Spec-level
 - The current view's crumb is NOT clickable (it's where you are).
 - Background matches the page cream; subtle 1px bottom border.
 
-### View 4.2 — Home
+### View 4.2 — Home: the four-tab bar
 
-- Two-column responsive grid. On viewports ≤ 767px, the columns stack vertically (scenario grid first, spawn picker below).
-- **Left column** — Scenario grid:
+- Always visible at the top of the home content area, below the page header.
+- Four tabs in FIXED order: **Defaults · Scenarios · Instant smokes · Map**. The order is part of the contract — the audience needs muscle memory.
+- Each tab has a primary label + a one-line hint sub-text (e.g. "plant spots · timings · spawn rushes" under Defaults).
+- Default tab on first load: **Scenarios** (the headline coordination flow).
+- Active tab visual: accent-orange bottom border + raised cream-panel background + `aria-selected="true"`.
+- Tab clicks swap only the content area; the header, footer, and tab bar itself don't move.
+- Reducer action: `SELECT_TAB`. The reducer's `activeTab` is `"defaults" | "scenarios" | "instant_smokes" | "map"`.
+
+### View 4.3 — Home tab: Defaults
+
+Three labelled sections, top to bottom:
+
+1. **Default plant spots** (`<h2>Default plant spots</h2>`):
+   - Two-column body. Left: a radar with one marker per plant (small dot + label "A" / "B" overlaid).
+   - Right: per-site cards stacked vertically. Each card lists every plant at that site as a labelled sub-row (name + description).
+2. **Round timings** (`<h2>Round timings</h2>`):
+   - Four-column responsive grid. One column per phase (Buy 0:00–0:15 · Early 0:15–0:30 · Mid 0:30–1:00 · Late / post-plant).
+   - Each column is a vertical list. Each item: optional T/CT chip, bold label, body paragraph.
+   - Empty phases render nothing (no empty column).
+3. **Spawn rushes (T side)** (`<h2>Spawn rushes (T side)</h2>`):
+   - A 5-column table: From spawn · Contest path · You'll beat · You'll lose to · Notes.
+   - Spawn chips (small pill, side-colored) for fromSpawnId / beats / loses-to references. Notes is plain text.
+
+Empty-state panels for any section with zero data: cream-dashed panel with "No plants authored yet. Edit `src/data/dust2.json`." (etc.).
+
+### View 4.4 — Home tab: Scenarios
+
+This is what the v6 "home" used to be. Two-column responsive grid (stacks on ≤ 767px viewport).
+
+- **Left column — Scenario grid:**
   - Title "Scenarios" with subtitle "5 curated · numbered for 'let's do scenario 4' coordination."
   - Cards sorted by scenario number ascending.
-  - Each card: number chip (circular, accent-orange), side + area pill, player count meta in the top-right corner, name as `<h3>`, description paragraph (line-clamped to 3 lines), difficulty label.
-  - Cards on hover: subtle border-color intensify, shadow lift, 1px translateY.
+  - Each card: number chip (circular, accent-orange), side + area pill, player count meta in the top-right corner, name as `<h3>`, description (line-clamped to 3 lines), difficulty label.
+  - Cards on hover: subtle border-color intensify, shadow lift.
   - Card is a `<button>`; clicking opens scenario detail.
   - Empty state (zero scenarios): cream-bordered dashed panel with CLI hint.
-- **Right column** — Spawn picker:
-  - Header "Where am I?" + subtitle.
+
+- **Right column — Spawn picker:**
+  - Header "Where am I?" + subtitle "Pick your spawn for visual reference."
   - Side toggle: two pill-buttons `T-side` / `CT-side`. Selected button has filled background in the side's color.
-  - Radar zoomed to the active side's cluster (computed dynamically from the spawn positions + 7-unit padding).
-  - Each spawn rendered as a small filled circle with a black halo + side-colored stroke. A small numeric label sits ABOVE the dot (label includes the side prefix, e.g. "t-6", "ct-3"). The label has a black text-stroke (paintOrder=stroke fill) so it's legible on any background.
-  - Visible dot is the ONLY click target. No oversized invisible hit zone. Dot radius 1.05 viewBox units, picked-state 1.4.
+  - Radar zoomed to the active side's spawn cluster (computed dynamically from the spawn positions + 7-unit padding).
+  - **Spawn icon (FR-19, FR-20 — read carefully, the contract is precise):**
+    - Single shape: a small filled circle (cream when unpicked, side-colored when picked) with a side-colored stroke ring and a black halo for legibility.
+    - **The number lives INSIDE the dot** — e.g. "6", "15" — in mono with a black text-stroke (`paintOrder="stroke fill"`).
+    - **No "t-" / "ct-" prefix on the icon.** The side toggle above conveys side; the prefix would force the dot too small.
+    - **The dot IS the click target.** No oversized invisible hit zone. Clicking the visible icon selects; clicking off the dot does not.
+    - **Picked and unpicked dots share the same radius** (0.95 viewBox units). Picked state is signalled by fill + text color only — never by inflating the dot. Earlier inflated-picked-dot covered the adjacent unpicked spawn's click center and broke the swap. Keep them equal.
   - Below the radar, a chip:
     - When no spawn picked: cream pill "Click a spawn dot to mark 'I am here' for visual reference."
-    - When picked: side-colored pill "Spawn: T-6" with a "clear" button on the right.
+    - When picked: side-colored pill **with the FULL label** ("Spawn: T-6") and a "clear" button on the right.
   - When CT side is active, **the CT position guide appears below** the chip.
 
-### View 4.3 — CT position guide (CT side only, sits inside the Home right column)
+### View 4.5 — CT position guide (sits inside Scenarios tab when CT side is picked)
 
 - Title "CT positions" + subtitle "loose guide — 'if you're playing here, learn these'."
 - 5 stacked cards by default. Each card:
   - Position label (e.g. "A Anchor") with an inline spawn hint in muted mono font.
   - Description paragraph.
   - "**Focus:** ..." paragraph with the utility-focus free text.
-  - 0+ recommended-lineup chips. Each chip: a small colored dot (matching utility type) + lineup name. Clicking a chip opens the lineup walkthrough.
-- Cards on the home page even when no spawn is picked (presence is gated by side, not by spawn pick).
+  - 0+ recommended-lineup chips. Each chip: a small colored dot (matching utility type) + lineup name. Clicking a chip opens the lineup walkthrough directly (no scenario context — BACK from the walkthrough returns home, not to scenario).
+- Presence gated by side toggle, not by spawn pick.
 
-### View 4.4 — Scenario detail
+### View 4.6 — Home tab: Instant smokes
+
+- Lineups whose `throwFrom` is within ~1500 world units of a spawn (the smokes you can deploy at round start without moving more than a few seconds).
+- Grouped by side (T section, then CT section).
+- Each entry: lineup name, type pill (smoke / flash / etc.), area, throw style, and the spawn it's "instant from" (e.g. "Xbox Smoke from T Spawn — instant from T-6").
+- Clicking an entry opens the 4-card walkthrough.
+- Empty state: "No instant smokes recorded — every lineup currently requires more than a few seconds of movement from the nearest spawn."
+
+### View 4.7 — Home tab: Map
+
+- **Origin-first** radar view (FR-24) — INVERSE of cs2util.com / csnades.gg, which are destination-first.
+- Renders the full radar with one marker per UNIQUE throw-from position across all lineups. Lineups within ~150 world units of each other share a single marker (cluster).
+- Marker visual: small ring + colored dot (color = dominant utility type at that spot). If the cluster has > 1 lineup, a small count badge appears in the center.
+- Right panel:
+  - When no marker is active: a cream-dashed panel "{N} throw-from positions on the map. Click a marker to see lineups available there."
+  - When a marker is active: a panel listing every lineup throwable from that spot. Each row is clickable → opens the 4-card walkthrough. Above the list: a monospace `setpos x y z` block for the throw-from coordinates (so the user can paste it into CS2 console).
+- Re-clicking the active marker (or the "clear" button on the panel) deselects.
+
+### View 4.8 — Scenario detail
 
 - Header bar below the breadcrumb header: `← Back` button, "Scenario N" pill (accent-orange), scenario name as `<h2>`, meta string (side · target area · difficulty · N-man).
 - Description paragraph below the header.
@@ -214,7 +280,7 @@ Every observable behavior in the app belongs to one of five surfaces. Spec-level
       - If active role has actions: ordered list of `StepRow`s, sorted by `order` ascending.
 - **StepRow** layout: numbered badge in the player's color, lineup name, lineup type+throw-style+area meta, timing+description if present, chevron on the right. Whole row is clickable → opens lineup walkthrough.
 
-### View 4.5 — Lineup walkthrough (the 2×2 grid)
+### View 4.9 — Lineup walkthrough (the 2×2 grid)
 
 - Header bar: `← Back`, lineup name, utility-type pill (color matches type), meta string (style · movement · difficulty · air-time).
 - Below: a 2×2 grid (`grid-template-columns: 1fr 1fr`). **Locked at 2×2 even on 375px-wide mobile viewports** — cards just shrink. Never collapses to 1×4 vertical.
@@ -240,11 +306,16 @@ There is exactly one JSON file that contains every editable piece of data: `src/
 
 ```json
 {
-  "config": { ... },       // see §2.4
-  "spawns": [ ... ],       // see §2.1, exactly 20 entries
-  "lineups": [ ... ],      // see §2.2, 10 today, grows over time
-  "scenarios": [ ... ],    // see §2.3, 5 seeded shells
-  "ctPositions": [ ... ]   // see §2.4, 5 seeded
+  "config": { ... },       // Valve overview constants for radar projection
+  "spawns": [ ... ],       // §2.1, exactly 20 entries
+  "lineups": [ ... ],      // §2.2, 10 today, grows over time
+  "scenarios": [ ... ],    // §2.3, 5 seeded shells
+  "ctPositions": [ ... ],  // §2.4, 5 seeded
+  "defaults": {            // §2.5 — Defaults tab data
+    "plants": [ ... ],     //   PlantSpot[]
+    "timings": [ ... ],    //   TimingNote[]
+    "spawnRushes": [ ... ] //   SpawnRush[]
+  }
 }
 ```
 
@@ -252,6 +323,8 @@ There is exactly one JSON file that contains every editable piece of data: `src/
 - The top-level isn't an object with the four required arrays + config.
 - Any lineup is missing both `landingAt.world` and `landingAt.percent`.
 - Any scenario action's `lineupId` doesn't match any lineup in the lineups array.
+- Any `CtPosition.recommendedLineupIds[i]` doesn't match a lineup id.
+- `defaults` is shape-checked (must be `{ plants, timings, spawnRushes }` with each entry having required fields) but cross-validation of spawn-id references inside `spawnRushes` is NOT enforced — see DECISIONS_LEDGER W-12.
 - Any CT position's `recommendedLineupIds` references a missing lineup.
 
 Other invariants the validator does NOT (yet) enforce, but probably should over time:
@@ -346,16 +419,16 @@ This formula is the most-tested code in the project. If it breaks, every dot, ev
 
 ## Part 8 — Testing: the regression net
 
-Every reported bug becomes a test that, had it existed, would have caught the bug. Current count: **99 tests across 5 layers.**
+Every reported bug becomes a test that, had it existed, would have caught the bug. Current count: **114 tests across 6 layers.**
 
 | Layer | Count | Time | Purpose |
 |---|---|---|---|
-| Pure utility unit | 31 | ~50ms | Coord math, setpos parsing, bounds, steam URL formatting |
+| Pure utility unit | 49 | ~50ms | Coord math, setpos parsing, bounds, steam URL formatting |
 | Data integrity unit | 5 | ~10ms | Boot validator: missing landingAt, dangling refs, malformed shape |
-| Reducer | 10 | ~10ms | Every state transition + the BACK edge cases |
+| Reducer | 11 | ~10ms | Every state transition + the BACK edge cases |
 | Component (RTL) | 12 | ~80ms | Three user journeys: Home, ScenarioDetail, Walkthrough |
 | CLI parity (node:test) | 11 | ~50ms | new-lineup + new-scenario flag parsing + setpos regex |
-| **E2E (Playwright)** | **12** | **~6s** | **Spawn click selection, radar load, visual snapshots** |
+| **E2E (Playwright)** | **26** | **~9s** | **Spawn click (8 spawn-click-target + 5 spawn-hitbox), home tabs (6), radar load (4), visual snapshots (3)** |
 
 `npm run validate` runs all except E2E (kept off the critical path for sub-second feedback). `npm run test:e2e` runs E2E against a Vite dev server it spins up automatically.
 
@@ -403,10 +476,36 @@ The v6 plan went through five rounds of stress-testing (71 findings absorbed) be
 - **Click hitbox off** → identified overlapping hit-zone bug; visible dot is now the only click target.
 - **Map background "not loading"** → investigated; renders correctly locally. Possibly an owner expectation mismatch about radar style. Open question.
 
+### v6.1 — Audience clarification + four-tab home (2026-05)
+
+Owner clarified the primary audience: **"an autistic 25-year-old that needs structure when playing cs2."** This is a design constraint, not a demographic — every layout decision now favors a labelled, sectioned, predictable structure over compactness.
+
+Restructured home into **four fixed-order tabs**:
+
+1. **Defaults** — plant spots per site, round timings bucketed by phase, T-spawn rush matrix. New `defaults` data section + new types `PlantSpot` / `TimingNote` / `SpawnRush`.
+2. **Scenarios** — the existing scenario grid + spawn picker + CT position guide moved into its own tab so it's not the only thing on home.
+3. **Instant smokes** — lineups whose `throwFrom` is within ~1500 world units of a spawn (the smokes you can deploy at round start without moving).
+4. **Map** — **origin-first** radar (FR-24). Click a throw-from marker to see lineups available from there. Inverse of cs2util.com / csnades.gg.
+
+### v6.2 — Number-in-dot spawn icon (2026-05)
+
+Owner reported: *"I can't select t-15 then select t-14 because the t-15 clickable area is above t-14 clickable. I want the number instead of the spawn icon without 'ct-' or 't-' prefix."*
+
+Root cause: the label "t-15" was floating ABOVE the dot with `pointer-events: none`. Users clicked the visible label (inert) and missed the small dot below.
+
+Fix:
+- The number lives INSIDE the dot. The visible icon IS the click target.
+- "t-" / "ct-" prefix dropped from the radar (the side toggle above the picker already disambiguates).
+- Picked and unpicked dots share the same radius (0.95 viewBox units). Inflating the picked dot covers the adjacent unpicked spawn's click center and breaks the swap — discovered while iterating on this fix.
+
+Locked by 8 E2E tests including the exact T-15 → T-14 regression and the CT-3 → CT-4 overlap-stealing case.
+
 The history matters because:
 1. If you see code that looks like multi-map support, it's dead leftovers.
 2. If you see references to "the admin UI," that's v2 — deleted in v6 Phase 2.
 3. If you see plans labeled v3/v4/v5, those are dead. v6 is the only one shipped.
+4. If you see a single-page home with no tabs, that's pre-v6.1 — the four-tab structure is canonical.
+5. If you see a spawn icon with the side prefix in its label, that's pre-v6.2 — the bare number inside the dot is canonical.
 
 ---
 

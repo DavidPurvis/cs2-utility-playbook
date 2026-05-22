@@ -82,8 +82,33 @@
 
 ### Q-12 · The URD section §4 lists FR-13 (list view of all lineups) as ✗ Not implemented. Is this still wanted, or has the CT position guide + scenario action lists sufficiently surfaced lineups?
 
-- **Default:** not implemented. The audit flagged it as the biggest miss.
+- **Default:** not implemented. The audit flagged it as the biggest miss. *(2026-05: Instant Smokes tab partially answers this — a flat list of a SUBSET. A full "all lineups" list is still missing.)*
 - **Owner verdict:** ____________________
+
+### Q-13 · Instant Smokes radius threshold (1500 world units)
+
+- **Default:** lineups whose `throwFrom` is within 1500 world units of a spawn count as "instant from spawn."
+- **Why:** roughly the distance covered in 3–4 seconds of running. Captures throws from spawn and from one-step-out-of-spawn.
+- **Risk:** too loose → list bloats with throws that aren't really "instant." Too tight → useful throws missed.
+- **Owner verdict:** does this threshold match what you'd call "instant"? ____________________
+
+### Q-14 · Map tab cluster radius (150 world units)
+
+- **Default:** lineups whose `throwFrom` is within 150 world units of each other share a single marker.
+- **Why:** roughly one player-width. Captures lineups thrown from "the same spot" with minor pixel-perfect variation (left-foot vs right-foot of a corner).
+- **Risk:** too loose → distinct throw spots collapse into one marker. Too tight → adjacent spots look like cluttered duplicates.
+- **Owner verdict:** does this match your "same spot" intuition? ____________________
+
+### Q-15 · Spawn rush matrix direction — T-only, or both sides?
+
+- **Default:** matrix is T-side only ("if I rush from T-6, I beat CT-2 to mid"). No CT-side analogue.
+- **Why:** owner's quote specifies "If I were to rush with best spawn who would I beat on the opposite team" — T-side rushes are the canonical case.
+- **Owner verdict:** do you want a parallel CT-side matrix ("if I anchor from CT-3, T-X will reach me before T-Y")? ____________________
+
+### Q-16 · Defaults tab data depth
+
+- **Default:** 4 plant spots (A-default, A-goose, B-default, B-window), 7 timings, 4 spawn rushes — starter set.
+- **Owner verdict:** flesh out more (plant per smoke style, post-plant timings, rushes from every T-spawn)? Or is this depth sufficient? ____________________
 
 ---
 
@@ -155,7 +180,30 @@
 - **Mandate:** if the next commit makes a choice that wasn't explicit in the URD, the choice goes in §B with the WHY.
 - **Why:** prevents the "wait, why did we…" tax six months from now.
 
----
+### R-11 · Home is sectioned into four FIXED-ORDER tabs
+
+- **Decided:** 2026-05-21 (owner reframe — "the primary audience is an autistic 25-year-old that needs structure").
+- **Tabs:** Defaults · Scenarios · Instant smokes · Map. Default is Scenarios on first load.
+- **Why this order:** Defaults first (the "what's true on every round" reference) → Scenarios (the headline coordination flow) → Instant smokes (the fast-path subset of lineups) → Map (the deep-explore view). Mirrors the user's mental zoom from "general rules" → "team play" → "this round" → "free exploration."
+- **Why fixed:** the structure-craving audience needs muscle memory. Reordering tabs across sessions would break that.
+- **Test:** `tests/e2e/home-tabs.spec.ts > all four tab buttons are present in order`.
+
+### R-12 · Spawn icon is a single shape: dot WITH bare number inside (no prefix, no floating label)
+
+- **Decided:** 2026-05-21 (owner: "I can't select t-15 then select t-14 because the t-15 clickable area is above t-14 clickable. I want the number instead of the spawn icon without 'ct-' or 't-' prefix.").
+- **What we changed:** the radar icon now shows just "15" / "3" INSIDE the dot, no "t-" / "ct-" prefix, no separate text element floating above.
+- **What stayed:** the chip below the picker still shows the full label ("Spawn: T-6") for unambiguous reference.
+- **Why no prefix on the icon:** the side toggle above the picker already disambiguates. Showing "t-15" forced the dot too small to comfortably land on at cluster zoom.
+- **Why picked/unpicked dots share radius:** earlier inflated-picked-dot covered the adjacent unpicked spawn's click center, making the swap fail. Picked state is now signalled by fill + text color only.
+- **Tests:** `tests/e2e/spawn-click-target.spec.ts` — 8 cases including the exact T-15 → T-14 regression and CT-3 → CT-4 overlap-stealing case.
+
+### R-13 · Map tab is ORIGIN-FIRST, not destination-first
+
+- **Decided:** 2026-05-21 (owner reframe: "this is a different approach from websites like cs2util.com and csnades.gg that show the place you are trying to smoke then shows you where you can throw it from").
+- **What:** the Map tab marker is a throw-from position. Clicking it reveals lineups thrown FROM that spot.
+- **Why:** owner's mental model is "I'm at this spot, what can I do?" — not "I want to smoke X, where do I throw from?"
+- **Cluster radius:** 150 world units (see Q-14).
+- **Trade-off:** users coming from cs2util / csnades will need a moment to adjust. Worth it for the owner's preferred ergonomics.
 
 ## C. Things I'm worried about (the annoying junior is anxious)
 
@@ -214,6 +262,24 @@ These aren't questions for the owner; they're things I'm tracking that could bit
 - **Stopping criterion:** when the bug rate going INTO main approaches zero AND CI runtime stays under 60 seconds.
 - **Question to owner:** is that the right criterion, or should we adopt a coverage % target?
 
+### W-11 · The visual snapshot baselines in `tests/e2e/visual-snapshots.spec.ts-snapshots/` cover home (T + CT side) and scenario detail. They do NOT cover the Defaults / Instant smokes / Map tabs.
+
+- **Risk:** a visual regression on those tabs (e.g. layout broken by a CSS change) wouldn't be caught by the snapshot suite.
+- **Mitigation path:** add three more snapshot tests — one per uncovered tab. Owner gut-check before doing so: does the snapshot churn cost outweigh the regression-catch value?
+- **Tracked:** documenting here so this gap is explicit, not silent.
+
+### W-12 · The `defaults.spawnRushes[].fromSpawnId` / `.beatsSpawnIds` / `.losesToSpawnIds` are NOT cross-validated by the boot loader
+
+- **Risk:** a typo like `fromSpawnId: "t-99"` (no such spawn) would render a broken row in the Defaults tab without throwing.
+- **Why not fixed yet:** the rest of the validator (scenarios, ctPositions) does check these; spawnRushes was added late and not back-filled.
+- **Fix path:** extend `loadDust2.ts` to walk `defaults.spawnRushes` and verify every spawn id resolves. Owner verdict needed on whether to ALSO fail if `defaults.plants[].percent` is outside [0..100] (defensive vs strict trade-off).
+
+### W-13 · The Map tab's marker clustering is greedy / order-dependent
+
+- **Cause:** `clusterThrowFroms()` iterates lineups in array order, adding each to the first existing cluster within radius or creating a new cluster. Re-ordering the lineup array could re-partition clusters.
+- **Mitigation:** cluster keys are recomputed as sorted-id-joins, so the visible identity is stable regardless of which lineup created the cluster. The CLUSTER PARTITIONING itself can change.
+- **Real-world impact:** low for the current 10 lineups; possibly noticeable past ~50 lineups. Re-architect to a proper density-based clustering (e.g. DBSCAN-lite) if this bites.
+
 ---
 
 ## D. The annoying junior's commit-time checklist
@@ -235,4 +301,4 @@ If any answer is "yes" and the corresponding action isn't done, the annoying jun
 
 ---
 
-> Last updated: 2026-05-21 — after spawn-hitbox fix + E2E suite landing + this document being created.
+> Last updated: 2026-05-21 — after 4-tab home restructure (Defaults/Scenarios/Instant smokes/Map) + number-in-dot spawn icon contract (R-11, R-12, R-13; W-11, W-12, W-13).
