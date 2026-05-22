@@ -32,8 +32,8 @@ export function ScenarioGrid({ scenarios, onOpen }: ScenarioGridProps) {
           textAlign: "center",
         }}
       >
-        No scenarios yet. Run <code style={{ color: T.accent, background: T.accentBg, padding: "2px 6px", borderRadius: 4 }}>npm run new-scenario</code> to add one,
-        or edit <code style={{ color: T.accent }}>src/data/dust2.json</code> directly.
+        No scenarios yet. Run <code style={{ color: T.accentDk, background: T.accentBg, padding: "2px 6px", borderRadius: 4 }}>npm run new-scenario</code> to add one,
+        or edit <code style={{ color: T.accentDk }}>src/data/dust2.json</code> directly.
       </div>
     );
   }

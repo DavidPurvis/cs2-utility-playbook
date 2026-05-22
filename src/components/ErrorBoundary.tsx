@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { T } from "../theme";
 
 interface Props {
   children: ReactNode;
@@ -9,15 +10,20 @@ interface State {
   error: Error | null;
 }
 
-const colors = {
-  bg: "#0a0e15",
-  bgPanel: "#11161f",
-  border: "#2d364a",
-  danger: "#ef5969",
-  textPri: "#e6ebf2",
-  textSec: "#a3afc1",
-};
-
+/**
+ * Catches uncaught render errors and shows a themed fallback.
+ *
+ * Previously hardcoded a v5-era dark-theme palette (#0a0e15 bg etc.)
+ * which clashed visibly on the cream app. 2026-05 audit fix: imports
+ * theme tokens from T.
+ *
+ * Retry-button policy: the most likely failure mode is the boot-time
+ * `assertDustData` throw from `loadDust2.ts` — re-mounting the same
+ * children re-throws the same error. So in PROD we hide the Retry
+ * button and ask the user to reload (which would clear any transient
+ * state). In DEV we keep Retry visible because failures during local
+ * iteration are often state-dependent and Retry is fine.
+ */
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
 
@@ -35,47 +41,88 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ hasError: false, error: null });
   };
 
+  handleReload = () => {
+    if (typeof window !== "undefined") window.location.reload();
+  };
+
   render() {
     if (!this.state.hasError) return this.props.children;
+    const isDev = import.meta.env.DEV;
     return (
       <div
+        role="alert"
         style={{
-          padding: 12,
-          background: colors.bgPanel,
-          border: `1px solid ${colors.danger}`,
-          borderRadius: 8,
-          color: colors.danger,
-          fontSize: 12,
-          fontFamily: "'Inter', sans-serif",
+          padding: 16,
+          background: T.dangerBg,
+          border: `1px solid ${T.danger}`,
+          borderRadius: T.radius,
+          color: T.danger,
+          fontSize: 13,
+          fontFamily: T.fontUI,
+          maxWidth: 720,
+          margin: "20px auto",
         }}
       >
-        <strong>Something broke in this section.</strong>
-        {import.meta.env.DEV ? (
-          <div style={{ marginTop: 4, color: colors.textSec, fontSize: 11 }}>
+        <strong style={{ fontSize: 15, display: "block" }}>
+          Something broke loading the playbook.
+        </strong>
+        {isDev ? (
+          <pre
+            style={{
+              marginTop: 8,
+              color: T.textSec,
+              fontSize: 11,
+              fontFamily: T.fontMono,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
             {String(this.state.error?.message ?? this.state.error)}
-          </div>
+          </pre>
         ) : (
-          <div style={{ marginTop: 4, color: colors.textSec, fontSize: 11 }}>
-            Reload the page or click Retry. If it keeps happening, file an issue.
+          <div style={{ marginTop: 8, color: T.textSec, fontSize: 12, lineHeight: 1.5 }}>
+            Please reload the page. If the issue persists, the data file
+            may need attention.
           </div>
         )}
-        <button
-          type="button"
-          onClick={this.handleRetry}
-          style={{
-            marginTop: 8,
-            padding: "6px 12px",
-            fontSize: 11,
-            fontWeight: 700,
-            cursor: "pointer",
-            background: colors.bg,
-            border: `1px solid ${colors.border}`,
-            borderRadius: 4,
-            color: colors.textPri,
-          }}
-        >
-          Retry
-        </button>
+        <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+          <button
+            type="button"
+            onClick={this.handleReload}
+            style={{
+              padding: "6px 14px",
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: "pointer",
+              background: T.bgPanel,
+              border: `1px solid ${T.danger}55`,
+              borderRadius: T.radiusSm,
+              color: T.danger,
+              fontFamily: T.fontUI,
+            }}
+          >
+            Reload page
+          </button>
+          {isDev && (
+            <button
+              type="button"
+              onClick={this.handleRetry}
+              style={{
+                padding: "6px 14px",
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: "pointer",
+                background: "transparent",
+                border: `1px solid ${T.border}`,
+                borderRadius: T.radiusSm,
+                color: T.textSec,
+                fontFamily: T.fontUI,
+              }}
+            >
+              Retry (dev)
+            </button>
+          )}
+        </div>
       </div>
     );
   }
