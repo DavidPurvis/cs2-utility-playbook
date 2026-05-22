@@ -14,7 +14,7 @@
  */
 import { useMemo } from "react";
 import { T } from "../theme";
-import type { CtPosition, Lineup, UtilityType } from "../types";
+import type { CtPosition, Lineup } from "../types";
 
 export interface CtPositionGuideProps {
   positions: CtPosition[];
@@ -104,12 +104,8 @@ export function CtPositionGuide({ positions, lineups, onSelectLineup }: CtPositi
   );
 }
 
-const UTIL_COLOR: Record<UtilityType, string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 function LineupChip({ lineup, onClick }: { lineup: Lineup; onClick: () => void }) {
   const color = UTIL_COLOR[lineup.type];

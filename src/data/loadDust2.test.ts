@@ -83,4 +83,81 @@ describe("assertDustData", () => {
     bundle.scenarios = [];
     expect(() => assertDustData(bundle)).not.toThrow();
   });
+
+  // ── New checks (PR-3, audit M-2 / M-3 / W-12 / spawn-id uniqueness) ─
+
+  it("throws when a lineup id does not match snake_case format", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups[0]!.id = "Xbox-Smoke"; // capital + hyphen — invalid
+    expect(() => assertDustData(bad)).toThrow(/snake_case/);
+  });
+
+  it("throws when two lineups share the same id", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups.push({ ...bad.lineups[0]! });
+    expect(() => assertDustData(bad)).toThrow(/duplicate lineup id/);
+  });
+
+  it("throws when two spawns share the same id", () => {
+    const bad = structuredClone(validBase);
+    bad.spawns.push({ ...bad.spawns[0]! });
+    expect(() => assertDustData(bad)).toThrow(/duplicate spawn id/);
+  });
+
+  it("throws when two scenarios share the same number", () => {
+    const bad = structuredClone(validBase);
+    bad.scenarios.push({ ...bad.scenarios[0]!, id: "test2" });
+    expect(() => assertDustData(bad)).toThrow(/duplicate scenario.number/);
+  });
+
+  it("throws when defaults.spawnRushes.fromSpawnId is unknown (W-12)", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    bad.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-bogus",
+          fromSpawnId: "dust2-t-s99", // unknown
+          contestPath: "Mid",
+          beatsSpawnIds: [],
+        },
+      ],
+    };
+    expect(() => assertDustData(bad)).toThrow(/spawnRush.*unknown fromSpawnId.*dust2-t-s99/);
+  });
+
+  it("throws when defaults.spawnRushes.beatsSpawnIds contains an unknown spawn (W-12)", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    bad.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-bad-beats",
+          fromSpawnId: "dust2-t-s1",
+          contestPath: "Mid",
+          beatsSpawnIds: ["dust2-ct-bogus"],
+        },
+      ],
+    };
+    expect(() => assertDustData(bad)).toThrow(/beatsSpawnIds.*unknown spawn/);
+  });
+
+  it("accepts defaults.spawnRushes when all spawn refs resolve", () => {
+    const bundle = structuredClone(validBase) as Record<string, unknown>;
+    bundle.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-good",
+          fromSpawnId: "dust2-t-s1",
+          contestPath: "Mid",
+          beatsSpawnIds: [], // empty is fine — no refs to check
+        },
+      ],
+    };
+    expect(() => assertDustData(bundle)).not.toThrow();
+  });
 });
