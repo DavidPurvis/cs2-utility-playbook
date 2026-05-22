@@ -48,6 +48,17 @@ export const T = {
   utilMolly: "#C25A3A",
   utilHE:    "#9C3C3C",
 
+  // Lookup map: utility type → display color. Five components were
+  // each defining their own `UTIL_COLOR: Record<UtilityType, string>`
+  // pointing at the same four tokens above; this lifts them into one
+  // place so a future palette tweak only edits theme.ts.
+  utilColor: {
+    smoke:   "#6E7989",
+    flash:   "#A8842B",
+    molotov: "#C25A3A",
+    he:      "#9C3C3C",
+  } as const,
+
   // Status
   danger:    "#9C3C3C",
   dangerBg:  "#F4DDD7",

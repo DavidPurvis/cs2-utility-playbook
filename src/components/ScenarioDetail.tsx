@@ -17,12 +17,8 @@ import { worldToPercent } from "../utils/coordinates";
 import { T } from "../theme";
 import type { Lineup, MapConfig, Scenario, ScenarioAction, Spawn } from "../types";
 
-const UTIL_COLOR: Record<Lineup["type"], string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 export interface ScenarioDetailProps {
   scenario: Scenario;

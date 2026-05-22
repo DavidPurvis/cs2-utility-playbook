@@ -25,12 +25,8 @@ import type { DustData, Lineup, UtilityType, WorldPoint } from "../../types";
 // (e.g. left-foot vs right-foot of a corner).
 const MERGE_RADIUS_SQ = 150 * 150;
 
-const UTIL_COLOR: Record<UtilityType, string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 interface ThrowFromCluster {
   key: string;             // stable id (sorted lineup ids joined)
