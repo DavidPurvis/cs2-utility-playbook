@@ -38,4 +38,61 @@ test.describe("Visual snapshots", () => {
     await page.waitForTimeout(800);
     await expect(page).toHaveScreenshot("scenario-detail.png", { fullPage: false });
   });
+
+  // ── Map tab snapshots (closes W-11 in DECISIONS_LEDGER) ───────────────
+  // Owner directive 2026-05: visual regression coverage for the Map tab
+  // (Defaults / Instant smokes still uncovered — those are tracked
+  // separately).
+
+  test("home — Map tab (desktop, no marker active)", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("tab", { name: /Map/i }).click();
+    // Wait for the radar SVG + marker rendering.
+    await page.waitForSelector('svg[aria-label*="throw-from positions"]');
+    await page.waitForTimeout(800);
+    await expect(page).toHaveScreenshot("home-map-desktop-default.png", { fullPage: false });
+  });
+
+  test("home — Map tab (desktop, first marker active)", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("tab", { name: /Map/i }).click();
+    await page.waitForSelector('svg[aria-label*="throw-from positions"]');
+    await page.waitForTimeout(600);
+    // Click the first cluster marker. Markers are the `<g>` elements
+    // that have a direct `<title>` child; other `<g>` wrappers in the
+    // Radar (image transform, loading overlay) don't carry a <title>.
+    await page
+      .locator('svg[aria-label*="throw-from positions"] g:has(> title)')
+      .first()
+      .click();
+    await page.waitForTimeout(400);
+    await expect(page).toHaveScreenshot("home-map-desktop-active.png", { fullPage: false });
+  });
+
+  test("home — Map tab (mobile, no marker active)", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("tab", { name: /Map/i }).click();
+    await page.waitForSelector('svg[aria-label*="throw-from positions"]');
+    await page.waitForTimeout(800);
+    await expect(page).toHaveScreenshot("home-map-mobile-default.png", { fullPage: true });
+  });
+
+  test("home — Map tab (mobile, first marker active)", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("tab", { name: /Map/i }).click();
+    await page.waitForSelector('svg[aria-label*="throw-from positions"]');
+    await page.waitForTimeout(600);
+    await page
+      .locator('svg[aria-label*="throw-from positions"] g:has(> title)')
+      .first()
+      .click();
+    await page.waitForTimeout(400);
+    await expect(page).toHaveScreenshot("home-map-mobile-active.png", { fullPage: true });
+  });
 });
