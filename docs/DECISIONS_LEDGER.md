@@ -205,6 +205,15 @@
 - **Cluster radius:** 150 world units (see Q-14).
 - **Trade-off:** users coming from cs2util / csnades will need a moment to adjust. Worth it for the owner's preferred ergonomics.
 
+### R-14 · Same-radius rule applied to Map tab cluster markers (same lesson as R-12)
+
+- **Decided:** 2026-05-22 (owner reported "things misaligned or overlapping" on the Map tab; pinpointed via AskUserQuestion to "Markers cover adjacent markers when clicked").
+- **What changed:** in `src/components/tabs/MapTab.tsx`, the cluster-marker `<circle>` elements now use a CONSTANT radius for both active and inactive states. Previously active = r 2.2 outer / 1.9 main; inactive = r 1.6 / 1.3. The inflation (~46% larger active) created overlap-stealing — an active dot's hit footprint covered the click center of clusters as close as ~3.3 viewBox units away (the natural spacing from `MERGE_RADIUS_SQ = 150*150` world units → ~3.33 percent units).
+- **Final shape:** halo r=1.6, main r=1.3, both states. Active is signalled by **fill + stroke color only** — `T.accent` fill + `T.accentDk` stroke + white text vs `T.bgPanel` fill + utility-type stroke + `T.textPri` text.
+- **Why same rule from R-12:** the spawn picker exhibited identical bug. Lesson is generic: **hit-target footprint MUST be constant across selection states.**
+- **Tests:** `tests/e2e/map-marker-click.spec.ts` — 5 cases (single select, swap, click-outside, toggle-deselect, closest-pair regression both directions). Plus 4 new visual snapshots in `tests/e2e/visual-snapshots.spec.ts` covering desktop + mobile × default + active states.
+- **Closes:** W-11 below (Map tab snapshot coverage gap).
+
 ## C. Things I'm worried about (the annoying junior is anxious)
 
 These aren't questions for the owner; they're things I'm tracking that could bite us. The annoying junior is supposed to be paranoid.
@@ -264,9 +273,9 @@ These aren't questions for the owner; they're things I'm tracking that could bit
 
 ### W-11 · The visual snapshot baselines in `tests/e2e/visual-snapshots.spec.ts-snapshots/` cover home (T + CT side) and scenario detail. They do NOT cover the Defaults / Instant smokes / Map tabs.
 
-- **Risk:** a visual regression on those tabs (e.g. layout broken by a CSS change) wouldn't be caught by the snapshot suite.
-- **Mitigation path:** add three more snapshot tests — one per uncovered tab. Owner gut-check before doing so: does the snapshot churn cost outweigh the regression-catch value?
-- **Tracked:** documenting here so this gap is explicit, not silent.
+- ~~**Risk:** a visual regression on those tabs (e.g. layout broken by a CSS change) wouldn't be caught by the snapshot suite.~~
+- **PARTIALLY CLOSED 2026-05-22:** Map tab now has 4 visual snapshots (desktop + mobile × default + active) — see R-14. **Defaults and Instant smokes still uncovered.**
+- **Remaining gap:** Defaults tab (3 sections — plant spots, timings, spawn rushes), Instant Smokes tab (2 grouped sections). Each at desktop + mobile = 4 more snapshots if completed fully.
 
 ### W-12 · The `defaults.spawnRushes[].fromSpawnId` / `.beatsSpawnIds` / `.losesToSpawnIds` are NOT cross-validated by the boot loader
 
@@ -301,4 +310,4 @@ If any answer is "yes" and the corresponding action isn't done, the annoying jun
 
 ---
 
-> Last updated: 2026-05-21 — after 4-tab home restructure (Defaults/Scenarios/Instant smokes/Map) + number-in-dot spawn icon contract (R-11, R-12, R-13; W-11, W-12, W-13).
+> Last updated: 2026-05-22 — after Map tab marker overlap fix (R-14) + 5 new click-precision E2E tests + 4 new visual snapshots (desktop/mobile × default/active). W-11 partially closed.

@@ -102,6 +102,15 @@ export function MapTab({
                 if (!p) return null;
                 const isActive = c.key === activeThrowFromKey;
                 const types = uniqueTypes(c.lineups);
+                // Owner directive 2026-05: marker radius MUST be constant
+                // between active and inactive states. The previous
+                // implementation inflated the active dot from r=1.3 → r=1.9
+                // (~46%), which is enough that the active dot covers the
+                // click center of an adjacent cluster (clusters are
+                // ~3.3 viewBox units apart at minimum). Same overlap-stealing
+                // bug class as the spawn picker (DECISIONS_LEDGER R-12).
+                // Active state is signalled by FILL + STROKE color only —
+                // size is constant so the hit footprint never grows.
                 return (
                   <g
                     key={c.key}
@@ -111,18 +120,19 @@ export function MapTab({
                       onSelectThrowFrom(c.key === activeThrowFromKey ? null : c.key)
                     }
                   >
-                    {/* Outer halo */}
+                    {/* Outer halo — constant radius. */}
                     <circle
-                      r={isActive ? 2.2 : 1.6}
+                      r={1.6}
                       fill="none"
                       stroke="#000"
                       strokeWidth={0.25}
                       opacity={0.6}
                       pointerEvents="none"
                     />
-                    {/* Main dot — center color is the dominant util type, ring is accent */}
+                    {/* Main dot — constant radius. Color shift is the only
+                        active-state signal. */}
                     <circle
-                      r={isActive ? 1.9 : 1.3}
+                      r={1.3}
                       fill={isActive ? T.accent : T.bgPanel}
                       stroke={isActive ? T.accentDk : UTIL_COLOR[types[0]!]}
                       strokeWidth={isActive ? 0.5 : 0.4}
