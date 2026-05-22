@@ -249,8 +249,8 @@ export function ScenarioDetail({
             >
               <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no actions
               yet. Add lineups to this role with{" "}
-              <code style={{ color: T.accent }}>npm run new-scenario</code> or edit{" "}
-              <code style={{ color: T.accent }}>src/data/dust2.json</code> directly.
+              <code style={{ color: T.accentDk }}>npm run new-scenario</code> or edit{" "}
+              <code style={{ color: T.accentDk }}>src/data/dust2.json</code> directly.
             </div>
           ) : (
             <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>

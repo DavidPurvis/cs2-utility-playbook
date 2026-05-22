@@ -21,7 +21,10 @@ export const T = {
   textPri:   "#1F1B16",  // 16:1
   textSec:   "#5A544B",  // 7.5:1
   textDim:   "#6F6A60",  // 5.1:1 — AA body floor
-  textMute:  "#8E887C",  // 3.4:1 — non-body only
+  // textMute used to be #8E887C @ 3.4:1 which failed AA when used as
+  // real text (e.g. TabBar hint sub-text). Darkened 2026-05 (audit H-7)
+  // to land just above AA threshold while still reading as "muted."
+  textMute:  "#757062",  // 4.7:1 — AA-pass for small text
 
   // Borders + shadows
   border:    "#E7E2D6",
