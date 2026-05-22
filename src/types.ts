@@ -159,6 +159,51 @@ export interface CtPosition {
   utilityFocus: string;     // freeform: what to carry / when to throw
 }
 
+/**
+ * A "default" plant location on a bombsite — the recommended bomb drop
+ * for organized executes. Per-site, T-side intent.
+ */
+export interface PlantSpot {
+  id: string;
+  site: string;             // "A", "B", "Mid" (rare)
+  name: string;             // e.g. "Default plant (rafters side)"
+  description: string;
+  percent: PercentPoint;    // where on the radar to render the marker
+}
+
+/**
+ * A round-timing note — e.g. "T-side xbox smoke must land by 1:50 left."
+ * Lives in the Defaults tab as a flat checklist.
+ */
+export interface TimingNote {
+  id: string;
+  label: string;            // short headline
+  body: string;             // 1-2 sentence detail
+  side?: Side;              // omit for "either side"
+  phase: "buy" | "early" | "mid" | "late"; // round phase bucket
+}
+
+/**
+ * A spawn-rush matchup. "If I rush from T-1 to A long, I'll beat the CT
+ * who spawns at CT-1 to the corner first." Loose and contextual; meant
+ * to inform spawn-claim calls on freeze time.
+ */
+export interface SpawnRush {
+  id: string;
+  fromSpawnId: string;      // references Spawn.id (T-side)
+  contestPath: string;      // freeform e.g. "A long" / "B tunnels exit"
+  beatsSpawnIds: string[];  // references Spawn.id (CT-side) — CT spawns you'd outrun
+  losesToSpawnIds?: string[]; // CT spawns that would still beat you
+  description?: string;
+}
+
+/** Defaults bundle — populated incrementally by the owner. */
+export interface DustDefaults {
+  plants: PlantSpot[];
+  timings: TimingNote[];
+  spawnRushes: SpawnRush[];
+}
+
 /** Bundle of all editable data for Dust 2. Loaded once at boot. */
 export interface DustData {
   config: MapConfig;
@@ -166,4 +211,5 @@ export interface DustData {
   lineups: Lineup[];
   scenarios: Scenario[];
   ctPositions: CtPosition[];
+  defaults: DustDefaults;
 }

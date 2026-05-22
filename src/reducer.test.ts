@@ -13,10 +13,12 @@ describe("uiReducer", () => {
   it("starts in home view with no selections", () => {
     expect(initialUiState).toEqual({
       view: "home",
+      activeTab: "scenarios",
       activeScenarioId: null,
       activeRoleId: null,
       activeLineupId: null,
       pickedSpawnId: null,
+      activeThrowFromKey: null,
     });
   });
 
@@ -92,10 +94,12 @@ describe("uiReducer", () => {
   it("GO_HOME clears everything regardless of source view", () => {
     const s: UiState = {
       view: "lineup",
+      activeTab: "scenarios",
       activeScenarioId: "x",
       activeRoleId: "a-man",
       activeLineupId: "xbox_smoke",
       pickedSpawnId: "dust2-t-s6",
+      activeThrowFromKey: null,
     };
     const next = uiReducer(s, { type: "GO_HOME" });
     expect(next.view).toBe("home");

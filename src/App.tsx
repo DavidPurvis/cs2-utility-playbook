@@ -49,6 +49,10 @@ export default function App() {
       ? dustData.lineups.find((l) => l.id === state.activeLineupId) ?? null
       : null;
 
+  const onSelectTab = useCallback(
+    (tab: import("./reducer").HomeTab) => dispatch({ type: "SELECT_TAB", tab }),
+    []
+  );
   const onSelectScenario = useCallback((id: string) => {
     dispatch({ type: "SELECT_SCENARIO", scenarioId: id });
     if (typeof history !== "undefined") history.pushState({ view: "scenario", id }, "");
@@ -62,6 +66,10 @@ export default function App() {
   }, []);
   const onPickSpawn = useCallback((id: string) => dispatch({ type: "PICK_SPAWN", spawnId: id }), []);
   const onClearSpawn = useCallback(() => dispatch({ type: "CLEAR_SPAWN" }), []);
+  const onSelectThrowFrom = useCallback(
+    (key: string | null) => dispatch({ type: "SELECT_THROW_FROM", key }),
+    []
+  );
   const onGoHome = useCallback(() => {
     dispatch({ type: "GO_HOME" });
     if (typeof history !== "undefined") history.pushState({ view: "home" }, "");
@@ -116,11 +124,15 @@ export default function App() {
       {state.view === "home" && (
         <Home
           data={dustData}
+          activeTab={state.activeTab}
           pickedSpawnId={state.pickedSpawnId}
+          activeThrowFromKey={state.activeThrowFromKey}
+          onSelectTab={onSelectTab}
           onSelectLineup={onSelectLineup}
           onSelectScenario={onSelectScenario}
           onPickSpawn={onPickSpawn}
           onClearSpawn={onClearSpawn}
+          onSelectThrowFrom={onSelectThrowFrom}
         />
       )}
 
