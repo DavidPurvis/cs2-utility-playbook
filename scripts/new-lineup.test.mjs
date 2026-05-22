@@ -9,7 +9,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseSetposForCli } from "./new-lineup.mjs";
+import { parseSetposForCli, parseLandingArgs } from "./new-lineup.mjs";
 
 test("parses a full cs2util-style setpos+setang", () => {
   const r = parseSetposForCli(
@@ -52,4 +52,69 @@ test("accepts signed decimals", () => {
   assert.ok(r);
   assert.deepStrictEqual(r.world, { x: -0.5, y: 100, z: -64.25 });
   assert.deepStrictEqual(r.angle, { pitch: -45.5, yaw: 180, roll: 0 });
+});
+
+// ── parseLandingArgs (audit C-4 fix, 2026-05) ─────────────────────
+// Replaces the pre-fix silent default of {percent:{x:50,y:50}} when
+// --landing was omitted. Landing is now required: either --landing
+// (world coords from setpos) or --landing-percent X,Y (legacy fallback).
+
+test("parseLandingArgs: --landing world coords parse to {world}", () => {
+  const r = parseLandingArgs("setpos 100 200 64", undefined);
+  assert.equal(r.ok, true);
+  assert.deepStrictEqual(r.landingAt, { world: { x: 100, y: 200, z: 64 } });
+});
+
+test("parseLandingArgs: --landing without z still resolves to world", () => {
+  const r = parseLandingArgs("setpos -657.27 -755.88", undefined);
+  assert.equal(r.ok, true);
+  assert.deepStrictEqual(r.landingAt, { world: { x: -657.27, y: -755.88 } });
+});
+
+test("parseLandingArgs: --landing-percent 'X,Y' parses to {percent}", () => {
+  const r = parseLandingArgs(undefined, "46.4,38.9");
+  assert.equal(r.ok, true);
+  assert.deepStrictEqual(r.landingAt, { percent: { x: 46.4, y: 38.9 } });
+});
+
+test("parseLandingArgs: --landing-percent 'X, Y' (with space) is accepted", () => {
+  const r = parseLandingArgs(undefined, "46.4, 38.9");
+  assert.equal(r.ok, true);
+  assert.deepStrictEqual(r.landingAt, { percent: { x: 46.4, y: 38.9 } });
+});
+
+test("parseLandingArgs: --landing-percent rejects out-of-range", () => {
+  const a = parseLandingArgs(undefined, "150,50");
+  assert.equal(a.ok, false);
+  assert.ok(/0\.\.100/.test(a.error));
+
+  const b = parseLandingArgs(undefined, "-5,50");
+  assert.equal(b.ok, false);
+  assert.ok(/0\.\.100/.test(b.error));
+});
+
+test("parseLandingArgs: --landing-percent rejects garbage", () => {
+  const r = parseLandingArgs(undefined, "not-a-pair");
+  assert.equal(r.ok, false);
+  assert.ok(/landing-percent/.test(r.error));
+});
+
+test("parseLandingArgs: --landing with unparseable setpos errors clearly", () => {
+  const r = parseLandingArgs("not a setpos", undefined);
+  assert.equal(r.ok, false);
+  assert.ok(/setpos/i.test(r.error));
+});
+
+test("parseLandingArgs: BOTH flags missing → required-error (AR-1: do not invent data)", () => {
+  const r = parseLandingArgs(undefined, undefined);
+  assert.equal(r.ok, false);
+  assert.ok(/Missing landing position/i.test(r.error));
+  assert.ok(/--landing/.test(r.error));
+  assert.ok(/--landing-percent/.test(r.error));
+});
+
+test("parseLandingArgs: prefers --landing over --landing-percent when both given", () => {
+  const r = parseLandingArgs("setpos 1 2 3", "50,50");
+  assert.equal(r.ok, true);
+  assert.deepStrictEqual(r.landingAt, { world: { x: 1, y: 2, z: 3 } });
 });

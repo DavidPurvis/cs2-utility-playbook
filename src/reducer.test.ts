@@ -131,4 +131,116 @@ describe("uiReducer", () => {
     const next = uiReducer(s, { type: "__UNKNOWN__" } as unknown as UiAction);
     expect(next).toBe(s);
   });
+
+  // ── SELECT_TAB ─────────────────────────────────────────────────────
+  // Previously uncovered (audit M-5). Tab switching must change only
+  // `activeTab` + clear the Map-tab marker; never change `view` or
+  // touch the scenario/role/lineup stack.
+
+  it("SELECT_TAB updates activeTab and leaves view + scenario state untouched", () => {
+    const s: UiState = { ...initialUiState };
+    const next = uiReducer(s, { type: "SELECT_TAB", tab: "map" });
+    expect(next.activeTab).toBe("map");
+    expect(next.view).toBe("home");
+    expect(next.activeScenarioId).toBeNull();
+    expect(next.activeRoleId).toBeNull();
+    expect(next.activeLineupId).toBeNull();
+  });
+
+  it("SELECT_TAB clears activeThrowFromKey (Map-tab marker doesn't persist across tabs)", () => {
+    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke|long_flash" };
+    const next = uiReducer(s, { type: "SELECT_TAB", tab: "scenarios" });
+    expect(next.activeThrowFromKey).toBeNull();
+    expect(next.activeTab).toBe("scenarios");
+  });
+
+  it("SELECT_TAB preserves pickedSpawnId (visual reference is orthogonal to tab state)", () => {
+    const s: UiState = { ...initialUiState, pickedSpawnId: "dust2-t-s6" };
+    const next = uiReducer(s, { type: "SELECT_TAB", tab: "defaults" });
+    expect(next.pickedSpawnId).toBe("dust2-t-s6");
+  });
+
+  // ── SELECT_THROW_FROM ──────────────────────────────────────────────
+  // Previously uncovered (audit M-6). Sets/clears the Map-tab marker.
+
+  it("SELECT_THROW_FROM sets activeThrowFromKey without changing view or tab", () => {
+    const s: UiState = { ...initialUiState, activeTab: "map" };
+    const next = uiReducer(s, { type: "SELECT_THROW_FROM", key: "xbox_smoke|long_flash" });
+    expect(next.activeThrowFromKey).toBe("xbox_smoke|long_flash");
+    expect(next.view).toBe("home");
+    expect(next.activeTab).toBe("map");
+  });
+
+  it("SELECT_THROW_FROM with key=null clears the active marker", () => {
+    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke" };
+    const next = uiReducer(s, { type: "SELECT_THROW_FROM", key: null });
+    expect(next.activeThrowFromKey).toBeNull();
+  });
+
+  // ── activeThrowFromKey lifecycle on navigation (audit C-3 fix) ─────
+  // The Map-tab marker MUST clear when the user navigates away — else
+  // returning to the Map tab shows a stale highlight.
+
+  it("SELECT_SCENARIO clears activeThrowFromKey", () => {
+    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke" };
+    const next = uiReducer(s, { type: "SELECT_SCENARIO", scenarioId: "a_default" });
+    expect(next.activeThrowFromKey).toBeNull();
+  });
+
+  it("GO_HOME clears activeThrowFromKey (fresh-start semantics)", () => {
+    const s: UiState = {
+      ...initialUiState,
+      view: "scenario",
+      activeScenarioId: "a_default",
+      activeThrowFromKey: "xbox_smoke",
+    };
+    const next = uiReducer(s, { type: "GO_HOME" });
+    expect(next.activeThrowFromKey).toBeNull();
+    expect(next.view).toBe("home");
+  });
+
+  it("BACK from scenario → home clears activeThrowFromKey", () => {
+    const s: UiState = {
+      ...initialUiState,
+      view: "scenario",
+      activeScenarioId: "a_default",
+      activeThrowFromKey: "xbox_smoke",
+    };
+    const next = uiReducer(s, { type: "BACK" });
+    expect(next.view).toBe("home");
+    expect(next.activeThrowFromKey).toBeNull();
+  });
+
+  it("BACK from lineup (no scenario context) → home clears activeThrowFromKey", () => {
+    // CT-position-guide path: user opens a lineup with no scenario.
+    const s: UiState = {
+      ...initialUiState,
+      view: "lineup",
+      activeLineupId: "xbox_smoke",
+      activeThrowFromKey: "xbox_smoke",
+    };
+    const next = uiReducer(s, { type: "BACK" });
+    expect(next.view).toBe("home");
+    expect(next.activeThrowFromKey).toBeNull();
+  });
+
+  it("BACK from lineup → scenario does NOT clear activeThrowFromKey (still in nav stack)", () => {
+    // Sanity: when the user came through a scenario, they stay in the
+    // scenario detail. The Map tab marker is only cleared when the
+    // user returns to HOME (where Map tab actually renders).
+    const s: UiState = {
+      ...initialUiState,
+      view: "lineup",
+      activeScenarioId: "a_default",
+      activeRoleId: "a-man",
+      activeLineupId: "xbox_smoke",
+      activeThrowFromKey: "xbox_smoke",
+    };
+    const next = uiReducer(s, { type: "BACK" });
+    expect(next.view).toBe("scenario");
+    // Marker is preserved — it doesn't affect anything until the user
+    // returns to home + Map tab, and clearing it on intermediate
+    // navigation would be surprising.
+    expect(next.activeThrowFromKey).toBe("xbox_smoke");
+  });
 });

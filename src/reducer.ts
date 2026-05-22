@@ -58,7 +58,11 @@ export const initialUiState: UiState = {
 export function uiReducer(state: UiState, action: UiAction): UiState {
   switch (action.type) {
     case "SELECT_TAB":
-      return { ...state, activeTab: action.tab };
+      // Switching tabs clears the Map-tab's active marker so the user
+      // doesn't return to a stale highlight when they come back to Map
+      // later. (Audit C-3.) The pickedSpawnId is intentionally kept —
+      // it's a visual "I am here" reference orthogonal to tab state.
+      return { ...state, activeTab: action.tab, activeThrowFromKey: null };
 
     case "SELECT_SCENARIO":
       return {
@@ -67,6 +71,8 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         activeScenarioId: action.scenarioId,
         activeRoleId: null,
         activeLineupId: null,
+        // Clear Map-tab selection on navigation — see SELECT_TAB.
+        activeThrowFromKey: null,
       };
 
     case "SELECT_THROW_FROM":
@@ -92,7 +98,13 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         // blank "scenario view with no active scenario" page.
         return state.activeScenarioId
           ? { ...state, view: "scenario", activeLineupId: null }
-          : { ...state, view: "home", activeLineupId: null };
+          : {
+              ...state,
+              view: "home",
+              activeLineupId: null,
+              // Returning to home clears the Map-tab marker selection.
+              activeThrowFromKey: null,
+            };
       }
       if (state.view === "scenario") {
         return {
@@ -101,18 +113,23 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
           activeScenarioId: null,
           activeRoleId: null,
           activeLineupId: null,
+          // Returning to home clears the Map-tab marker selection.
+          activeThrowFromKey: null,
         };
       }
       return state;
 
     case "GO_HOME":
-      // Picked spawn intentionally preserved.
+      // Picked spawn intentionally preserved. Map-tab marker NOT
+      // preserved — explicit GO_HOME means "fresh start," and a stale
+      // marker selection from earlier is more confusing than useful.
       return {
         ...state,
         view: "home",
         activeScenarioId: null,
         activeRoleId: null,
         activeLineupId: null,
+        activeThrowFromKey: null,
       };
 
     case "PICK_SPAWN":
