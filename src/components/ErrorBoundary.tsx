@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { T } from "../theme";
 
 interface Props {
   children: ReactNode;
@@ -8,15 +9,6 @@ interface State {
   hasError: boolean;
   error: Error | null;
 }
-
-const colors = {
-  bg: "#0a0e15",
-  bgPanel: "#11161f",
-  border: "#2d364a",
-  danger: "#ef5969",
-  textPri: "#e6ebf2",
-  textSec: "#a3afc1",
-};
 
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
@@ -41,21 +33,21 @@ export class ErrorBoundary extends Component<Props, State> {
       <div
         style={{
           padding: 12,
-          background: colors.bgPanel,
-          border: `1px solid ${colors.danger}`,
+          background: T.bgPanel,
+          border: `1px solid ${T.danger}`,
           borderRadius: 8,
-          color: colors.danger,
+          color: T.danger,
           fontSize: 12,
           fontFamily: "'Inter', sans-serif",
         }}
       >
         <strong>Something broke in this section.</strong>
         {import.meta.env.DEV ? (
-          <div style={{ marginTop: 4, color: colors.textSec, fontSize: 11 }}>
+          <div style={{ marginTop: 4, color: T.textSec, fontSize: 11 }}>
             {String(this.state.error?.message ?? this.state.error)}
           </div>
         ) : (
-          <div style={{ marginTop: 4, color: colors.textSec, fontSize: 11 }}>
+          <div style={{ marginTop: 4, color: T.textSec, fontSize: 11 }}>
             Reload the page or click Retry. If it keeps happening, file an issue.
           </div>
         )}
@@ -68,10 +60,10 @@ export class ErrorBoundary extends Component<Props, State> {
             fontSize: 11,
             fontWeight: 700,
             cursor: "pointer",
-            background: colors.bg,
-            border: `1px solid ${colors.border}`,
+            background: T.bg,
+            border: `1px solid ${T.border}`,
             borderRadius: 4,
-            color: colors.textPri,
+            color: T.textPri,
           }}
         >
           Retry

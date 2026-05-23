@@ -67,6 +67,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         activeScenarioId: action.scenarioId,
         activeRoleId: null,
         activeLineupId: null,
+        activeThrowFromKey: null,
       };
 
     case "SELECT_THROW_FROM":
@@ -82,6 +83,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         ...state,
         view: "lineup",
         activeLineupId: action.lineupId,
+        activeThrowFromKey: null,
       };
 
     case "BACK":
@@ -91,8 +93,8 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         // position guide on home), back to home — avoids landing on a
         // blank "scenario view with no active scenario" page.
         return state.activeScenarioId
-          ? { ...state, view: "scenario", activeLineupId: null }
-          : { ...state, view: "home", activeLineupId: null };
+          ? { ...state, view: "scenario", activeLineupId: null, activeThrowFromKey: null }
+          : { ...state, view: "home", activeLineupId: null, activeThrowFromKey: null };
       }
       if (state.view === "scenario") {
         return {
@@ -101,6 +103,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
           activeScenarioId: null,
           activeRoleId: null,
           activeLineupId: null,
+          activeThrowFromKey: null,
         };
       }
       return state;
@@ -113,6 +116,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         activeScenarioId: null,
         activeRoleId: null,
         activeLineupId: null,
+        activeThrowFromKey: null,
       };
 
     case "PICK_SPAWN":
