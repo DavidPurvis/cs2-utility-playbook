@@ -47,4 +47,27 @@ describe("parseSetposCommand", () => {
     expect(reparsed!.world).toEqual(parsed!.world);
     expect(reparsed!.angle).toEqual(parsed!.angle);
   });
+
+  it("handles extra semicolons: ';;setpos 1 2 3;;;'", () => {
+    const r = parseSetposCommand(";;setpos 1 2 3;;;");
+    expect(r).not.toBeNull();
+    expect(r!.world).toEqual({ x: 1, y: 2, z: 3 });
+  });
+});
+
+describe("formatSetposCommand edge cases", () => {
+  it("returns empty string when world is undefined", () => {
+    expect(formatSetposCommand(undefined)).toBe("");
+  });
+
+  it("returns setpos only when angle is undefined", () => {
+    const result = formatSetposCommand({ x: 1, y: 2, z: 3 }, undefined);
+    expect(result).toBe("setpos 1 2 3");
+    expect(result).not.toContain("setang");
+  });
+
+  it("omits z from setpos when world.z is undefined", () => {
+    const result = formatSetposCommand({ x: 10, y: 20 });
+    expect(result).toBe("setpos 10 20");
+  });
 });

@@ -32,13 +32,13 @@ const UTIL_COLOR: Record<UtilityType, string> = {
   he: T.utilHE,
 };
 
-interface ThrowFromCluster {
+export interface ThrowFromCluster {
   key: string;             // stable id (sorted lineup ids joined)
   representative: WorldPoint;
   lineups: Lineup[];
 }
 
-function clusterThrowFroms(lineups: Lineup[]): ThrowFromCluster[] {
+export function clusterThrowFroms(lineups: Lineup[]): ThrowFromCluster[] {
   const clusters: ThrowFromCluster[] = [];
   for (const l of lineups) {
     const existing = clusters.find((c) =>
