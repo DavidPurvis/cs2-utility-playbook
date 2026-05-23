@@ -190,6 +190,22 @@ export function assertDustData(d: unknown): asserts d is DustData {
 }
 
 // ---------------------------------------------------------------------------
+// Runtime immutability — prevents accidental mutation of the shared
+// data singleton. Any `dustData.lineups.push(...)` or
+// `lineup.name = "foo"` will throw a TypeError at runtime.
+// ---------------------------------------------------------------------------
+
+function deepFreeze<T extends object>(obj: T): Readonly<T> {
+  Object.freeze(obj);
+  for (const val of Object.values(obj)) {
+    if (val && typeof val === "object" && !Object.isFrozen(val)) {
+      deepFreeze(val);
+    }
+  }
+  return obj;
+}
+
+// ---------------------------------------------------------------------------
 // Lazy-init loader — catches validation errors instead of crashing the
 // module evaluation. This is critical because a module-scope throw
 // happens before React mounts, so ErrorBoundary can't catch it.
@@ -206,11 +222,11 @@ export function loadDustData(): DustData | Error {
   try {
     assertDustData(raw);
     const d = raw as DustData;
-    cached = {
+    cached = deepFreeze({
       ...d,
       ctPositions: d.ctPositions ?? [],
       defaults: d.defaults ?? { plants: [], timings: [], spawnRushes: [] },
-    };
+    });
   } catch (e) {
     cached = e instanceof Error ? e : new Error(String(e));
   }

@@ -27,6 +27,25 @@ describe("loadDustData (catch-safe boot)", () => {
   });
 });
 
+describe("deep freeze (runtime immutability)", () => {
+  const data = getDustData();
+
+  it("top-level object is frozen", () => {
+    expect(Object.isFrozen(data)).toBe(true);
+  });
+
+  it("nested arrays are frozen", () => {
+    expect(Object.isFrozen(data.lineups)).toBe(true);
+    expect(Object.isFrozen(data.spawns)).toBe(true);
+    expect(Object.isFrozen(data.scenarios)).toBe(true);
+  });
+
+  it("deeply nested objects are frozen", () => {
+    expect(Object.isFrozen(data.lineups[0])).toBe(true);
+    expect(Object.isFrozen(data.config)).toBe(true);
+  });
+});
+
 describe("getDustData (convenience getter)", () => {
   it("returns the same data as loadDustData on valid bundle", () => {
     const loaded = loadDustData();

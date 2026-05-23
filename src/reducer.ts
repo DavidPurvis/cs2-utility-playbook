@@ -45,15 +45,15 @@ export type UiAction =
   | { type: "CLEAR_SPAWN" }
   | { type: "SELECT_THROW_FROM"; key: string | null };
 
-export const initialUiState: UiState = {
-  view: "home",
-  activeTab: "scenarios", // default tab — headline feature
+export const initialUiState: UiState = Object.freeze({
+  view: "home" as const,
+  activeTab: "scenarios" as const, // default tab — headline feature
   activeScenarioId: null,
   activeRoleId: null,
   activeLineupId: null,
   pickedSpawnId: null,
   activeThrowFromKey: null,
-};
+});
 
 export function uiReducer(state: UiState, action: UiAction): UiState {
   switch (action.type) {
