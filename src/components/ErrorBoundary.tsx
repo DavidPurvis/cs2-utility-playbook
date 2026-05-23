@@ -35,10 +35,10 @@ export class ErrorBoundary extends Component<Props, State> {
           padding: 12,
           background: T.bgPanel,
           border: `1px solid ${T.danger}`,
-          borderRadius: 8,
+          borderRadius: T.radiusSm,
           color: T.danger,
           fontSize: 12,
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: T.fontUI,
         }}
       >
         <strong>Something broke in this section.</strong>
@@ -62,7 +62,7 @@ export class ErrorBoundary extends Component<Props, State> {
             cursor: "pointer",
             background: T.bg,
             border: `1px solid ${T.border}`,
-            borderRadius: 4,
+            borderRadius: T.radiusSm,
             color: T.textPri,
           }}
         >

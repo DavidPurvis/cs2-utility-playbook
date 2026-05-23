@@ -99,13 +99,14 @@ describe("uiReducer", () => {
       activeRoleId: "a-man",
       activeLineupId: "xbox_smoke",
       pickedSpawnId: "dust2-t-s6",
-      activeThrowFromKey: null,
+      activeThrowFromKey: "some_marker",
     };
     const next = uiReducer(s, { type: "GO_HOME" });
     expect(next.view).toBe("home");
     expect(next.activeScenarioId).toBeNull();
     expect(next.activeRoleId).toBeNull();
     expect(next.activeLineupId).toBeNull();
+    expect(next.activeThrowFromKey).toBeNull();
     // Picked spawn intentionally preserved across navigation — it's a
     // visual reference, not part of the view stack.
     expect(next.pickedSpawnId).toBe("dust2-t-s6");
@@ -122,6 +123,50 @@ describe("uiReducer", () => {
     const s: UiState = { ...initialUiState, pickedSpawnId: "dust2-t-s6" };
     const next = uiReducer(s, { type: "CLEAR_SPAWN" });
     expect(next.pickedSpawnId).toBeNull();
+  });
+
+  // C-3 fix: activeThrowFromKey must be cleared on all navigation actions
+  // so the Map tab doesn't show stale highlighted markers on return.
+  describe("C-3: clears activeThrowFromKey on navigation", () => {
+    const withThrowFrom: UiState = {
+      ...initialUiState,
+      activeTab: "map",
+      activeThrowFromKey: "xbox_smoke_group",
+    };
+
+    it("SELECT_SCENARIO clears activeThrowFromKey", () => {
+      const next = uiReducer(withThrowFrom, { type: "SELECT_SCENARIO", scenarioId: "x" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("SELECT_LINEUP clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "scenario" as const, activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "SELECT_LINEUP", lineupId: "xbox_smoke" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("BACK from lineup clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke", activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("BACK from scenario clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "scenario" as const, activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("GO_HOME clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke" };
+      const next = uiReducer(s, { type: "GO_HOME" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("SELECT_TAB does NOT clear activeThrowFromKey (Map state persists across tabs)", () => {
+      const next = uiReducer(withThrowFrom, { type: "SELECT_TAB", tab: "scenarios" });
+      expect(next.activeThrowFromKey).toBe("xbox_smoke_group");
+    });
   });
 
   // Defensive: unknown actions must not be reachable in strict TS but
