@@ -31,7 +31,7 @@ export function Header({ crumbs }: HeaderProps) {
         {crumbs.map((c, i) => {
           const isLast = i === crumbs.length - 1;
           return (
-            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <span key={c.label} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
               {c.onClick && !isLast ? (
                 <button
                   type="button"

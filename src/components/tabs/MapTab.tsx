@@ -134,7 +134,7 @@ export function MapTab({
                     <circle
                       r={1.3}
                       fill={isActive ? T.accent : T.bgPanel}
-                      stroke={isActive ? T.accentDk : UTIL_COLOR[types[0]!]}
+                      stroke={isActive ? T.accentDk : UTIL_COLOR[types[0] ?? "smoke"]}
                       strokeWidth={isActive ? 0.5 : 0.4}
                     />
                     {/* Count badge for clusters with multiple lineups */}
@@ -158,7 +158,7 @@ export function MapTab({
                     )}
                     <title>
                       {c.lineups.length === 1
-                        ? c.lineups[0]!.name
+                        ? (c.lineups[0]?.name ?? "Lineup")
                         : `${c.lineups.length} lineups from this spot`}
                     </title>
                   </g>

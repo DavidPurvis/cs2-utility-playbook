@@ -61,7 +61,7 @@ export function ScenarioDetail({
   const orderedPlayers = useMemo(() => {
     if (!scenario.roleOrder?.length) return scenario.players;
     const idx = (role: string) => {
-      const i = scenario.roleOrder!.indexOf(role);
+      const i = scenario.roleOrder?.indexOf(role) ?? -1;
       return i === -1 ? Number.MAX_SAFE_INTEGER : i;
     };
     return [...scenario.players].sort((a, b) => idx(a.role) - idx(b.role));
