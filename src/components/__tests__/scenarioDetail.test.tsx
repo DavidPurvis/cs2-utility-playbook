@@ -16,7 +16,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ScenarioDetail } from "../ScenarioDetail";
-import { dustData } from "../../data/loadDust2";
+import { getDustData } from "../../data/loadDust2";
+const dustData = getDustData();
 
 // Seed scenarios ship with empty actions[]. We pick the 3-man "A
 // Default Take" and graft on a single action referencing the xbox

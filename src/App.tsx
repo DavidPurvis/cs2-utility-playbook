@@ -9,7 +9,7 @@
  * descendent's CopyButton can dispatch through it.
  */
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { dustData } from "./data/loadDust2";
+import { getDustData } from "./data/loadDust2";
 import { Header } from "./components/Header";
 import { Home } from "./components/Home";
 import { ScenarioDetail } from "./components/ScenarioDetail";
@@ -20,6 +20,9 @@ import type { CopyResult } from "./components/CopyButton";
 import { T } from "./theme";
 
 export default function App() {
+  // getDustData() is safe here — main.tsx calls loadDustData() first
+  // and only renders App on success, so this never throws in production.
+  const dustData = getDustData();
   const [state, dispatch] = useReducer(uiReducer, initialUiState);
   const [toast, setToast] = useState<ToastState>(null);
   const toastIdRef = useRef(0);

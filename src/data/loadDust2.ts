@@ -83,16 +83,42 @@ export function assertDustData(d: unknown): asserts d is DustData {
   }
 }
 
-// `assertDustData` runs before the cast; downstream consumers can
-// iterate without null-checking optional arrays / objects.
-const validated = (() => {
-  assertDustData(raw);
-  const d = raw as DustData;
-  return {
-    ...d,
-    ctPositions: d.ctPositions ?? [],
-    defaults: d.defaults ?? { plants: [], timings: [], spawnRushes: [] },
-  };
-})();
+// ---------------------------------------------------------------------------
+// Lazy-init loader — catches validation errors instead of crashing the
+// module evaluation. This is critical because a module-scope throw
+// happens before React mounts, so ErrorBoundary can't catch it.
+// ---------------------------------------------------------------------------
 
-export const dustData: DustData = validated;
+let cached: DustData | Error | undefined;
+
+/**
+ * Validate and return the Dust 2 data bundle, or an Error if validation
+ * fails. Result is memoized — second call returns the same reference.
+ */
+export function loadDustData(): DustData | Error {
+  if (cached !== undefined) return cached;
+  try {
+    assertDustData(raw);
+    const d = raw as DustData;
+    cached = {
+      ...d,
+      ctPositions: d.ctPositions ?? [],
+      defaults: d.defaults ?? { plants: [], timings: [], spawnRushes: [] },
+    };
+  } catch (e) {
+    cached = e instanceof Error ? e : new Error(String(e));
+  }
+  return cached;
+}
+
+/**
+ * Convenience getter — throws if data is invalid. Call from inside
+ * components (render time), NOT at module scope. main.tsx calls
+ * loadDustData() first and shows a fallback on error, so by the time
+ * any component calls getDustData(), success is guaranteed.
+ */
+export function getDustData(): DustData {
+  const result = loadDustData();
+  if (result instanceof Error) throw result;
+  return result;
+}
