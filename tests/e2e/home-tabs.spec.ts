@@ -2,7 +2,7 @@
  * Home four-tab navigation contract.
  *
  * Owner directive: the home page has four tabs — Defaults / Scenarios
- * / Instant smokes / Map — and the tab order is FIXED for the
+ * / Instant utility / Map — and the tab order is FIXED for the
  * structure-craving audience (one autistic 25-year-old). Clicking
  * each tab MUST swap the content; the active tab MUST be visibly
  * distinct.
@@ -20,7 +20,7 @@ test.describe("Home four-tab navigation", () => {
     await expect(tabs).toHaveCount(4);
     await expect(tabs.nth(0)).toContainText(/Defaults/i);
     await expect(tabs.nth(1)).toContainText(/Scenarios/i);
-    await expect(tabs.nth(2)).toContainText(/Instant smokes/i);
+    await expect(tabs.nth(2)).toContainText(/Instant utility/i);
     await expect(tabs.nth(3)).toContainText(/Map/i);
   });
 
@@ -46,11 +46,11 @@ test.describe("Home four-tab navigation", () => {
     await expect(page.locator('[data-testid="scenario-grid"]')).toHaveCount(0);
   });
 
-  test("clicking Instant smokes tab swaps to instant-from-spawn lineup list", async ({ page }) => {
+  test("clicking Instant utility tab swaps to instant-from-spawn lineup list", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    await page.getByRole("tab", { name: /Instant smokes/i }).click();
-    await expect(page.locator("text=Instant smokes from spawn")).toBeVisible();
+    await page.getByRole("tab", { name: /Instant utility/i }).click();
+    await expect(page.locator("text=Instant utility from spawn")).toBeVisible();
     await expect(page.locator("text=Xbox Smoke from T Spawn")).toBeVisible();
   });
 

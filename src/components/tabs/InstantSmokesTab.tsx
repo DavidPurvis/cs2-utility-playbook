@@ -57,7 +57,7 @@ export function InstantSmokesTab({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <header>
         <h2 style={{ margin: 0, fontSize: 20, color: T.textPri }}>
-          Instant smokes from spawn{" "}
+          Instant utility from spawn{" "}
           <span style={{ color: T.textDim, fontSize: 13, fontWeight: 400 }}>· {total}</span>
         </h2>
         <p style={{ margin: "4px 0 0", fontSize: 13, color: T.textDim, lineHeight: 1.5 }}>

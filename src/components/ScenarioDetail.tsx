@@ -247,10 +247,9 @@ export function ScenarioDetail({
                 lineHeight: 1.5,
               }}
             >
-              <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no actions
-              yet. Add lineups to this role with{" "}
-              <code style={{ color: T.accent }}>npm run new-scenario</code> or edit{" "}
-              <code style={{ color: T.accent }}>src/data/dust2.json</code> directly.
+              <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no lineups
+              assigned yet. This role needs utility lineups added to complete the
+              execute.
             </div>
           ) : (
             <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -287,6 +286,7 @@ function StepRow({
       <button
         type="button"
         onClick={onSelect}
+        aria-label={`Step ${action.order}: ${lineup?.name ?? "unknown lineup"} — click to view walkthrough`}
         style={{
           width: "100%",
           textAlign: "left",

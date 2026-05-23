@@ -685,7 +685,14 @@
           "label": "Mid Lurker",
           "color": "#C67C4E",
           "startingSpawnId": "dust2-t-s2",
-          "actions": []
+          "actions": [
+            {
+              "order": 1,
+              "lineupId": "a_short_flash",
+              "description": "Flash catwalk/short for mid-to-short push",
+              "timing": "t+3s"
+            }
+          ]
         },
         {
           "role": "mid-support",
