@@ -246,7 +246,7 @@ const th: CSSProperties = {
   textAlign: "left",
   fontSize: 11,
   fontFamily: "monospace",
-  color: "#6F6A60",
+  color: T.textDim,
   textTransform: "uppercase",
   letterSpacing: 0.5,
   fontWeight: 800,

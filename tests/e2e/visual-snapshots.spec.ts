@@ -41,7 +41,7 @@ test.describe("Visual snapshots", () => {
 
   // ── Map tab snapshots (closes W-11 in DECISIONS_LEDGER) ───────────────
   // Owner directive 2026-05: visual regression coverage for the Map tab
-  // (Defaults / Instant smokes still uncovered — those are tracked
+  // (Defaults / Instant utility still uncovered — those are tracked
   // separately).
 
   test("home — Map tab (desktop, no marker active)", async ({ page }) => {

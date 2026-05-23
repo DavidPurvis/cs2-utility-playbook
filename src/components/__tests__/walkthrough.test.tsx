@@ -13,7 +13,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { LineupDetail } from "../LineupDetail";
-import { dustData } from "../../data/loadDust2";
+import { getDustData } from "../../data/loadDust2";
+const dustData = getDustData();
 
 const baseLineup = dustData.lineups.find((l) => l.id === "xbox_smoke")!;
 

@@ -29,7 +29,7 @@ interface TabDef {
 const TABS: TabDef[] = [
   { id: "defaults",       label: "Defaults",       hint: "plant spots · timings · spawn rushes" },
   { id: "scenarios",      label: "Scenarios",      hint: "numbered team executes (2-5 man)" },
-  { id: "instant_smokes", label: "Instant smokes", hint: "throw at round start from spawn" },
+  { id: "instant_smokes", label: "Instant utility", hint: "throw at round start from spawn" },
   { id: "map",            label: "Map",            hint: "every position you can throw from" },
 ];
 

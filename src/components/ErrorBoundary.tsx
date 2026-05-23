@@ -3,6 +3,8 @@ import { T } from "../theme";
 
 interface Props {
   children: ReactNode;
+  /** Optional label shown in the fallback: "Something broke in {label}." */
+  label?: string;
 }
 
 interface State {
@@ -64,7 +66,7 @@ export class ErrorBoundary extends Component<Props, State> {
         }}
       >
         <strong style={{ fontSize: 15, display: "block" }}>
-          Something broke loading the playbook.
+          Something broke{this.props.label ? ` in ${this.props.label}` : ""}.
         </strong>
         {isDev ? (
           <pre

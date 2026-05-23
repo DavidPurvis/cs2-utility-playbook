@@ -10,6 +10,7 @@
  * The active tab lives in the App-level reducer so it survives
  * navigation to scenario / lineup detail and back.
  */
+import { ErrorBoundary } from "./ErrorBoundary";
 import { TabBar } from "./TabBar";
 import { tabButtonId, tabPanelId } from "./tabIds";
 import { ScenariosTab } from "./tabs/ScenariosTab";
@@ -59,27 +60,37 @@ export function Home({
         aria-labelledby={tabButtonId(activeTab)}
         style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}
       >
-        {activeTab === "defaults" && <DefaultsTab data={data} />}
+        {activeTab === "defaults" && (
+          <ErrorBoundary label="Defaults">
+            <DefaultsTab data={data} />
+          </ErrorBoundary>
+        )}
         {activeTab === "scenarios" && (
-          <ScenariosTab
-            data={data}
-            pickedSpawnId={pickedSpawnId}
-            onSelectScenario={onSelectScenario}
-            onPickSpawn={onPickSpawn}
-            onClearSpawn={onClearSpawn}
-            onSelectLineup={onSelectLineup}
-          />
+          <ErrorBoundary label="Scenarios">
+            <ScenariosTab
+              data={data}
+              pickedSpawnId={pickedSpawnId}
+              onSelectScenario={onSelectScenario}
+              onPickSpawn={onPickSpawn}
+              onClearSpawn={onClearSpawn}
+              onSelectLineup={onSelectLineup}
+            />
+          </ErrorBoundary>
         )}
         {activeTab === "instant_smokes" && (
-          <InstantSmokesTab data={data} onSelectLineup={onSelectLineup} />
+          <ErrorBoundary label="Instant utility">
+            <InstantSmokesTab data={data} onSelectLineup={onSelectLineup} />
+          </ErrorBoundary>
         )}
         {activeTab === "map" && (
-          <MapTab
-            data={data}
-            activeThrowFromKey={activeThrowFromKey}
-            onSelectThrowFrom={onSelectThrowFrom}
-            onSelectLineup={onSelectLineup}
-          />
+          <ErrorBoundary label="Map">
+            <MapTab
+              data={data}
+              activeThrowFromKey={activeThrowFromKey}
+              onSelectThrowFrom={onSelectThrowFrom}
+              onSelectLineup={onSelectLineup}
+            />
+          </ErrorBoundary>
         )}
       </div>
     </>

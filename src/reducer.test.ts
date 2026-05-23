@@ -6,7 +6,7 @@
  * documented transitions and any "back" behavior. They're written
  * before the implementation per the v6 TDD mandate.
  */
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { uiReducer, initialUiState, type UiAction, type UiState } from "./reducer";
 
 describe("uiReducer", () => {
@@ -99,13 +99,14 @@ describe("uiReducer", () => {
       activeRoleId: "a-man",
       activeLineupId: "xbox_smoke",
       pickedSpawnId: "dust2-t-s6",
-      activeThrowFromKey: null,
+      activeThrowFromKey: "some_marker",
     };
     const next = uiReducer(s, { type: "GO_HOME" });
     expect(next.view).toBe("home");
     expect(next.activeScenarioId).toBeNull();
     expect(next.activeRoleId).toBeNull();
     expect(next.activeLineupId).toBeNull();
+    expect(next.activeThrowFromKey).toBeNull();
     // Picked spawn intentionally preserved across navigation — it's a
     // visual reference, not part of the view stack.
     expect(next.pickedSpawnId).toBe("dust2-t-s6");
@@ -124,18 +125,66 @@ describe("uiReducer", () => {
     expect(next.pickedSpawnId).toBeNull();
   });
 
-  // Defensive: unknown actions must not be reachable in strict TS but
-  // we still want the reducer to be total — fall through to current state.
-  it("returns the current state for unhandled actions", () => {
-    const s: UiState = { ...initialUiState };
-    const next = uiReducer(s, { type: "__UNKNOWN__" } as unknown as UiAction);
-    expect(next).toBe(s);
+  // C-3 fix: activeThrowFromKey must be cleared on navigation actions
+  // that return to home (where Map tab renders). Intermediate navigation
+  // (lineup → scenario) preserves it since it doesn't affect anything
+  // until the user returns to Map.
+  describe("C-3: activeThrowFromKey lifecycle on navigation", () => {
+    const withThrowFrom: UiState = {
+      ...initialUiState,
+      activeTab: "map",
+      activeThrowFromKey: "xbox_smoke_group",
+    };
+
+    it("SELECT_SCENARIO clears activeThrowFromKey", () => {
+      const next = uiReducer(withThrowFrom, { type: "SELECT_SCENARIO", scenarioId: "x" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("SELECT_LINEUP clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "scenario" as const, activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "SELECT_LINEUP", lineupId: "xbox_smoke" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("BACK from lineup → home clears activeThrowFromKey", () => {
+      // CT-position-guide path: user opened lineup without a scenario.
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.view).toBe("home");
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("BACK from lineup → scenario preserves activeThrowFromKey", () => {
+      // User came through a scenario. They stay in scenario detail —
+      // Map tab doesn't render here, so the marker is harmless to keep.
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke", activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.view).toBe("scenario");
+      expect(next.activeThrowFromKey).toBe("xbox_smoke_group");
+    });
+
+    it("BACK from scenario clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "scenario" as const, activeScenarioId: "x" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("GO_HOME clears activeThrowFromKey", () => {
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke" };
+      const next = uiReducer(s, { type: "GO_HOME" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("SELECT_TAB clears activeThrowFromKey (Map-tab marker doesn't persist across tabs)", () => {
+      const next = uiReducer(withThrowFrom, { type: "SELECT_TAB", tab: "scenarios" });
+      expect(next.activeThrowFromKey).toBeNull();
+    });
   });
 
   // ── SELECT_TAB ─────────────────────────────────────────────────────
-  // Previously uncovered (audit M-5). Tab switching must change only
-  // `activeTab` + clear the Map-tab marker; never change `view` or
-  // touch the scenario/role/lineup stack.
+  // Tab switching must change only `activeTab` + clear the Map-tab
+  // marker; never change `view` or touch the scenario/role/lineup stack.
 
   it("SELECT_TAB updates activeTab and leaves view + scenario state untouched", () => {
     const s: UiState = { ...initialUiState };
@@ -147,13 +196,6 @@ describe("uiReducer", () => {
     expect(next.activeLineupId).toBeNull();
   });
 
-  it("SELECT_TAB clears activeThrowFromKey (Map-tab marker doesn't persist across tabs)", () => {
-    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke|long_flash" };
-    const next = uiReducer(s, { type: "SELECT_TAB", tab: "scenarios" });
-    expect(next.activeThrowFromKey).toBeNull();
-    expect(next.activeTab).toBe("scenarios");
-  });
-
   it("SELECT_TAB preserves pickedSpawnId (visual reference is orthogonal to tab state)", () => {
     const s: UiState = { ...initialUiState, pickedSpawnId: "dust2-t-s6" };
     const next = uiReducer(s, { type: "SELECT_TAB", tab: "defaults" });
@@ -161,7 +203,7 @@ describe("uiReducer", () => {
   });
 
   // ── SELECT_THROW_FROM ──────────────────────────────────────────────
-  // Previously uncovered (audit M-6). Sets/clears the Map-tab marker.
+  // Sets/clears the Map-tab marker without affecting navigation state.
 
   it("SELECT_THROW_FROM sets activeThrowFromKey without changing view or tab", () => {
     const s: UiState = { ...initialUiState, activeTab: "map" };
@@ -177,70 +219,56 @@ describe("uiReducer", () => {
     expect(next.activeThrowFromKey).toBeNull();
   });
 
-  // ── activeThrowFromKey lifecycle on navigation (audit C-3 fix) ─────
-  // The Map-tab marker MUST clear when the user navigates away — else
-  // returning to the Map tab shows a stale highlight.
-
-  it("SELECT_SCENARIO clears activeThrowFromKey", () => {
-    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke" };
-    const next = uiReducer(s, { type: "SELECT_SCENARIO", scenarioId: "a_default" });
-    expect(next.activeThrowFromKey).toBeNull();
+  // Defensive: unknown actions must not be reachable in strict TS but
+  // we still want the reducer to be total — fall through to current state.
+  // The `as unknown as UiAction` cast intentionally bypasses the
+  // compile-time exhaustiveness guard (the `never` check in default case).
+  it("returns the current state for unhandled actions", () => {
+    const s: UiState = { ...initialUiState };
+    const next = uiReducer(s, { type: "__UNKNOWN__" } as unknown as UiAction);
+    expect(next).toBe(s);
   });
 
-  it("GO_HOME clears activeThrowFromKey (fresh-start semantics)", () => {
-    const s: UiState = {
-      ...initialUiState,
-      view: "scenario",
-      activeScenarioId: "a_default",
-      activeThrowFromKey: "xbox_smoke",
-    };
-    const next = uiReducer(s, { type: "GO_HOME" });
-    expect(next.activeThrowFromKey).toBeNull();
-    expect(next.view).toBe("home");
-  });
+  // ── Dev-mode invariant assertions ─────────────────────────────────
+  describe("devAssertInvariants", () => {
+    it("fires console.error for impossible state: view=scenario + null scenarioId", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      // Construct an impossible state and run any dispatch through it
+      const impossible: UiState = {
+        ...initialUiState,
+        view: "scenario",
+        activeScenarioId: null, // impossible: scenario view without an ID
+      };
+      uiReducer(impossible, { type: "SELECT_TAB", tab: "defaults" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("view=scenario but activeScenarioId is null")
+      );
+      spy.mockRestore();
+    });
 
-  it("BACK from scenario → home clears activeThrowFromKey", () => {
-    const s: UiState = {
-      ...initialUiState,
-      view: "scenario",
-      activeScenarioId: "a_default",
-      activeThrowFromKey: "xbox_smoke",
-    };
-    const next = uiReducer(s, { type: "BACK" });
-    expect(next.view).toBe("home");
-    expect(next.activeThrowFromKey).toBeNull();
-  });
+    it("fires console.error for impossible state: view=home + stale scenarioId", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const impossible: UiState = {
+        ...initialUiState,
+        view: "home",
+        activeScenarioId: "stale_id", // should be null in home view
+      };
+      uiReducer(impossible, { type: "SELECT_TAB", tab: "map" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("view=home but activeScenarioId still set")
+      );
+      spy.mockRestore();
+    });
 
-  it("BACK from lineup (no scenario context) → home clears activeThrowFromKey", () => {
-    // CT-position-guide path: user opens a lineup with no scenario.
-    const s: UiState = {
-      ...initialUiState,
-      view: "lineup",
-      activeLineupId: "xbox_smoke",
-      activeThrowFromKey: "xbox_smoke",
-    };
-    const next = uiReducer(s, { type: "BACK" });
-    expect(next.view).toBe("home");
-    expect(next.activeThrowFromKey).toBeNull();
-  });
-
-  it("BACK from lineup → scenario does NOT clear activeThrowFromKey (still in nav stack)", () => {
-    // Sanity: when the user came through a scenario, they stay in the
-    // scenario detail. The Map tab marker is only cleared when the
-    // user returns to HOME (where Map tab actually renders).
-    const s: UiState = {
-      ...initialUiState,
-      view: "lineup",
-      activeScenarioId: "a_default",
-      activeRoleId: "a-man",
-      activeLineupId: "xbox_smoke",
-      activeThrowFromKey: "xbox_smoke",
-    };
-    const next = uiReducer(s, { type: "BACK" });
-    expect(next.view).toBe("scenario");
-    // Marker is preserved — it doesn't affect anything until the user
-    // returns to home + Map tab, and clearing it on intermediate
-    // navigation would be surprising.
-    expect(next.activeThrowFromKey).toBe("xbox_smoke");
+    it("does NOT fire console.error for valid state transitions", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      let s: UiState = { ...initialUiState };
+      s = uiReducer(s, { type: "SELECT_SCENARIO", scenarioId: "x" });
+      s = uiReducer(s, { type: "SELECT_LINEUP", lineupId: "xbox_smoke" });
+      s = uiReducer(s, { type: "BACK" });
+      uiReducer(s, { type: "GO_HOME" });
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
   });
 });

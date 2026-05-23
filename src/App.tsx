@@ -9,7 +9,7 @@
  * descendent's CopyButton can dispatch through it.
  */
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { dustData } from "./data/loadDust2";
+import { getDustData } from "./data/loadDust2";
 import { Header } from "./components/Header";
 import { Home } from "./components/Home";
 import { ScenarioDetail } from "./components/ScenarioDetail";
@@ -20,6 +20,9 @@ import type { CopyResult } from "./components/CopyButton";
 import { T } from "./theme";
 
 export default function App() {
+  // getDustData() is safe here — main.tsx calls loadDustData() first
+  // and only renders App on success, so this never throws in production.
+  const dustData = getDustData();
   const [state, dispatch] = useReducer(uiReducer, initialUiState);
   const [toast, setToast] = useState<ToastState>(null);
   const toastIdRef = useRef(0);
@@ -105,6 +108,10 @@ export default function App() {
     const onPop = (e: PopStateEvent) => {
       const popped = e.state as { view?: string; tab?: import("./reducer").HomeTab } | null;
       if (popped && popped.view === "home" && popped.tab) {
+        // GO_HOME ensures we leave any non-home view first (scenario/
+        // lineup); when already on home it's a no-op. Then SELECT_TAB
+        // restores the correct tab (audit H-1 tab-history).
+        dispatch({ type: "GO_HOME" });
         dispatch({ type: "SELECT_TAB", tab: popped.tab });
         return;
       }

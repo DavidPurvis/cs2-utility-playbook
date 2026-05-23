@@ -10,7 +10,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Home } from "../Home";
-import { dustData } from "../../data/loadDust2";
+import { getDustData } from "../../data/loadDust2";
+const dustData = getDustData();
 
 describe("Home view", () => {
   const noop = () => {};
