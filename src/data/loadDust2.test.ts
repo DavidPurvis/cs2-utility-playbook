@@ -83,4 +83,137 @@ describe("assertDustData", () => {
     bundle.scenarios = [];
     expect(() => assertDustData(bundle)).not.toThrow();
   });
+
+  // ── Config sanity ───────────────────────────────────────────────
+  it("throws when config.scale is 0", () => {
+    const bad = structuredClone(validBase);
+    (bad.config as Record<string, unknown>).scale = 0;
+    expect(() => assertDustData(bad)).toThrow(/scale must be > 0/);
+  });
+
+  it("throws when config.sourceResolution is NaN", () => {
+    const bad = structuredClone(validBase);
+    (bad.config as Record<string, unknown>).sourceResolution = NaN;
+    expect(() => assertDustData(bad)).toThrow(/sourceResolution must be a finite number/);
+  });
+
+  // ── Duplicate IDs ───────────────────────────────────────────────
+  it("throws on duplicate lineup id", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups.push({ ...bad.lineups[0]! });
+    expect(() => assertDustData(bad)).toThrow(/duplicate lineup id.*xbox_smoke/);
+  });
+
+  it("throws on duplicate spawn id", () => {
+    const bad = structuredClone(validBase);
+    bad.spawns.push({ ...bad.spawns[0]! });
+    expect(() => assertDustData(bad)).toThrow(/duplicate spawn id.*dust2-t-s1/);
+  });
+
+  it("throws on duplicate scenario id", () => {
+    const bad = structuredClone(validBase);
+    bad.scenarios.push(structuredClone(bad.scenarios[0]!));
+    expect(() => assertDustData(bad)).toThrow(/duplicate scenario id.*test/);
+  });
+
+  // ── Empty required strings ──────────────────────────────────────
+  it("throws when lineup name is empty", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups[0]!.name = "";
+    expect(() => assertDustData(bad)).toThrow(/non-empty name/);
+  });
+
+  it("throws when scenario name is empty", () => {
+    const bad = structuredClone(validBase);
+    bad.scenarios[0]!.name = "";
+    expect(() => assertDustData(bad)).toThrow(/non-empty name/);
+  });
+
+  // ── Ref integrity: startingSpawnId ──────────────────────────────
+  it("throws when startingSpawnId references unknown spawn", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    const scenario = (bad.scenarios as Array<Record<string, unknown>>)[0]!;
+    const player = (scenario.players as Array<Record<string, unknown>>)[0]!;
+    player.startingSpawnId = "ghost-spawn";
+    expect(() => assertDustData(bad)).toThrow(/unknown spawn.*ghost-spawn/);
+  });
+
+  // ── Ref integrity: roleOrder ────────────────────────────────────
+  it("throws when roleOrder contains a role not in players", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    const scenario = (bad.scenarios as Array<Record<string, unknown>>)[0]!;
+    scenario.roleOrder = ["a-man", "lurker"];
+    expect(() => assertDustData(bad)).toThrow(/roleOrder contains.*lurker.*not a player role/);
+  });
+
+  // ── Action order uniqueness ─────────────────────────────────────
+  it("throws on duplicate action order within a player", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups.push({
+      ...bad.lineups[0]!,
+      id: "second_lineup",
+      name: "Second lineup",
+    });
+    bad.scenarios[0]!.players[0]!.actions.push(
+      { order: 1, lineupId: "second_lineup" }
+    );
+    expect(() => assertDustData(bad)).toThrow(/duplicate action order 1/);
+  });
+
+  // ── SpawnRush ref integrity ─────────────────────────────────────
+  it("throws when spawnRush.fromSpawnId references unknown spawn", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    bad.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-1",
+          fromSpawnId: "nonexistent-spawn",
+          contestPath: "A long",
+          beatsSpawnIds: [],
+        },
+      ],
+    };
+    expect(() => assertDustData(bad)).toThrow(/fromSpawnId.*nonexistent-spawn/);
+  });
+
+  it("throws when spawnRush.beatsSpawnIds references unknown spawn", () => {
+    const bad = structuredClone(validBase) as Record<string, unknown>;
+    bad.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-1",
+          fromSpawnId: "dust2-t-s1",
+          contestPath: "A long",
+          beatsSpawnIds: ["ghost-ct-spawn"],
+        },
+      ],
+    };
+    expect(() => assertDustData(bad)).toThrow(/beatsSpawnIds.*ghost-ct-spawn/);
+  });
+
+  // ── Valid bundle with all new fields ─────────────────────────────
+  it("accepts a fully valid bundle with roleOrder, startingSpawnId, and defaults", () => {
+    const full = structuredClone(validBase) as Record<string, unknown>;
+    const scenario = (full.scenarios as Array<Record<string, unknown>>)[0]!;
+    scenario.roleOrder = ["a-man", "b-man"];
+    const player = (scenario.players as Array<Record<string, unknown>>)[0]!;
+    player.startingSpawnId = "dust2-t-s1";
+    full.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-1",
+          fromSpawnId: "dust2-t-s1",
+          contestPath: "A long",
+          beatsSpawnIds: [],
+        },
+      ],
+    };
+    expect(() => assertDustData(full)).not.toThrow();
+  });
 });

@@ -19,7 +19,10 @@
  */
 
 import raw from "./dust2.json";
-import type { CtPosition, DustData, Lineup, Scenario, ScenarioPlayer } from "../types";
+import type {
+  CtPosition, DustData, DustDefaults, Lineup, MapConfig,
+  Scenario, ScenarioPlayer, Spawn, SpawnRush,
+} from "../types";
 
 export function assertDustData(d: unknown): asserts d is DustData {
   if (typeof d !== "object" || d === null) {
@@ -27,46 +30,121 @@ export function assertDustData(d: unknown): asserts d is DustData {
   }
   const o = d as Record<string, unknown>;
 
+  // ── 1. Top-level shape ────────────────────────────────────────────
   if (typeof o.config !== "object" || o.config === null) {
     throw new Error("dust2.json: config missing or not an object");
   }
   if (!Array.isArray(o.spawns)) throw new Error("dust2.json: spawns must be array");
   if (!Array.isArray(o.lineups)) throw new Error("dust2.json: lineups must be array");
   if (!Array.isArray(o.scenarios)) throw new Error("dust2.json: scenarios must be array");
-  // ctPositions is optional — older data files won't have it. Treat as empty.
   if (o.ctPositions !== undefined && !Array.isArray(o.ctPositions)) {
     throw new Error("dust2.json: ctPositions must be array if present");
   }
 
-  // Build a lookup of known lineup ids, and assert each lineup has at
-  // least one resolvable landing coordinate.
+  // ── 2. Config sanity ──────────────────────────────────────────────
+  const cfg = o.config as MapConfig;
+  for (const key of ["pos_x", "pos_y", "scale", "sourceResolution"] as const) {
+    const v = cfg[key];
+    if (typeof v !== "number" || !Number.isFinite(v)) {
+      throw new Error(`dust2.json: config.${key} must be a finite number (got ${v})`);
+    }
+  }
+  if (cfg.scale <= 0) {
+    throw new Error(`dust2.json: config.scale must be > 0 (got ${cfg.scale})`);
+  }
+  if (cfg.sourceResolution <= 0) {
+    throw new Error(`dust2.json: config.sourceResolution must be > 0 (got ${cfg.sourceResolution})`);
+  }
+
+  // ── 3. Spawns: IDs + labels ───────────────────────────────────────
+  const spawnIds = new Set<string>();
+  for (const s of o.spawns as Spawn[]) {
+    if (typeof s.id !== "string" || s.id.length === 0) {
+      throw new Error("dust2.json: every spawn must have a non-empty string id");
+    }
+    if (spawnIds.has(s.id)) {
+      throw new Error(`dust2.json: duplicate spawn id '${s.id}'`);
+    }
+    spawnIds.add(s.id);
+    if (typeof s.label !== "string" || s.label.length === 0) {
+      throw new Error(`dust2.json: spawn '${s.id}' must have a non-empty label`);
+    }
+  }
+
+  // ── 4. Lineups: IDs + names + landing discriminator ───────────────
   const lineupIds = new Set<string>();
   for (const l of o.lineups as Lineup[]) {
-    if (typeof l.id !== "string") {
-      throw new Error("dust2.json: every lineup must have a string id");
+    if (typeof l.id !== "string" || l.id.length === 0) {
+      throw new Error("dust2.json: every lineup must have a non-empty string id");
+    }
+    if (lineupIds.has(l.id)) {
+      throw new Error(`dust2.json: duplicate lineup id '${l.id}'`);
     }
     lineupIds.add(l.id);
+    if (typeof l.name !== "string" || l.name.length === 0) {
+      throw new Error(`dust2.json: lineup '${l.id}' must have a non-empty name`);
+    }
     if (!l.landingAt || (!l.landingAt.world && !l.landingAt.percent)) {
       throw new Error(
-        `dust2.json: lineup ${l.id} missing landingAt.world or landingAt.percent`
+        `dust2.json: lineup '${l.id}' missing landingAt.world or landingAt.percent`
       );
     }
   }
 
-  // Scenario ref integrity: every action.lineupId must resolve.
+  // ── 5. Scenarios: IDs + names + ref integrity + action ordering ───
+  const scenarioIds = new Set<string>();
   for (const s of o.scenarios as Scenario[]) {
+    if (typeof s.id !== "string" || s.id.length === 0) {
+      throw new Error("dust2.json: every scenario must have a non-empty string id");
+    }
+    if (scenarioIds.has(s.id)) {
+      throw new Error(`dust2.json: duplicate scenario id '${s.id}'`);
+    }
+    scenarioIds.add(s.id);
+    if (typeof s.name !== "string" || s.name.length === 0) {
+      throw new Error(`dust2.json: scenario '${s.id}' must have a non-empty name`);
+    }
+
+    // roleOrder consistency: every entry must match a player role
+    if (s.roleOrder) {
+      const playerRoles = new Set(s.players.map((p) => p.role));
+      for (const role of s.roleOrder) {
+        if (!playerRoles.has(role)) {
+          throw new Error(
+            `dust2.json: scenario '${s.id}' roleOrder contains '${role}' which is not a player role`
+          );
+        }
+      }
+    }
+
     for (const p of s.players as ScenarioPlayer[]) {
+      // startingSpawnId ref integrity
+      if (p.startingSpawnId && !spawnIds.has(p.startingSpawnId)) {
+        throw new Error(
+          `dust2.json: scenario '${s.id}', player '${p.role}' references unknown spawn '${p.startingSpawnId}'`
+        );
+      }
+
+      // Action lineupId ref integrity
+      const actionOrders = new Set<number>();
       for (const a of p.actions) {
         if (!lineupIds.has(a.lineupId)) {
           throw new Error(
             `dust2.json: Scenario ${s.number} ('${s.name}'), player '${p.role}' references unknown lineup '${a.lineupId}'`
           );
         }
+        // Action order uniqueness within a player
+        if (actionOrders.has(a.order)) {
+          throw new Error(
+            `dust2.json: scenario '${s.id}', player '${p.role}' has duplicate action order ${a.order}`
+          );
+        }
+        actionOrders.add(a.order);
       }
     }
   }
 
-  // CT position ref integrity: every recommendedLineupId must resolve.
+  // ── 6. CT position ref integrity ──────────────────────────────────
   if (Array.isArray(o.ctPositions)) {
     for (const pos of o.ctPositions as CtPosition[]) {
       if (typeof pos.id !== "string" || typeof pos.label !== "string") {
@@ -77,6 +155,34 @@ export function assertDustData(d: unknown): asserts d is DustData {
           throw new Error(
             `dust2.json: CT position '${pos.id}' references unknown lineup '${lineupId}'`
           );
+        }
+      }
+    }
+  }
+
+  // ── 7. SpawnRush ref integrity ────────────────────────────────────
+  const defaults = o.defaults as DustDefaults | undefined;
+  if (defaults?.spawnRushes) {
+    for (const rush of defaults.spawnRushes as SpawnRush[]) {
+      if (!spawnIds.has(rush.fromSpawnId)) {
+        throw new Error(
+          `dust2.json: spawnRush '${rush.id}' references unknown fromSpawnId '${rush.fromSpawnId}'`
+        );
+      }
+      for (const sid of rush.beatsSpawnIds) {
+        if (!spawnIds.has(sid)) {
+          throw new Error(
+            `dust2.json: spawnRush '${rush.id}' beatsSpawnIds references unknown spawn '${sid}'`
+          );
+        }
+      }
+      if (rush.losesToSpawnIds) {
+        for (const sid of rush.losesToSpawnIds) {
+          if (!spawnIds.has(sid)) {
+            throw new Error(
+              `dust2.json: spawnRush '${rush.id}' losesToSpawnIds references unknown spawn '${sid}'`
+            );
+          }
         }
       }
     }
