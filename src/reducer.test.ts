@@ -216,7 +216,7 @@ describe("uiReducer", () => {
       s = uiReducer(s, { type: "SELECT_SCENARIO", scenarioId: "x" });
       s = uiReducer(s, { type: "SELECT_LINEUP", lineupId: "xbox_smoke" });
       s = uiReducer(s, { type: "BACK" });
-      s = uiReducer(s, { type: "GO_HOME" });
+      uiReducer(s, { type: "GO_HOME" });
       expect(spy).not.toHaveBeenCalled();
       spy.mockRestore();
     });

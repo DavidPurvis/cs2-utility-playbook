@@ -8,7 +8,7 @@
  * lineup appears in exactly one cluster).
  */
 import { describe, expect, it } from "vitest";
-import { clusterThrowFroms } from "../MapTab";
+import { clusterThrowFroms } from "../../../utils/clusterThrowFroms";
 import type { Lineup } from "../../../types";
 
 /** Minimal lineup factory — only fields used by clusterThrowFroms. */

@@ -15,15 +15,9 @@
 import { useMemo } from "react";
 import { Radar } from "../Radar";
 import { worldToPercent } from "../../utils/coordinates";
-import { worldDistSq } from "../../utils/bounds";
+import { clusterThrowFroms } from "../../utils/clusterThrowFroms";
 import { T } from "../../theme";
-import type { DustData, Lineup, UtilityType, WorldPoint } from "../../types";
-
-// Lineups whose throwFrom is within ~150 world units of each other are
-// rendered as a single marker. Roughly one player-width radius —
-// captures lineups thrown from the "same spot" with minor variation
-// (e.g. left-foot vs right-foot of a corner).
-const MERGE_RADIUS_SQ = 150 * 150;
+import type { DustData, Lineup, UtilityType } from "../../types";
 
 const UTIL_COLOR: Record<UtilityType, string> = {
   smoke: T.utilSmoke,
@@ -31,39 +25,6 @@ const UTIL_COLOR: Record<UtilityType, string> = {
   molotov: T.utilMolly,
   he: T.utilHE,
 };
-
-export interface ThrowFromCluster {
-  key: string;             // stable id (sorted lineup ids joined)
-  representative: WorldPoint;
-  lineups: Lineup[];
-}
-
-export function clusterThrowFroms(lineups: Lineup[]): ThrowFromCluster[] {
-  const clusters: ThrowFromCluster[] = [];
-  for (const l of lineups) {
-    const existing = clusters.find((c) =>
-      worldDistSq(c.representative, l.throwFrom.world) <= MERGE_RADIUS_SQ
-    );
-    if (existing) {
-      existing.lineups.push(l);
-    } else {
-      clusters.push({
-        key: l.id,
-        representative: l.throwFrom.world,
-        lineups: [l],
-      });
-    }
-  }
-  // Recompute keys as sorted-lineup-id-list so they're stable across
-  // permutations of the input.
-  return clusters.map((c) => ({
-    ...c,
-    key: c.lineups
-      .map((l) => l.id)
-      .sort()
-      .join("|"),
-  }));
-}
 
 export function MapTab({
   data,
