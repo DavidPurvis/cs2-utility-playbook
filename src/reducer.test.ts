@@ -6,7 +6,7 @@
  * documented transitions and any "back" behavior. They're written
  * before the implementation per the v6 TDD mandate.
  */
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { uiReducer, initialUiState, type UiAction, type UiState } from "./reducer";
 
 describe("uiReducer", () => {
@@ -171,9 +171,54 @@ describe("uiReducer", () => {
 
   // Defensive: unknown actions must not be reachable in strict TS but
   // we still want the reducer to be total — fall through to current state.
+  // The `as unknown as UiAction` cast intentionally bypasses the
+  // compile-time exhaustiveness guard (the `never` check in default case).
   it("returns the current state for unhandled actions", () => {
     const s: UiState = { ...initialUiState };
     const next = uiReducer(s, { type: "__UNKNOWN__" } as unknown as UiAction);
     expect(next).toBe(s);
+  });
+
+  // ── Dev-mode invariant assertions ─────────────────────────────────
+  describe("devAssertInvariants", () => {
+    it("fires console.error for impossible state: view=scenario + null scenarioId", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      // Construct an impossible state and run any dispatch through it
+      const impossible: UiState = {
+        ...initialUiState,
+        view: "scenario",
+        activeScenarioId: null, // impossible: scenario view without an ID
+      };
+      uiReducer(impossible, { type: "SELECT_TAB", tab: "defaults" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("view=scenario but activeScenarioId is null")
+      );
+      spy.mockRestore();
+    });
+
+    it("fires console.error for impossible state: view=home + stale scenarioId", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const impossible: UiState = {
+        ...initialUiState,
+        view: "home",
+        activeScenarioId: "stale_id", // should be null in home view
+      };
+      uiReducer(impossible, { type: "SELECT_TAB", tab: "map" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("view=home but activeScenarioId still set")
+      );
+      spy.mockRestore();
+    });
+
+    it("does NOT fire console.error for valid state transitions", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+      let s: UiState = { ...initialUiState };
+      s = uiReducer(s, { type: "SELECT_SCENARIO", scenarioId: "x" });
+      s = uiReducer(s, { type: "SELECT_LINEUP", lineupId: "xbox_smoke" });
+      s = uiReducer(s, { type: "BACK" });
+      s = uiReducer(s, { type: "GO_HOME" });
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
   });
 });
