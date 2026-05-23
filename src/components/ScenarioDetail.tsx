@@ -12,6 +12,7 @@
  * state nudges the user to populate via `npm run new-scenario`.
  */
 import { useMemo } from "react";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { Radar } from "./Radar";
 import { worldToPercent } from "../utils/coordinates";
 import { T } from "../theme";
@@ -122,149 +123,153 @@ export function ScenarioDetail({
       )}
 
       <div className="app-grid">
-        <div>
-          <Radar
-            config={config}
-            ariaLabel={`Scenario ${scenario.number} arcs on Dust 2`}
-          >
-            {() => (
-              <g>
-                {orderedPlayers.flatMap((p) => {
-                  const dim = activeRoleId && p.role !== activeRoleId ? 0.18 : 0.9;
-                  // Player's spawn dot (visual anchor)
-                  const spawnNode = p.startingSpawnId
-                    ? spawnById.get(p.startingSpawnId)
-                    : null;
-                  const spawnPct = spawnNode
-                    ? worldToPercent(spawnNode.world.x, spawnNode.world.y, config)
-                    : null;
+        <ErrorBoundary label="Scenario radar">
+          <div>
+            <Radar
+              config={config}
+              ariaLabel={`Scenario ${scenario.number} arcs on Dust 2`}
+            >
+              {() => (
+                <g>
+                  {orderedPlayers.flatMap((p) => {
+                    const dim = activeRoleId && p.role !== activeRoleId ? 0.18 : 0.9;
+                    // Player's spawn dot (visual anchor)
+                    const spawnNode = p.startingSpawnId
+                      ? spawnById.get(p.startingSpawnId)
+                      : null;
+                    const spawnPct = spawnNode
+                      ? worldToPercent(spawnNode.world.x, spawnNode.world.y, config)
+                      : null;
 
-                  const arcs = p.actions.map((a) => {
-                    const l = lineupById.get(a.lineupId);
-                    if (!l) return null;
-                    const o = worldToPercent(l.throwFrom.world.x, l.throwFrom.world.y, config);
-                    const land = l.landingAt.world
-                      ? worldToPercent(l.landingAt.world.x, l.landingAt.world.y, config)
-                      : l.landingAt.percent ?? null;
-                    if (!o || !land) return null;
-                    return (
-                      <g key={`${p.role}-${a.order}`} opacity={dim}>
-                        <line
-                          x1={o.x}
-                          y1={o.y}
-                          x2={land.x}
-                          y2={land.y}
-                          stroke={p.color}
-                          strokeWidth={0.5}
-                          strokeDasharray="1.5 1"
-                        />
-                        <circle cx={o.x} cy={o.y} r={1.5} fill="none" stroke={p.color} strokeWidth={0.5} />
-                        <circle cx={land.x} cy={land.y} r={2.1} fill={UTIL_COLOR[l.type]} stroke="#FFFFFF" strokeWidth={0.3} />
-                      </g>
-                    );
-                  });
+                    const arcs = p.actions.map((a) => {
+                      const l = lineupById.get(a.lineupId);
+                      if (!l) return null;
+                      const o = worldToPercent(l.throwFrom.world.x, l.throwFrom.world.y, config);
+                      const land = l.landingAt.world
+                        ? worldToPercent(l.landingAt.world.x, l.landingAt.world.y, config)
+                        : l.landingAt.percent ?? null;
+                      if (!o || !land) return null;
+                      return (
+                        <g key={`${p.role}-${a.order}`} opacity={dim}>
+                          <line
+                            x1={o.x}
+                            y1={o.y}
+                            x2={land.x}
+                            y2={land.y}
+                            stroke={p.color}
+                            strokeWidth={0.5}
+                            strokeDasharray="1.5 1"
+                          />
+                          <circle cx={o.x} cy={o.y} r={1.5} fill="none" stroke={p.color} strokeWidth={0.5} />
+                          <circle cx={land.x} cy={land.y} r={2.1} fill={UTIL_COLOR[l.type]} stroke="#FFFFFF" strokeWidth={0.3} />
+                        </g>
+                      );
+                    });
 
-                  return [
-                    spawnPct && (
-                      <g key={`${p.role}-spawn`} opacity={dim}>
-                        <circle cx={spawnPct.x} cy={spawnPct.y} r={3.4} fill="none" stroke={p.color} strokeWidth={0.6} />
-                        <circle cx={spawnPct.x} cy={spawnPct.y} r={2.2} fill={p.color} />
-                      </g>
-                    ),
-                    ...arcs,
-                  ].filter(Boolean);
-                })}
-              </g>
-            )}
-          </Radar>
-        </div>
-
-        <aside style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div role="tablist" aria-label="Player roles" style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-            {orderedPlayers.map((p) => {
-              const active = p.role === activeRoleId;
-              return (
-                <button
-                  key={p.role}
-                  role="tab"
-                  type="button"
-                  aria-selected={active}
-                  onClick={() => onSelectRole(p.role)}
-                  style={{
-                    background: active ? p.color : T.bgPanel,
-                    color: active ? "#FFFFFF" : T.textPri,
-                    border: `1px solid ${active ? p.color : T.border}`,
-                    borderRadius: T.radiusSm,
-                    padding: "6px 12px",
-                    fontSize: 12,
-                    fontFamily: T.fontUI,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  <span
-                    aria-hidden
-                    style={{
-                      display: "inline-block",
-                      width: 8,
-                      height: 8,
-                      borderRadius: 999,
-                      background: p.color,
-                      marginRight: 6,
-                      border: active ? "1px solid #FFFFFF" : "none",
-                    }}
-                  />
-                  {p.label}
-                </button>
-              );
-            })}
+                    return [
+                      spawnPct && (
+                        <g key={`${p.role}-spawn`} opacity={dim}>
+                          <circle cx={spawnPct.x} cy={spawnPct.y} r={3.4} fill="none" stroke={p.color} strokeWidth={0.6} />
+                          <circle cx={spawnPct.x} cy={spawnPct.y} r={2.2} fill={p.color} />
+                        </g>
+                      ),
+                      ...arcs,
+                    ].filter(Boolean);
+                  })}
+                </g>
+              )}
+            </Radar>
           </div>
+        </ErrorBoundary>
 
-          {!activePlayer ? (
-            <div
-              style={{
-                padding: 16,
-                background: T.bgPanel,
-                border: `1px dashed ${T.border}`,
-                borderRadius: T.radius,
-                color: T.textDim,
-                fontSize: 13,
-                lineHeight: 1.5,
-                textAlign: "center",
-              }}
-            >
-              Pick a role above to see that player's chronological lineups.
+        <ErrorBoundary label="Player actions">
+          <aside style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div role="tablist" aria-label="Player roles" style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {orderedPlayers.map((p) => {
+                const active = p.role === activeRoleId;
+                return (
+                  <button
+                    key={p.role}
+                    role="tab"
+                    type="button"
+                    aria-selected={active}
+                    onClick={() => onSelectRole(p.role)}
+                    style={{
+                      background: active ? p.color : T.bgPanel,
+                      color: active ? "#FFFFFF" : T.textPri,
+                      border: `1px solid ${active ? p.color : T.border}`,
+                      borderRadius: T.radiusSm,
+                      padding: "6px 12px",
+                      fontSize: 12,
+                      fontFamily: T.fontUI,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <span
+                      aria-hidden
+                      style={{
+                        display: "inline-block",
+                        width: 8,
+                        height: 8,
+                        borderRadius: 999,
+                        background: p.color,
+                        marginRight: 6,
+                        border: active ? "1px solid #FFFFFF" : "none",
+                      }}
+                    />
+                    {p.label}
+                  </button>
+                );
+              })}
             </div>
-          ) : sortedActions.length === 0 ? (
-            <div
-              style={{
-                padding: 16,
-                background: T.bgPanel,
-                border: `1px dashed ${T.border}`,
-                borderRadius: T.radius,
-                color: T.textDim,
-                fontSize: 12,
-                lineHeight: 1.5,
-              }}
-            >
-              <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no lineups
-              assigned yet. This role needs utility lineups added to complete the
-              execute.
-            </div>
-          ) : (
-            <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-              {sortedActions.map((a) => (
-                <StepRow
-                  key={a.order}
-                  action={a}
-                  lineup={lineupById.get(a.lineupId) ?? null}
-                  color={activePlayer.color}
-                  onSelect={() => onSelectLineup(a.lineupId)}
-                />
-              ))}
-            </ol>
-          )}
-        </aside>
+
+            {!activePlayer ? (
+              <div
+                style={{
+                  padding: 16,
+                  background: T.bgPanel,
+                  border: `1px dashed ${T.border}`,
+                  borderRadius: T.radius,
+                  color: T.textDim,
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  textAlign: "center",
+                }}
+              >
+                Pick a role above to see that player's chronological lineups.
+              </div>
+            ) : sortedActions.length === 0 ? (
+              <div
+                style={{
+                  padding: 16,
+                  background: T.bgPanel,
+                  border: `1px dashed ${T.border}`,
+                  borderRadius: T.radius,
+                  color: T.textDim,
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                }}
+              >
+                <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no lineups
+                assigned yet. This role needs utility lineups added to complete the
+                execute.
+              </div>
+            ) : (
+              <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+                {sortedActions.map((a) => (
+                  <StepRow
+                    key={a.order}
+                    action={a}
+                    lineup={lineupById.get(a.lineupId) ?? null}
+                    color={activePlayer.color}
+                    onSelect={() => onSelectLineup(a.lineupId)}
+                  />
+                ))}
+              </ol>
+            )}
+          </aside>
+        </ErrorBoundary>
       </div>
     </div>
   );

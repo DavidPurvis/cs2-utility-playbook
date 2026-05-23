@@ -18,6 +18,7 @@
  * cover` so a mismatched-size screenshot doesn't ragger the layout.
  */
 import { useMemo, type ReactNode } from "react";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { Radar } from "./Radar";
 import { CopyButton } from "./CopyButton";
 import { worldToPercent } from "../utils/coordinates";
@@ -102,10 +103,18 @@ export function LineupDetail({ lineup, config, onBack, onCopy }: LineupDetailPro
       </div>
 
       <div className="walkthrough-grid">
-        <CardPosition lineup={lineup} config={config} setposString={setposString} onCopy={onCopy} />
-        <CardAim lineup={lineup} />
-        <CardThrow lineup={lineup} steamUrl={steamUrl} setposString={setposString} onCopy={onCopy} />
-        <CardResult lineup={lineup} config={config} />
+        <ErrorBoundary label="Position card">
+          <CardPosition lineup={lineup} config={config} setposString={setposString} onCopy={onCopy} />
+        </ErrorBoundary>
+        <ErrorBoundary label="Aim card">
+          <CardAim lineup={lineup} />
+        </ErrorBoundary>
+        <ErrorBoundary label="Throw card">
+          <CardThrow lineup={lineup} steamUrl={steamUrl} setposString={setposString} onCopy={onCopy} />
+        </ErrorBoundary>
+        <ErrorBoundary label="Result card">
+          <CardResult lineup={lineup} config={config} />
+        </ErrorBoundary>
       </div>
 
       {lineup.description && (

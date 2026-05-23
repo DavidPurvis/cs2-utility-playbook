@@ -3,6 +3,8 @@ import { T } from "../theme";
 
 interface Props {
   children: ReactNode;
+  /** Optional label shown in the fallback: "Something broke in {label}." */
+  label?: string;
 }
 
 interface State {
@@ -41,7 +43,7 @@ export class ErrorBoundary extends Component<Props, State> {
           fontFamily: T.fontUI,
         }}
       >
-        <strong>Something broke in this section.</strong>
+        <strong>Something broke{this.props.label ? ` in ${this.props.label}` : ""}.</strong>
         {import.meta.env.DEV ? (
           <div style={{ marginTop: 4, color: T.textSec, fontSize: 11 }}>
             {String(this.state.error?.message ?? this.state.error)}
