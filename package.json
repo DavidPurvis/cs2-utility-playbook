@@ -22,7 +22,7 @@
     "test:e2e:update": "playwright test --update-snapshots",
     "new-lineup": "node scripts/new-lineup.mjs",
     "new-scenario": "node scripts/new-scenario.mjs",
-    "validate": "npm run typecheck && npm run lint && npm test && npm run test:scripts && vite build"
+    "validate": "npm run typecheck && npm run lint && npm test && npm run test:scripts && npm run test:e2e && vite build"
   },
   "dependencies": {
     "react": "^18.3.1",
