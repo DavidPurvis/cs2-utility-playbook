@@ -4,9 +4,21 @@
  * Tab order matters — the owner reads left-to-right and expects the
  * primary activity (Scenarios) in a fixed spot. Tab labels are explicit
  * verbs / nouns: no clever wording, no icons-without-text. Predictable.
+ *
+ * Implements the WAI-ARIA Tabs pattern (audit H-5):
+ *  - role="tablist" on the container (was already present)
+ *  - role="tab" + aria-selected on each button (was already present)
+ *  - aria-controls pointing to the panel id (NEW — see Home.tsx wraps
+ *    its content in role="tabpanel" with matching id)
+ *  - tabIndex management — only the active tab participates in TAB
+ *    nav; inactive tabs are -1 (NEW)
+ *  - keyboard navigation — ArrowLeft / ArrowRight cycle, Home / End
+ *    jump to first / last (NEW)
  */
+import { useRef, type KeyboardEvent } from "react";
 import { T } from "../theme";
 import type { HomeTab } from "../reducer";
+import { tabButtonId, tabPanelId } from "./tabIds";
 
 interface TabDef {
   id: HomeTab;
@@ -27,6 +39,29 @@ export interface TabBarProps {
 }
 
 export function TabBar({ active, onChange }: TabBarProps) {
+  // One ref slot per tab so the keyboard handler can imperatively
+  // focus the newly-active tab after an arrow-key dispatch.
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  function handleKeyDown(e: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const nextIdx =
+      e.key === "ArrowRight" || e.key === "Right"
+        ? (index + 1) % TABS.length
+        : e.key === "ArrowLeft" || e.key === "Left"
+          ? (index - 1 + TABS.length) % TABS.length
+          : e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? TABS.length - 1
+              : -1;
+    if (nextIdx < 0) return;
+    e.preventDefault();
+    onChange(TABS[nextIdx]!.id);
+    // .focus() works regardless of tabIndex; the tabIndex change is
+    // only for TAB-key navigation in/out of the tablist.
+    tabRefs.current[nextIdx]?.focus();
+  }
+
   return (
     <nav
       role="tablist"
@@ -42,15 +77,22 @@ export function TabBar({ active, onChange }: TabBarProps) {
         background: T.bg,
       }}
     >
-      {TABS.map((tab) => {
+      {TABS.map((tab, index) => {
         const isActive = active === tab.id;
         return (
           <button
             key={tab.id}
+            ref={(el) => {
+              tabRefs.current[index] = el;
+            }}
+            id={tabButtonId(tab.id)}
             role="tab"
             aria-selected={isActive}
+            aria-controls={tabPanelId(tab.id)}
+            tabIndex={isActive ? 0 : -1}
             type="button"
             onClick={() => onChange(tab.id)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             style={{
               display: "flex",
               flexDirection: "column",

@@ -125,9 +125,11 @@ describe("uiReducer", () => {
     expect(next.pickedSpawnId).toBeNull();
   });
 
-  // C-3 fix: activeThrowFromKey must be cleared on all navigation actions
-  // so the Map tab doesn't show stale highlighted markers on return.
-  describe("C-3: clears activeThrowFromKey on navigation", () => {
+  // C-3 fix: activeThrowFromKey must be cleared on navigation actions
+  // that return to home (where Map tab renders). Intermediate navigation
+  // (lineup → scenario) preserves it since it doesn't affect anything
+  // until the user returns to Map.
+  describe("C-3: activeThrowFromKey lifecycle on navigation", () => {
     const withThrowFrom: UiState = {
       ...initialUiState,
       activeTab: "map",
@@ -145,10 +147,21 @@ describe("uiReducer", () => {
       expect(next.activeThrowFromKey).toBeNull();
     });
 
-    it("BACK from lineup clears activeThrowFromKey", () => {
+    it("BACK from lineup → home clears activeThrowFromKey", () => {
+      // CT-position-guide path: user opened lineup without a scenario.
+      const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke" };
+      const next = uiReducer(s, { type: "BACK" });
+      expect(next.view).toBe("home");
+      expect(next.activeThrowFromKey).toBeNull();
+    });
+
+    it("BACK from lineup → scenario preserves activeThrowFromKey", () => {
+      // User came through a scenario. They stay in scenario detail —
+      // Map tab doesn't render here, so the marker is harmless to keep.
       const s = { ...withThrowFrom, view: "lineup" as const, activeLineupId: "xbox_smoke", activeScenarioId: "x" };
       const next = uiReducer(s, { type: "BACK" });
-      expect(next.activeThrowFromKey).toBeNull();
+      expect(next.view).toBe("scenario");
+      expect(next.activeThrowFromKey).toBe("xbox_smoke_group");
     });
 
     it("BACK from scenario clears activeThrowFromKey", () => {
@@ -163,10 +176,47 @@ describe("uiReducer", () => {
       expect(next.activeThrowFromKey).toBeNull();
     });
 
-    it("SELECT_TAB does NOT clear activeThrowFromKey (Map state persists across tabs)", () => {
+    it("SELECT_TAB clears activeThrowFromKey (Map-tab marker doesn't persist across tabs)", () => {
       const next = uiReducer(withThrowFrom, { type: "SELECT_TAB", tab: "scenarios" });
-      expect(next.activeThrowFromKey).toBe("xbox_smoke_group");
+      expect(next.activeThrowFromKey).toBeNull();
     });
+  });
+
+  // ── SELECT_TAB ─────────────────────────────────────────────────────
+  // Tab switching must change only `activeTab` + clear the Map-tab
+  // marker; never change `view` or touch the scenario/role/lineup stack.
+
+  it("SELECT_TAB updates activeTab and leaves view + scenario state untouched", () => {
+    const s: UiState = { ...initialUiState };
+    const next = uiReducer(s, { type: "SELECT_TAB", tab: "map" });
+    expect(next.activeTab).toBe("map");
+    expect(next.view).toBe("home");
+    expect(next.activeScenarioId).toBeNull();
+    expect(next.activeRoleId).toBeNull();
+    expect(next.activeLineupId).toBeNull();
+  });
+
+  it("SELECT_TAB preserves pickedSpawnId (visual reference is orthogonal to tab state)", () => {
+    const s: UiState = { ...initialUiState, pickedSpawnId: "dust2-t-s6" };
+    const next = uiReducer(s, { type: "SELECT_TAB", tab: "defaults" });
+    expect(next.pickedSpawnId).toBe("dust2-t-s6");
+  });
+
+  // ── SELECT_THROW_FROM ──────────────────────────────────────────────
+  // Sets/clears the Map-tab marker without affecting navigation state.
+
+  it("SELECT_THROW_FROM sets activeThrowFromKey without changing view or tab", () => {
+    const s: UiState = { ...initialUiState, activeTab: "map" };
+    const next = uiReducer(s, { type: "SELECT_THROW_FROM", key: "xbox_smoke|long_flash" });
+    expect(next.activeThrowFromKey).toBe("xbox_smoke|long_flash");
+    expect(next.view).toBe("home");
+    expect(next.activeTab).toBe("map");
+  });
+
+  it("SELECT_THROW_FROM with key=null clears the active marker", () => {
+    const s: UiState = { ...initialUiState, activeThrowFromKey: "xbox_smoke" };
+    const next = uiReducer(s, { type: "SELECT_THROW_FROM", key: null });
+    expect(next.activeThrowFromKey).toBeNull();
   });
 
   // Defensive: unknown actions must not be reachable in strict TS but

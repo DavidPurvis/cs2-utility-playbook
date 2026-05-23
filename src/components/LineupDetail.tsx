@@ -35,12 +35,8 @@ const SLOT_LABEL: Record<"position" | "aim" | "throw" | "result", string> = {
   result: "4. Result",
 };
 
-const UTIL_COLOR: Record<Lineup["type"], string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 export interface LineupDetailProps {
   lineup: Lineup;

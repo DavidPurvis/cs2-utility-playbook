@@ -73,4 +73,104 @@ test.describe("Home four-tab navigation", () => {
     await expect(defaults).toHaveAttribute("aria-selected", "true");
     await expect(scenarios).toHaveAttribute("aria-selected", "false");
   });
+
+  // ── WAI-ARIA Tabs pattern (audit H-5, fix PR-2) ────────────────────
+
+  test("tab buttons link to a single tabpanel via aria-controls / id", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    const scenariosTab = homeTabList.getByRole("tab", { name: /Scenarios/i });
+    const controlsId = await scenariosTab.getAttribute("aria-controls");
+    expect(controlsId).toBe("home-tabpanel-scenarios");
+    // The panel exists in the DOM and is labelled by the tab.
+    const panel = page.locator(`#${controlsId}`);
+    await expect(panel).toHaveAttribute("role", "tabpanel");
+    await expect(panel).toHaveAttribute("aria-labelledby", "home-tab-scenarios");
+  });
+
+  test("only the active tab is tab-key reachable (tabIndex management)", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    // Default tab is Scenarios → tabIndex=0; others tabIndex=-1
+    await expect(homeTabList.getByRole("tab", { name: /Scenarios/i })).toHaveAttribute(
+      "tabindex",
+      "0"
+    );
+    await expect(homeTabList.getByRole("tab", { name: /Defaults/i })).toHaveAttribute(
+      "tabindex",
+      "-1"
+    );
+    await expect(homeTabList.getByRole("tab", { name: /Map/i })).toHaveAttribute(
+      "tabindex",
+      "-1"
+    );
+  });
+
+  test("ArrowRight cycles tabs and moves focus to the new active tab", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    const scenarios = homeTabList.getByRole("tab", { name: /Scenarios/i });
+    // Focus the active tab (Scenarios is default), then ArrowRight.
+    await scenarios.focus();
+    await page.keyboard.press("ArrowRight");
+    // Now Instant utility is active and focused.
+    await expect(
+      homeTabList.getByRole("tab", { name: /Instant utility/i })
+    ).toHaveAttribute("aria-selected", "true");
+    await expect(
+      homeTabList.getByRole("tab", { name: /Instant utility/i })
+    ).toBeFocused();
+  });
+
+  test("ArrowLeft cycles backward + wraps from first to last", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    // Switch to Defaults (first tab) by click
+    await homeTabList.getByRole("tab", { name: /Defaults/i }).click();
+    await homeTabList.getByRole("tab", { name: /Defaults/i }).focus();
+    // ArrowLeft from first tab wraps to last (Map)
+    await page.keyboard.press("ArrowLeft");
+    await expect(
+      homeTabList.getByRole("tab", { name: /Map/i })
+    ).toHaveAttribute("aria-selected", "true");
+  });
+
+  test("Home key jumps to first tab; End jumps to last", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    const scenarios = homeTabList.getByRole("tab", { name: /Scenarios/i });
+    await scenarios.focus();
+    await page.keyboard.press("End");
+    await expect(homeTabList.getByRole("tab", { name: /Map/i })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
+    await page.keyboard.press("Home");
+    await expect(
+      homeTabList.getByRole("tab", { name: /Defaults/i })
+    ).toHaveAttribute("aria-selected", "true");
+  });
+
+  // ── Browser back restores tab (audit H-1, fix PR-2) ────────────────
+
+  test("browser back from one tab returns to the previous tab", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const homeTabList = page.getByRole("tablist", { name: /Home sections/i });
+    // Start: Scenarios (default). Click Map.
+    await homeTabList.getByRole("tab", { name: /Map/i }).click();
+    await expect(
+      homeTabList.getByRole("tab", { name: /Map/i })
+    ).toHaveAttribute("aria-selected", "true");
+    // Browser back: should restore Scenarios.
+    await page.goBack();
+    await expect(
+      homeTabList.getByRole("tab", { name: /Scenarios/i })
+    ).toHaveAttribute("aria-selected", "true");
+  });
 });

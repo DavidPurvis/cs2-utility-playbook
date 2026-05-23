@@ -78,7 +78,11 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
   let next: UiState;
   switch (action.type) {
     case "SELECT_TAB":
-      next = { ...state, activeTab: action.tab };
+      // Switching tabs clears the Map-tab's active marker so the user
+      // doesn't return to a stale highlight when they come back to Map
+      // later. (Audit C-3.) The pickedSpawnId is intentionally kept —
+      // it's a visual "I am here" reference orthogonal to tab state.
+      next = { ...state, activeTab: action.tab, activeThrowFromKey: null };
       break;
 
     case "SELECT_SCENARIO":
@@ -88,6 +92,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         activeScenarioId: action.scenarioId,
         activeRoleId: null,
         activeLineupId: null,
+        // Clear Map-tab selection on navigation — see SELECT_TAB.
         activeThrowFromKey: null,
       };
       break;
@@ -117,9 +122,19 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
         // that scenario. If they reached it directly (e.g. via the CT
         // position guide on home), back to home — avoids landing on a
         // blank "scenario view with no active scenario" page.
+        //
+        // lineup → scenario: activeThrowFromKey preserved — it doesn't
+        // affect anything until the user returns to home + Map tab.
+        // lineup → home: activeThrowFromKey cleared — Map tab renders
+        // at home, stale marker would be confusing.
         next = state.activeScenarioId
-          ? { ...state, view: "scenario", activeLineupId: null, activeThrowFromKey: null }
-          : { ...state, view: "home", activeLineupId: null, activeThrowFromKey: null };
+          ? { ...state, view: "scenario", activeLineupId: null }
+          : {
+              ...state,
+              view: "home",
+              activeLineupId: null,
+              activeThrowFromKey: null,
+            };
       } else if (state.view === "scenario") {
         next = {
           ...state,
@@ -127,6 +142,7 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
           activeScenarioId: null,
           activeRoleId: null,
           activeLineupId: null,
+          // Returning to home clears the Map-tab marker selection.
           activeThrowFromKey: null,
         };
       } else {
@@ -135,7 +151,9 @@ export function uiReducer(state: UiState, action: UiAction): UiState {
       break;
 
     case "GO_HOME":
-      // Picked spawn intentionally preserved.
+      // Picked spawn intentionally preserved. Map-tab marker NOT
+      // preserved — explicit GO_HOME means "fresh start," and a stale
+      // marker selection from earlier is more confusing than useful.
       next = {
         ...state,
         view: "home",

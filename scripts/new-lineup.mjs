@@ -67,6 +67,54 @@ export function parseSetposForCli(input) {
   return out.world || out.angle ? out : null;
 }
 
+// ── landing-args validator (audit C-4 fix, 2026-05) ──────────────
+// Pure function — exported for unit testing. Returns either:
+//   { ok: true,  landingAt: { world | percent } }
+//   { ok: false, error: <human-readable string> }
+//
+// Replaces the pre-fix silent default `{percent:{x:50,y:50}}` which
+// quietly produced a junk lineup at radar center if --landing was
+// omitted or mistyped. AR-1 says "do not invent data" — that rule
+// applies at the CLI layer too.
+export function parseLandingArgs(landingFlag, landingPercentFlag) {
+  if (landingFlag) {
+    const parsed = parseSetposForCli(landingFlag);
+    if (!parsed || !parsed.world) {
+      return {
+        ok: false,
+        error: `Could not parse --landing: '${landingFlag}'. Expected: "setpos X Y Z[;setang P Y R]".`,
+      };
+    }
+    return { ok: true, landingAt: { world: parsed.world } };
+  }
+  if (landingPercentFlag) {
+    const m = /^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)$/.exec(landingPercentFlag);
+    if (!m) {
+      return {
+        ok: false,
+        error: `Could not parse --landing-percent: '${landingPercentFlag}'. Expected: "X,Y" (each 0..100).`,
+      };
+    }
+    const x = parseFloat(m[1]);
+    const y = parseFloat(m[2]);
+    if (x < 0 || x > 100 || y < 0 || y > 100) {
+      return {
+        ok: false,
+        error: `--landing-percent values must be in [0..100]; got x=${x}, y=${y}.`,
+      };
+    }
+    return { ok: true, landingAt: { percent: { x, y } } };
+  }
+  return {
+    ok: false,
+    error:
+      `Missing landing position. Provide one of:\n` +
+      `  --landing "setpos X Y Z"          (authoritative world coords)\n` +
+      `  --landing-percent X,Y             (legacy percent fallback, each 0..100)\n` +
+      `\nSee --help for more.`,
+  };
+}
+
 // ── enums ─────────────────────────────────────────────────────────
 const TYPES       = ["smoke", "flash", "molotov", "he"];
 const SIDES       = ["T", "CT"];
@@ -88,9 +136,12 @@ Required:
   --difficulty <${DIFFICULTIES.join("|")}>
   --throw "setpos X Y Z;setang P Y R"   (or pipe via stdin)
 
+Landing (REQUIRED — pick one):
+  --landing "setpos X Y Z"               authoritative world coords for where utility lands
+  --landing-percent X,Y                  fallback: percent (0..100) on radar (use for legacy lineups)
+
 Optional:
   --description '<text>'                 single-line; multi-line → edit JSON afterward
-  --landing "setpos X Y Z"               adds landingAt.world; else uses percent fallback
   --source-name <text>
   --source-url <url>
   --help                                 prints this and exits
@@ -142,6 +193,7 @@ async function main() {
       difficulty:   { type: "string" },
       throw:        { type: "string" },
       landing:      { type: "string" },
+      "landing-percent": { type: "string" },
       description:  { type: "string" },
       "source-name": { type: "string" },
       "source-url":  { type: "string" },
@@ -179,15 +231,13 @@ async function main() {
     die(`Could not parse --throw: '${throwStr}'.\nExpected: 'setpos X Y Z[;setang P Y R]'.`);
   }
 
-  // Optional --landing
-  let landingAt = { percent: { x: 50, y: 50 } }; // safe default — owner edits later
-  if (values.landing) {
-    const parsedLanding = parseSetposForCli(values.landing);
-    if (!parsedLanding || !parsedLanding.world) {
-      die(`Could not parse --landing: '${values.landing}'.`);
-    }
-    landingAt = { world: parsedLanding.world };
+  // Landing is REQUIRED. See `parseLandingArgs` below for the logic +
+  // the rationale (audit C-4 fix, 2026-05).
+  const landingResult = parseLandingArgs(values.landing, values["landing-percent"]);
+  if (!landingResult.ok) {
+    die(landingResult.error);
   }
+  const landingAt = landingResult.landingAt;
 
   // Build the Lineup object
   const lineup = {

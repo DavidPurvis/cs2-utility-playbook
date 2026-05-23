@@ -112,8 +112,24 @@ describe("assertDustData", () => {
 
   it("throws on duplicate scenario id", () => {
     const bad = structuredClone(validBase);
-    bad.scenarios.push(structuredClone(bad.scenarios[0]!));
+    const dupe = structuredClone(bad.scenarios[0]!);
+    dupe.number = 99; // unique number so the number-uniqueness check passes
+    bad.scenarios.push(dupe);
     expect(() => assertDustData(bad)).toThrow(/duplicate scenario id.*test/);
+  });
+
+  // ── snake_case format ───────────────────────────────────────────
+  it("throws when a lineup id does not match snake_case format", () => {
+    const bad = structuredClone(validBase);
+    bad.lineups[0]!.id = "Xbox-Smoke"; // capital + hyphen — invalid
+    expect(() => assertDustData(bad)).toThrow(/snake_case/);
+  });
+
+  // ── Scenario number uniqueness ─────────────────────────────────
+  it("throws when two scenarios share the same number", () => {
+    const bad = structuredClone(validBase);
+    bad.scenarios.push({ ...bad.scenarios[0]!, id: "test2" });
+    expect(() => assertDustData(bad)).toThrow(/duplicate scenario.number/);
   });
 
   // ── Empty required strings ──────────────────────────────────────
@@ -175,7 +191,7 @@ describe("assertDustData", () => {
         },
       ],
     };
-    expect(() => assertDustData(bad)).toThrow(/fromSpawnId.*nonexistent-spawn/);
+    expect(() => assertDustData(bad)).toThrow(/spawnRush.*unknown fromSpawnId.*nonexistent-spawn/);
   });
 
   it("throws when spawnRush.beatsSpawnIds references unknown spawn", () => {
@@ -192,7 +208,24 @@ describe("assertDustData", () => {
         },
       ],
     };
-    expect(() => assertDustData(bad)).toThrow(/beatsSpawnIds.*ghost-ct-spawn/);
+    expect(() => assertDustData(bad)).toThrow(/beatsSpawnIds.*unknown spawn.*ghost-ct-spawn/);
+  });
+
+  it("accepts defaults.spawnRushes when all spawn refs resolve", () => {
+    const bundle = structuredClone(validBase) as Record<string, unknown>;
+    bundle.defaults = {
+      plants: [],
+      timings: [],
+      spawnRushes: [
+        {
+          id: "rush-good",
+          fromSpawnId: "dust2-t-s1",
+          contestPath: "Mid",
+          beatsSpawnIds: [], // empty is fine — no refs to check
+        },
+      ],
+    };
+    expect(() => assertDustData(bundle)).not.toThrow();
   });
 
   // ── Valid bundle with all new fields ─────────────────────────────

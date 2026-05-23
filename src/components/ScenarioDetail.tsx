@@ -18,12 +18,8 @@ import { worldToPercent } from "../utils/coordinates";
 import { T } from "../theme";
 import type { Lineup, MapConfig, Scenario, ScenarioAction, Spawn } from "../types";
 
-const UTIL_COLOR: Record<Lineup["type"], string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 export interface ScenarioDetailProps {
   scenario: Scenario;
@@ -133,7 +129,6 @@ export function ScenarioDetail({
                 <g>
                   {orderedPlayers.flatMap((p) => {
                     const dim = activeRoleId && p.role !== activeRoleId ? 0.18 : 0.9;
-                    // Player's spawn dot (visual anchor)
                     const spawnNode = p.startingSpawnId
                       ? spawnById.get(p.startingSpawnId)
                       : null;
@@ -251,9 +246,10 @@ export function ScenarioDetail({
                   lineHeight: 1.5,
                 }}
               >
-                <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no lineups
-                assigned yet. This role needs utility lineups added to complete the
-                execute.
+                <strong style={{ color: T.textSec }}>{activePlayer.label}</strong> has no actions
+                yet. Add lineups to this role with{" "}
+                <code style={{ color: T.accentDk }}>npm run new-scenario</code> or edit{" "}
+                <code style={{ color: T.accentDk }}>src/data/dust2.json</code> directly.
               </div>
             ) : (
               <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>

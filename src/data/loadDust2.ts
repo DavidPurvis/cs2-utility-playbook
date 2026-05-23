@@ -5,24 +5,37 @@
  * a focused assertion function that validates:
  *
  *   1. Top-level shape: config (object), spawns/lineups/scenarios (arrays).
- *   2. Every lineup has at least one of landingAt.world or landingAt.percent
- *      (the boot discriminator — both renderers need at least one).
- *   3. Every scenario action's lineupId resolves to an actual lineup
- *      (ref integrity — prevents silent dangling refs that would render
- *      blank arcs).
+ *   2. Config numeric sanity (finite numbers, positive scale/resolution).
+ *   3. Spawn IDs unique + non-empty labels.
+ *   4. Lineup IDs unique + snake_case format + non-empty names + landing
+ *      discriminator (world or percent).
+ *   5. Scenario numbers unique (voice-call protocol).
+ *   6. Scenario IDs unique + non-empty names + roleOrder consistency +
+ *      startingSpawnId ref integrity + action lineupId ref integrity +
+ *      action order uniqueness.
+ *   7. CT position recommendedLineupIds ref integrity.
+ *   8. SpawnRush ref integrity (fromSpawnId, beatsSpawnIds, losesToSpawnIds).
  *
  * On any failure, throws an Error with a path-pointed message so the
- * ErrorBoundary surfaces it to the developer. There is no field-level
- * validation beyond the discriminator + ref check — the JSON is
- * single-author and the TypeScript types in src/types.ts already cover
- * the rest.
+ * ErrorBoundary surfaces it to the developer.
  */
 
 import raw from "./dust2.json";
 import type {
-  CtPosition, DustData, DustDefaults, Lineup, MapConfig,
-  Scenario, ScenarioPlayer, Spawn, SpawnRush,
+  CtPosition,
+  DustData,
+  DustDefaults,
+  Lineup,
+  MapConfig,
+  Scenario,
+  ScenarioPlayer,
+  Spawn,
+  SpawnRush,
 } from "../types";
+
+// Mirrors the CLI's id-format check (scripts/new-lineup.mjs). Hand-edits
+// to dust2.json could otherwise sneak an invalid id past boot.
+const LINEUP_ID_RE = /^[a-z][a-z0-9_]*$/;
 
 export function assertDustData(d: unknown): asserts d is DustData {
   if (typeof d !== "object" || d === null) {
@@ -71,7 +84,7 @@ export function assertDustData(d: unknown): asserts d is DustData {
     }
   }
 
-  // ── 4. Lineups: IDs + names + landing discriminator ───────────────
+  // ── 4. Lineups: IDs + names + snake_case + landing discriminator ──
   const lineupIds = new Set<string>();
   for (const l of o.lineups as Lineup[]) {
     if (typeof l.id !== "string" || l.id.length === 0) {
@@ -79,6 +92,11 @@ export function assertDustData(d: unknown): asserts d is DustData {
     }
     if (lineupIds.has(l.id)) {
       throw new Error(`dust2.json: duplicate lineup id '${l.id}'`);
+    }
+    if (!LINEUP_ID_RE.test(l.id)) {
+      throw new Error(
+        `dust2.json: lineup id '${l.id}' must match /^[a-z][a-z0-9_]*$/ (snake_case)`
+      );
     }
     lineupIds.add(l.id);
     if (typeof l.name !== "string" || l.name.length === 0) {
@@ -91,7 +109,23 @@ export function assertDustData(d: unknown): asserts d is DustData {
     }
   }
 
-  // ── 5. Scenarios: IDs + names + ref integrity + action ordering ───
+  // ── 5. Scenario numbers uniqueness ────────────────────────────────
+  // The voice-call protocol relies on "scenario 4" pointing at exactly
+  // one scenario.
+  const scenarioNumbers = new Set<number>();
+  for (const s of o.scenarios as Scenario[]) {
+    if (typeof s.number !== "number") {
+      throw new Error(`dust2.json: scenario '${s.id}' missing numeric .number`);
+    }
+    if (scenarioNumbers.has(s.number)) {
+      throw new Error(
+        `dust2.json: duplicate scenario.number ${s.number} (used by multiple scenarios)`
+      );
+    }
+    scenarioNumbers.add(s.number);
+  }
+
+  // ── 6. Scenarios: IDs + names + ref integrity + action ordering ───
   const scenarioIds = new Set<string>();
   for (const s of o.scenarios as Scenario[]) {
     if (typeof s.id !== "string" || s.id.length === 0) {
@@ -144,7 +178,7 @@ export function assertDustData(d: unknown): asserts d is DustData {
     }
   }
 
-  // ── 6. CT position ref integrity ──────────────────────────────────
+  // ── 7. CT position ref integrity ──────────────────────────────────
   if (Array.isArray(o.ctPositions)) {
     for (const pos of o.ctPositions as CtPosition[]) {
       if (typeof pos.id !== "string" || typeof pos.label !== "string") {
@@ -160,27 +194,29 @@ export function assertDustData(d: unknown): asserts d is DustData {
     }
   }
 
-  // ── 7. SpawnRush ref integrity ────────────────────────────────────
-  const defaults = o.defaults as DustDefaults | undefined;
-  if (defaults?.spawnRushes) {
-    for (const rush of defaults.spawnRushes as SpawnRush[]) {
-      if (!spawnIds.has(rush.fromSpawnId)) {
-        throw new Error(
-          `dust2.json: spawnRush '${rush.id}' references unknown fromSpawnId '${rush.fromSpawnId}'`
-        );
-      }
-      for (const sid of rush.beatsSpawnIds) {
-        if (!spawnIds.has(sid)) {
+  // ── 8. SpawnRush ref integrity ────────────────────────────────────
+  // Every fromSpawnId, beatsSpawnIds, and losesToSpawnIds entry must
+  // resolve to a real Spawn.
+  if (o.defaults !== undefined) {
+    const defaults = o.defaults as DustDefaults;
+    if (Array.isArray(defaults.spawnRushes)) {
+      for (const rush of defaults.spawnRushes as SpawnRush[]) {
+        if (typeof rush.fromSpawnId !== "string" || !spawnIds.has(rush.fromSpawnId)) {
           throw new Error(
-            `dust2.json: spawnRush '${rush.id}' beatsSpawnIds references unknown spawn '${sid}'`
+            `dust2.json: spawnRush '${rush.id}' references unknown fromSpawnId '${rush.fromSpawnId}'`
           );
         }
-      }
-      if (rush.losesToSpawnIds) {
-        for (const sid of rush.losesToSpawnIds) {
+        for (const sid of rush.beatsSpawnIds ?? []) {
           if (!spawnIds.has(sid)) {
             throw new Error(
-              `dust2.json: spawnRush '${rush.id}' losesToSpawnIds references unknown spawn '${sid}'`
+              `dust2.json: spawnRush '${rush.id}' beatsSpawnIds contains unknown spawn '${sid}'`
+            );
+          }
+        }
+        for (const sid of rush.losesToSpawnIds ?? []) {
+          if (!spawnIds.has(sid)) {
+            throw new Error(
+              `dust2.json: spawnRush '${rush.id}' losesToSpawnIds contains unknown spawn '${sid}'`
             );
           }
         }

@@ -14,17 +14,13 @@
 import { useMemo } from "react";
 import { worldDistSq } from "../../utils/bounds";
 import { T } from "../../theme";
-import type { DustData, Lineup, Side, UtilityType } from "../../types";
+import type { DustData, Lineup, Side } from "../../types";
 
 // 1500 world units ≈ the distance from T spawn to xbox-smoke throw position.
 const INSTANT_RADIUS_SQ = 1500 * 1500;
 
-const UTIL_COLOR: Record<UtilityType, string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 function isInstantFromSpawn(
   lineup: Lineup,

@@ -19,12 +19,8 @@ import { clusterThrowFroms } from "../../utils/clusterThrowFroms";
 import { T } from "../../theme";
 import type { DustData, Lineup, UtilityType } from "../../types";
 
-const UTIL_COLOR: Record<UtilityType, string> = {
-  smoke: T.utilSmoke,
-  flash: T.utilFlash,
-  molotov: T.utilMolly,
-  he: T.utilHE,
-};
+// UTIL_COLOR now lives in theme.ts as T.utilColor (single source of truth).
+const UTIL_COLOR = T.utilColor;
 
 export function MapTab({
   data,
@@ -188,6 +184,14 @@ export function MapTab({
                   background: T.bgSubtle,
                   padding: "6px 8px",
                   borderRadius: T.radiusSm,
+                  // Audit H-2 fix (2026-05): on 375px mobile the aside
+                  // collapses to ~343px. Typical setpos with signed
+                  // 4-digit coords is wider than that. overflowWrap
+                  // splits mid-word at the row boundary so the panel
+                  // never scrolls horizontally.
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
+                  display: "block",
                 }}
               >
                 throwFrom: setpos {active.representative.x} {active.representative.y}

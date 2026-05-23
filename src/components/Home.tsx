@@ -12,6 +12,7 @@
  */
 import { ErrorBoundary } from "./ErrorBoundary";
 import { TabBar } from "./TabBar";
+import { tabButtonId, tabPanelId } from "./tabIds";
 import { ScenariosTab } from "./tabs/ScenariosTab";
 import { DefaultsTab } from "./tabs/DefaultsTab";
 import { InstantSmokesTab } from "./tabs/InstantSmokesTab";
@@ -47,7 +48,18 @@ export function Home({
   return (
     <>
       <TabBar active={activeTab} onChange={onSelectTab} />
-      <div style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}>
+      <div
+        // ARIA tabs pattern (audit H-5): the content area is a single
+        // tabpanel whose id + aria-labelledby change to track the active
+        // tab. We use one panel that swaps content rather than rendering
+        // all four panels with `hidden` on inactive ones — the audience
+        // benefits from the simpler DOM, and screen readers re-announce
+        // the panel on activeTab change.
+        role="tabpanel"
+        id={tabPanelId(activeTab)}
+        aria-labelledby={tabButtonId(activeTab)}
+        style={{ padding: 20, maxWidth: 1280, margin: "0 auto" }}
+      >
         {activeTab === "defaults" && (
           <ErrorBoundary label="Defaults">
             <DefaultsTab data={data} />

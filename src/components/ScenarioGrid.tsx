@@ -32,8 +32,8 @@ export function ScenarioGrid({ scenarios, onOpen }: ScenarioGridProps) {
           textAlign: "center",
         }}
       >
-        No scenarios available yet. Scenarios are numbered team executes —
-        coordinated utility sequences for 2-5 players.
+        No scenarios yet. Run <code style={{ color: T.accentDk, background: T.accentBg, padding: "2px 6px", borderRadius: 4 }}>npm run new-scenario</code> to add one,
+        or edit <code style={{ color: T.accentDk }}>src/data/dust2.json</code> directly.
       </div>
     );
   }

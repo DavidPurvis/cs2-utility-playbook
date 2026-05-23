@@ -53,7 +53,13 @@ export default function App() {
       : null;
 
   const onSelectTab = useCallback(
-    (tab: import("./reducer").HomeTab) => dispatch({ type: "SELECT_TAB", tab }),
+    (tab: import("./reducer").HomeTab) => {
+      dispatch({ type: "SELECT_TAB", tab });
+      // Push a history entry so browser-back restores the previous tab
+      // (audit H-1). Other navigation actions (SELECT_SCENARIO etc.)
+      // already push; tabs were the lone gap.
+      if (typeof history !== "undefined") history.pushState({ view: "home", tab }, "");
+    },
     []
   );
   const onSelectScenario = useCallback((id: string) => {
@@ -80,8 +86,37 @@ export default function App() {
   const onBack = useCallback(() => dispatch({ type: "BACK" }), []);
 
   // Browser back-button.
+  //
+  // Two paths:
+  //   1. Going back from a scenario/lineup view → dispatch BACK so the
+  //      reducer's view-stack logic returns the user one level up.
+  //   2. Going back from one home tab to another → read the previous
+  //      history entry's `state.tab` and dispatch SELECT_TAB (audit H-1).
+  //
+  // We also seed the initial history entry on mount via replaceState
+  // so a back-from-the-first-tab-switch lands on a known state instead
+  // of `null` (which would have triggered the BACK path and left the
+  // tab unchanged).
   useEffect(() => {
-    const onPop = () => dispatch({ type: "BACK" });
+    if (typeof history !== "undefined") {
+      // Only seed if the current entry has no recognizable state —
+      // otherwise we'd clobber an existing scenario/lineup pushState.
+      if (history.state == null) {
+        history.replaceState({ view: "home", tab: "scenarios" }, "");
+      }
+    }
+    const onPop = (e: PopStateEvent) => {
+      const popped = e.state as { view?: string; tab?: import("./reducer").HomeTab } | null;
+      if (popped && popped.view === "home" && popped.tab) {
+        // GO_HOME ensures we leave any non-home view first (scenario/
+        // lineup); when already on home it's a no-op. Then SELECT_TAB
+        // restores the correct tab (audit H-1 tab-history).
+        dispatch({ type: "GO_HOME" });
+        dispatch({ type: "SELECT_TAB", tab: popped.tab });
+        return;
+      }
+      dispatch({ type: "BACK" });
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
